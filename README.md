@@ -119,3 +119,44 @@ class myPluginInit {
   }
 }
 ```
+
+### Settings
+```php
+$AdminPage->setting->section = "Setting Section"; // Make Section (Optional)
+
+$AdminPage->setting = "Image Size"; // Make New Input Field Named Image Size. It has to be unique within a page. ( Default : text )
+$AdminPage->setting->type = "number"; // Set the type of Image Size as number
+$AdminPage->setting->default = "200"; // Set Default Value
+$AdminPage->setting->description = "Image Size MUST be less than 1000";
+$AdminPage->setting->class = "large-text"; // The class attribute of input tag ( Default : regular-text )
+
+$AdminPage->setting = "Thumnail Size"; // Make New Input Field
+```
+#### Supported Type
+* file
+* text
+* number
+* checkbox
+* html
+* textarea
+
+You can add HTML into your form.
+```php
+$AdminPage->setting = "HTML"; // It won't appear if you set this as html type
+$AdminPage->setting->type = "html";
+$AdminPage->setting->html = "<p>This is HTML</p>";
+```
+
+You can make set input fields. It appears on one row.
+```php
+$AdminPage->setting = "Image Size";
+$AdminPage->setting->set = 'Width'; // New Field. This ID will be image-size-width.
+$AdminPage->setting->set->type = 'number';
+$AdminPage->setting->set->default = 370;
+$AdminPage->setting->set->class = 'small-text';
+
+$AdminPage->setting->set = 'Height';
+$AdminPage->setting->set->type = 'number';
+$AdminPage->setting->set->default = 250;
+$AdminPage->setting->set->class = 'small-text';
+```
