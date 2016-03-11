@@ -132,6 +132,11 @@ $AdminPage->setting->class = "large-text"; // The class attribute of input tag (
 
 $AdminPage->setting = "Thumnail Size"; // Make New Input Field
 ```
+You can get the setting data by calling getValue() method.
+```php
+$setting = $AdminPage->getValue();
+```
+
 #### Supported Type
 * file
 * text

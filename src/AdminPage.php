@@ -21,10 +21,9 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-
-class AdminPage {
-	protected $key;
-	private $name, $url, $template, $scripts, $styles, $plugin;
+class AdminPage extends Abs {
+	private $url, $template, $scripts, $styles, $plugin;
+	protected $defaultName = 'Admin Page';
 
 	private $position = 'settings';
 	private $icon = 'dashicons-admin-generic';
@@ -33,10 +32,8 @@ class AdminPage {
 	protected $version = '0.0.0';
 
 	public function __construct() {
-		$name = ( !func_num_args() ) ? 'Admin Page' : func_get_arg(0);
-
-		$this->name = __( $name );
-		$this->key = sanitize_title( $name );
+		$name = ( !func_num_args() ) ? false : func_get_arg(0);
+		parent::__construct( $name );
 
 		add_action( 'admin_menu', array( $this, 'setAdminMenu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueScripts' ) );
