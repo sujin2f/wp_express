@@ -205,11 +205,6 @@ class Options extends \WE\AdminPage {
 				register_setting( $sectionKey, $field );
 			}
 		}
-
-		if ( $isFile ) {
-			add_action( 'admin_footer', function() { $this->printMediaUploadScript( 'form-' . $this->key ); } );
-			add_action( 'admin_enqueue_scripts', 'wp_enqueue_media' );
-		}
 	}
 
 	# Setting API Fields

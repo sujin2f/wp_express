@@ -46,6 +46,9 @@ trait HtmlTrait {
 
 				<input class="custom-img-id" name="<?php echo $field[ 'key' ] ?>" type="hidden" value="<?php echo esc_attr( $field[ 'value' ] ); ?>" data-key="<?php echo $field[ 'key' ] ?>" />
 				<?php
+
+				add_action( 'admin_footer', array( $this, 'printMediaUploadScript' ) );
+				add_action( 'admin_enqueue_scripts', 'wp_enqueue_media' );
 			break;
 
 			case 'text' :
@@ -108,16 +111,16 @@ trait HtmlTrait {
 		}
 	}
 
-	private function printMediaUploadScript( $key ) {
-		if ( !empty( $this->script_encluded[ $key ] ) ) return false;
+	public function printMediaUploadScript() {
+		if ( !empty( $this->script_encluded[ $this->key ] ) ) return false;
 
-		$this->script_encluded[ $key ] = true;
+		$this->script_encluded[ $this->key ] = true;
 
 		?>
 		<script type="text/javascript">
 			jQuery( document ).ready( function($) {
 				var frame, selected_key;
-				$( '#<?php echo $key ?> .upload-custom-img' ).click( function( e ) {
+				$( '#form-<?php echo $this->key ?> .upload-custom-img' ).click( function( e ) {
 					e.preventDefault();
 					selected_key = $(this).attr( 'data-key' );
 
@@ -141,7 +144,7 @@ trait HtmlTrait {
 					frame.open();
 				});
 
-				$( '#term-<?php echo $key ?> .delete-custom-img' ).on( 'click', function( e ){
+				$( '#form-<?php echo $this->key ?> .delete-custom-img' ).on( 'click', function( e ){
 					e.preventDefault();
 					selected_key = $(this).attr( 'data-key' );
 
