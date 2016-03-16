@@ -39,7 +39,9 @@ if ( !class_exists('WE_Redirect' ) ) {
 			add_filter( 'wp_redirect', array( $this, 'wp_redirect' ) );
 		}
 
-		public function wp_redirect( $location ) {
+		public function wp_redirect( $location = false ) {
+			if ( !$location ) $location = $_SERVER[ 'REQUEST_URI' ];
+
 			if ( headers_sent() ) {
 				printf( '<meta http-equiv="refresh" content="0; url=%s">', $location );
 				printf( '<script>window.location="%s"</script>', $location );

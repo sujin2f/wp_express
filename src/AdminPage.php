@@ -21,7 +21,9 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class AdminPage extends Abs {
+class AdminPage extends Extensions\Abs {
+	use \WE\Extensions\StoredInfoSet;
+
 	private $url, $template, $scripts, $styles, $plugin;
 	protected $defaultName = 'Admin Page';
 
@@ -29,7 +31,6 @@ class AdminPage extends Abs {
 	private $icon = 'dashicons-admin-generic';
 	private $menu_icon = '';
 	private $capability = 'activate_plugins';
-	protected $version = '0.0.0';
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
@@ -49,27 +50,11 @@ class AdminPage extends Abs {
 			break;
 
 			case 'template' :
-				$this->template = $value;
-				return true;
-			break;
-
 			case 'position' :
-				$this->position = $value;
-				return true;
-			break;
-
 			case 'version' :
-				$this->version = $value;
-				return true;
-			break;
-
 			case 'plugin' :
-				$this->plugin = $value;
-				return true;
-			break;
-
 			case 'capability' :
-				$this->capability = $value;
+				$this->{$name} = $value;
 				return true;
 			break;
 

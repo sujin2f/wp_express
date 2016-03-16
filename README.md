@@ -122,7 +122,7 @@ class myPluginInit {
 
 ### Settings
 ```php
-$AdminPage->setting->section = "Setting Section"; // Make Section (Optional)
+$AdminPage->section = "Setting Section"; // Make Section (Optional)
 
 $AdminPage->setting = "Image Size"; // Make New Input Field Named Image Size. It has to be unique within a page. ( Default : text )
 $AdminPage->setting->type = "number"; // Set the type of Image Size as number
@@ -132,9 +132,9 @@ $AdminPage->setting->class = "large-text"; // The class attribute of input tag (
 
 $AdminPage->setting = "Thumnail Size"; // Make New Input Field
 ```
-You can get the setting data by calling getValue() method.
+You can get the setting data by calling $AdminPage->value.
 ```php
-$setting = $AdminPage->getValue();
+$setting = $AdminPage->value;
 ```
 
 #### Supported Type
@@ -155,13 +155,14 @@ $AdminPage->setting->html = "<p>This is HTML</p>";
 You can make set input fields. It appears on one row.
 ```php
 $AdminPage->setting = "Image Size";
-$AdminPage->setting->set = 'Width'; // New Field. This ID will be image-size-width.
-$AdminPage->setting->set->type = 'number';
-$AdminPage->setting->set->default = 370;
-$AdminPage->setting->set->class = 'small-text';
 
-$AdminPage->setting->set = 'Height';
-$AdminPage->setting->set->type = 'number';
-$AdminPage->setting->set->default = 250;
-$AdminPage->setting->set->class = 'small-text';
+$AdminPage->set = 'Width'; // New Field. This ID will be image-size-width.
+$AdminPage->set->type = 'number';
+$AdminPage->set->default = 370;
+$AdminPage->set->class = 'small-text';
+
+$AdminPage->set = 'Height';
+$AdminPage->set->type = 'number';
+$AdminPage->set->default = 250;
+$AdminPage->set->class = 'small-text';
 ```

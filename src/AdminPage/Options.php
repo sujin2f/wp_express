@@ -22,124 +22,44 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 class Options extends \WE\AdminPage {
-	use \WE\HtmlTrait;
-
-	private $save, $settings;
-	private $transient = false;
-	protected $value;
+	use \WE\Extensions\HtmlHelper;
+	use \WE\Extensions\StoredInfoSet;
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
 
-		add_action( 'after_setup_theme', array( $this, 'initialize' ), 1 );
-		add_action( 'after_setup_theme', array( $this, 'saveSettings' ), 2 );
+		$this->initOptionSetting( 'WP_Admin_Page_Settings-' . $this->key );
 
-		$this->settings = new \WE\Settings();
-	}
-
-	// ! Callbacks : for setting section and field
-	public function __call( $name, $arguments ) {
-		# Settings Section
-		if ( strpos( $name, 'settings_section_' ) === 0 ) {
-			return true;
-		}
-
-		# Settings Section
-		if ( strpos( $name, 'settings_field_' ) === 0 ) {
-			return $this->callPrintSettingsField( $arguments[0] );
-		}
+		add_action( 'init', array( $this, 'saveSettings' ), 5 );
+		add_action( 'init', array( $this, 'readFromDb' ), 50 );
 	}
 
 	public function __get( $name ) {
-		switch( $name ) {
-			case 'setting' :
-			case 'settings' :
-			case 'option' :
-			case 'options' :
-				return $this->settings;
-			break;
-		}
-
-		return false;
+		return $this->getOptionSetting( $name );
 	}
 
 	public function __set( $name, $value ) {
 		if ( parent::__set( $name, $value ) ) return;
-
-		switch( $name ) {
-			case 'save' :
-				$this->save = $value;
-				return;
-			break;
-
-			case 'setting' :
-			case 'settings' :
-			case 'option' :
-			case 'options' :
-				$this->transient = get_transient( 'WP_Admin_Page_Settings-' . $this->key );
-				if ( $this->version !== '0.0.0' && $this->transient ) return;
-
-				$this->settings->addField( $value );
-				return;
-			break;
-		}
+		if ( $this->setOptionSetting( $name, $value ) ) return;
 	}
 
-	function initialize() {
-		$this->settings->applySet();
+	private function checkIsSaving() {
+		if( !$_POST ) return false;
+		if( !isset( $_POST[ '_wpnonce' ] ) ) return false;
+		if( !wp_verify_nonce( $_POST[ '_wpnonce' ], $this->key . '-options' ) ) return false;
 
-		if ( $this->version !== '0.0.0' ) {
-			$this->transient = get_transient( 'WP_Admin_Page_Settings-' . $this->key );
-
-			if ( !$this->transient || $this->transient[0] !== $this->version ) {
-				$this->transient = [ $this->version, $this->settings->sections, $this->settings->getValue() ];
-				set_transient( 'WP_Admin_Page_Settings-' . $this->key, $this->transient, HOUR_IN_SECONDS );
-			}
-
-			$this->settings = new \WE\Settings( [ $this->transient[1], $this->transient[2] ] );
-		} else {
-			$this->transient = false;
-			delete_transient( 'WP_Admin_Page_Settings-' . $this->key );
-		}
-
-		$this->initializeOptions();
+		delete_transient( $this->transientKey );
+		return true;
 	}
 
-	// Load Setting from WP Option / Fill with the Default Vaule if not Exists
-	private function initializeOptions() {
-		$this->value = get_option( '_' . $this->key . '_', false );
+	public function readFromDb() {
+ 		$this->values = get_option( '_' . $this->key . '_', false );
 
-		// If setting is Empty, Set Default
-		if ( !$this->value ) {
-			$this->setOptionsDefault();
-		}
-	}
-
-	// Set Default Values to Options
-	private function setOptionsDefault() {
-		// Extract $settings_query's default value
-
-		foreach( $this->settings->getValue() as $field_key => $field ) {
-			$this->value[ $field_key ] = ( !empty( $field['default'] ) ) ? $field['default'] : false;
-		}
-	}
-
-	// Save
-	function saveSettings() {
-		if( !$_POST || !wp_verify_nonce( $_POST['_wpnonce'], $this->key . '-options' ) ) return false;
-		unset( $_POST['option_page'], $_POST['action'], $_POST['_wpnonce'], $_POST['_wp_http_referer'], $_POST['submit'] );
-
-		if ( $this->save ) {
-			call_user_func( $this->save );
-
-		} else {
-			$this->value = apply_filters( 'WE_AdminPage_update_options_' . $this->key , $_POST );
-			update_option( '_' . $this->key . '_', $this->value );
-
-			$this->showMessage( 'Option Saved!' );
-			do_action( 'WP_Admin_Page_' . $this->key . '_after_update_option' , $this->value );
-		}
+ 		foreach( $this->options as $key => $option ) {
+			if ( array_key_exists( $key, $this->values ) )
+				$option->value = $this->values[ $key ];
+ 		}
 	}
 
 	public function printTemplate( $contents = '' ) {
@@ -164,62 +84,59 @@ class Options extends \WE\AdminPage {
 	}
 
 	// ! Register Sections and Fields
-	private function setSettingsSection() {
-		$isFile = false;
-		$settings = $this->settings->getValue();
-
-		foreach ( $this->settings->sections as $sectionKey => $section ) {
-			add_settings_section( $sectionKey, $section['name'], array( $this, 'settings_section_' . $sectionKey ), $this->key );
+	public function setSettingsSection() {
+		foreach ( $this->sections as $sectionKey => $section ) {
+			add_settings_section( $sectionKey, $section['name'], false, $this->key );
 
 			# Set Fields
 			foreach ( $section['fields'] as $fieldKey ) {
 				// is Set Item
 				if ( is_array( $fieldKey ) ) {
 					$setKey = array_shift( $fieldKey );
-					$name = $settings[ $setKey ][ 'name' ];
+					$name = $this->options[ $setKey ]->name;
 
-					$field = [];
+					$setting = [];
 
 					foreach( $fieldKey as $key ) {
-						$setField = $settings[ $key ];
-
-						$setField[ 'key' ] = $key;
-						$setField[ 'value' ] = ( $this->value[ $key ] ) ? $this->value[ $key ] : '';
-
-						if ( $setField['type'] === 'file' ) $isFile = true;
-						$field[] = $setField;
+						$setting[] = $this->options[ $key ];
 					}
 
 					$fieldKey = $setKey;
+
 				} else {
-					$field = $settings[ $fieldKey ];
-					$name = ( $field[ 'type' ] === 'html' ) ? '' : $field[ 'name' ];
-
-					$field[ 'key' ] = $fieldKey;
-					$field[ 'value' ] = ( $this->value[ $fieldKey ] ) ? $this->value[ $fieldKey ] : '';
-
-					if ( $field['type'] === 'file' ) $isFile = true;
+					$setting = $this->options[ $fieldKey ];
+					$name = ( $setting->type === 'html' ) ? '' : $setting->name;
 				}
 
-				add_settings_field( $fieldKey, $name, array( $this, 'settings_field_' . $fieldKey ), $this->key, $sectionKey, $field );
-				register_setting( $sectionKey, $field );
+				add_settings_field( $fieldKey, $name, array( $this, 'callPrintSettingsField' ), $this->key, $sectionKey, [ $setting ] );
+				register_setting( $sectionKey, [ $setting ] );
 			}
 		}
 	}
 
 	# Setting API Fields
-	private function callPrintSettingsField( $arg ) {
-		if ( isset( $arg[ 'type' ] ) ) {
-			$this->printSettingsField( $arg );
+	public function callPrintSettingsField( $setting ) {
+		$setting = $setting[0];
 
-			if ( !empty( $arg[ 'description' ] ) ) {
-				echo '<p class="description">' . $arg[ 'description' ] . '</p>';
-			}
+		if ( !is_array( $setting ) ) {
+			$setting->printSettingsField();
 		} else {
-			foreach ( $arg as $multiple_type ) {
-				$this->callPrintSettingsField( $multiple_type );
+			foreach ( $setting as $setting_ ) {
+				$this->callPrintSettingsField( [ $setting_ ] );
 			}
 		}
 	}
-}
 
+	// Save
+	public function saveSettings() {
+		if( !$this->isSaving ) return;
+
+		if ( $this->save ) {
+			call_user_func( $this->save );
+
+		} else {
+			update_option( '_' . $this->key . '_', $_POST );
+			$this->showMessage( 'Option Saved!' );
+		}
+	}
+}
