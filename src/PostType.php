@@ -50,17 +50,9 @@ class PostType extends Extensions\Abs {
 
 		$this->arguments = array(
 			'labels' => $labels,
+			'supports' => [ 'title' ],
 			'public' => true,
-			'publicly_queryable' => true,
-			'show_ui' => true,
-			'show_in_menu' => true,
-			'query_var' => true,
-			'rewrite' => 'rewrite',
-			'capability_type' => 'post',
-			'has_archive' => true,
-			'hierarchical' => false,
-			'menu_position' => null,
-			'supports' => [ 'title' ]
+			'rewrite' => 'rewrite'
 		);
 
 		add_action( 'init', array( $this, 'registerPostType' ) );
@@ -96,20 +88,39 @@ class PostType extends Extensions\Abs {
 
 		switch( $name ) {
 			case 'public' :
+			case 'exclude_from_search' :
+			case 'description' :
 			case 'publicly_queryable' :
 			case 'show_ui' :
 			case 'show_in_menu' :
+			case 'show_in_admin_bar' :
 			case 'query_var' :
 			case 'rewrite' :
 			case 'capability_type' :
+			case 'capabilities' :
 			case 'has_archive' :
 			case 'hierarchical' :
 			case 'menu_position' :
+			case 'menu_icon' :
+			case 'map_meta_cap' :
+			case 'register_meta_box_cb' :
+			case 'taxonomies' :
+			case 'permalink_epmask' :
+			case 'can_export' :
+			case 'show_in_rest' :
+			case 'rest_base' :
+			case 'rest_controller_class' :
+			case '_builtin' :
+			case '_edit_link' :
 				$this->arguments[ $name ] = $value;
 			break;
 
 			case 'supports' :
-				$this->arguments[ 'supports' ][] = $value;
+				if ( is_array( $value ) ) {
+					$this->arguments[ 'supports' ] = array_merge( $this->arguments[ 'supports' ], $value );
+				} else {
+					$this->arguments[ 'supports' ][] = $value;
+				}
 			break;
 
 			case 'taxonomy';
@@ -127,8 +138,8 @@ class PostType extends Extensions\Abs {
 	}
 
 	public function registerPostType() {
-		// Post Type
 		if ( $this->arguments[ 'rewrite' ] == 'rewrite' ) $this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
+		// Post Type
 		register_post_type( $this->key, $this->arguments );
 	}
 

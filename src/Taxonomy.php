@@ -48,6 +48,7 @@ class Taxonomy extends Extensions\Abs {
 		$this->arguments = array(
 			'labels' => $this->arguments,
 			'hierarchical' => true,
+			'public' => true,
 			'show_ui' => true,
 			'query_var' => true,
 			'rewrite' => 'rewrite'
@@ -65,6 +66,18 @@ class Taxonomy extends Extensions\Abs {
 		if ( $this->setOptionSetting( $name, $value ) ) return;
 
 		switch( $name ) {
+			case 'public' :
+			case 'show_in_menu' :
+			case 'show_in_nav_menus' :
+			case 'show_tagcloud' :
+			case 'show_in_quick_edit' :
+			case 'meta_box_cb' :
+			case 'show_admin_column' :
+			case 'description' :
+			case 'update_count_callback' :
+			case 'capabilities' :
+			case 'sort' :
+			case '_builtin' :
 			case 'hierarchical' :
 			case 'show_ui' :
 			case 'query_var' :
