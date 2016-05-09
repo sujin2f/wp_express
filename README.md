@@ -7,9 +7,9 @@ Include autoload.php, and you are ready to use this!
 include_once( 'wp_express/autoload.php' );
 ```
 
-* [Admin Page](https://github.com/sujin2f/wp_express/blob/master/AdminPage.md)
-* [Post Type](https://github.com/sujin2f/wp_express/blob/master/PostType.md)
-* [Taxonomy](https://github.com/sujin2f/wp_express/blob/master/Taxonomy.md)
+* [Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
+* [Post Type](https://github.com/sujin2f/wp_express/blob/master/documents/PostType.md)
+* [Taxonomy](https://github.com/sujin2f/wp_express/blob/master/documents/Taxonomy.md)
 
 Setting options and meta data is same for each componants.
 

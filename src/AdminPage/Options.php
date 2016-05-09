@@ -36,6 +36,7 @@ class Options extends \WE\AdminPage {
 	}
 
 	public function __get( $name ) {
+		if ( $value = parent::__get( $name ) ) return $value;
 		return $this->getOptionSetting( $name );
 	}
 
@@ -47,7 +48,7 @@ class Options extends \WE\AdminPage {
 	private function checkIsSaving() {
 		if( !$_POST ) return false;
 		if( !isset( $_POST[ '_wpnonce' ] ) ) return false;
-		if( !wp_verify_nonce( $_POST[ '_wpnonce' ], $this->key . '-options' ) ) return false;
+		if( function_exists( 'wp_verify_nonce' ) && !wp_verify_nonce( $_POST[ '_wpnonce' ], $this->key . '-options' ) ) return false;
 
 		delete_transient( $this->transientKey );
 		return true;
@@ -57,7 +58,7 @@ class Options extends \WE\AdminPage {
  		$this->values = get_option( '_' . $this->key . '_', false );
 
  		foreach( $this->options as $key => $option ) {
-			if ( array_key_exists( $key, $this->values ) )
+			if ( is_array( $this->values ) && array_key_exists( $key, $this->values ) )
 				$option->value = $this->values[ $key ];
  		}
 	}
@@ -67,7 +68,7 @@ class Options extends \WE\AdminPage {
 
 		ob_start();
 		if ( $this->version === '0.0.0' ) {
-			printf( '<div class="description">The setting will be stored in <code>_%s_</code> option value. You can call it using <code>getValue()</code> method as well. This message will be disappeared when you set <code>version</code> value. ( ig. 1.0.0 )</div>', $this->key );
+			printf( '<div class="description">The setting will be stored in <code>_%s_</code> option value. You can call <code>view</code> member attribute as well. This message will be disappeared when you set <code>version</code> value. ( ig. 1.0.0 )</div>', $this->key );
 		}
 
 		?>
@@ -109,7 +110,6 @@ class Options extends \WE\AdminPage {
 				}
 
 				add_settings_field( $fieldKey, $name, array( $this, 'callPrintSettingsField' ), $this->key, $sectionKey, [ $setting ] );
-				register_setting( $sectionKey, [ $setting ] );
 			}
 		}
 	}
@@ -129,7 +129,7 @@ class Options extends \WE\AdminPage {
 
 	// Save
 	public function saveSettings() {
-		if( !$this->isSaving ) return;
+		if( !$this->checkIsSaving() ) return;
 
 		if ( $this->save ) {
 			call_user_func( $this->save );
