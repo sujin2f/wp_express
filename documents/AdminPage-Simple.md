@@ -68,7 +68,7 @@ $AdminPage->version = '1.0.0';
 ## Plugin
 If you assign plugin name, the Setting link will appear on the table of Plugins menu.
 ```php
-$AdminPage->plugin = 'My Plugin';
+$AdminPage->plugin = 'WooCommerce';
 ```
 
 ![Plugin Assignment](https://github.com/sujin2f/wp_express/blob/master/documents/images/AdminSimple_003.png "Plugin Assignment")
