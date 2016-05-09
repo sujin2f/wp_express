@@ -1,20 +1,37 @@
-# WordPress Express
-Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies.
-
-## Initialize
-Include autoload.php, and you are ready to use this!
-
+# AdminPage : Options Page
+Options Page makes an admin page which the user set option values.
 ```php
-include_once( 'wp_express/autoload.php' );
+$AdminPage = new WE\AdminPage\Options( 'Page Name' );
 ```
 
-* [Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
-* [Post Type](https://github.com/sujin2f/wp_express/blob/master/documents/PostType.md)
-* [Taxonomy](https://github.com/sujin2f/wp_express/blob/master/documents/Taxonomy.md)
+## Version
+The version is important for the perfomance. When version value isn't declared or declared as '0.0.0', the small paragraph will be appeared on the admin page. Moreover, Options page calculates your setting whenever users visit the site. When you change the version, the setting will be updated and stored (It will be updated in every one hour).
 
-Setting options and meta data is same for each componants.
+## Save Callback
+You can change the saving action by assigning a save callback property.
+```php
+$AdminPage->save = 'saveAdminPage';
 
-### Settings
+function saveAdminPage() {
+  /// Write the Code.
+}
+```
+You can also call a method as well.
+```php
+class myPluginInit {
+  function __construct() {
+    include_once( 'wp_express/autoload.php' );
+    $AdminPage = new WE\AdminPage( 'My Admin Page' );
+    $AdminPage->save = array( $this, 'saveTemplate' );
+  }
+  
+  function saveTemplate() {
+    /// Write the Code.
+  }
+}
+```
+
+## Settings
 ```php
 $AdminPage->section = "Setting Section"; // Make Section (Optional)
 
@@ -26,8 +43,12 @@ $AdminPage->setting->class = "large-text"; // The class attribute of input tag (
 
 $AdminPage->setting = "Thumnail Size"; // Make New Input Field
 ```
+You can get the setting data by calling $AdminPage->value.
+```php
+$setting = $AdminPage->value;
+```
 
-#### Supported Type
+### Supported Type
 * file
 * text
 * number
@@ -36,7 +57,6 @@ $AdminPage->setting = "Thumnail Size"; // Make New Input Field
 * textarea
 
 You can add HTML into your form.
-
 ```php
 $AdminPage->setting = "HTML"; // It won't appear if you set this as html type
 $AdminPage->setting->type = "html";
@@ -44,7 +64,6 @@ $AdminPage->setting->html = "<p>This is HTML</p>";
 ```
 
 You can make set input fields. It appears on one row.
-
 ```php
 $AdminPage->setting = "Image Size";
 
