@@ -1,35 +1,13 @@
 # AdminPage : Options Page
-Options Page makes an admin page which the user set option values.
 ```php
 $AdminPage = new WE\AdminPage\Options( 'Page Name' );
 ```
+Options Page is the page which provides input fields.
+
+![Options Page Example](https://github.com/sujin2f/wp_express/blob/master/documents/images/AdminOption_001.png "Options Page Example")
 
 ## Version
-The version is important for the perfomance. When version value isn't declared or declared as '0.0.0', the small paragraph will be appeared on the admin page. Moreover, Options page calculates your setting whenever users visit the site. When you change the version, the setting will be updated and stored (It will be updated in every one hour).
-
-## Save Callback
-You can change the saving action by assigning a save callback property.
-```php
-$AdminPage->save = 'saveAdminPage';
-
-function saveAdminPage() {
-  /// Write the Code.
-}
-```
-You can also call a method as well.
-```php
-class myPluginInit {
-  function __construct() {
-    include_once( 'wp_express/autoload.php' );
-    $AdminPage = new WE\AdminPage( 'My Admin Page' );
-    $AdminPage->save = array( $this, 'saveTemplate' );
-  }
-  
-  function saveTemplate() {
-    /// Write the Code.
-  }
-}
-```
+The version is important for the perfomance. When version value isn't declared or declared as '0.0.0', an explanation will be appeared on the admin page. Moreover, Options page calculates your setting whenever users visit the site. When you change the version, the setting will be updated and stored.
 
 ## Settings
 ```php
@@ -43,7 +21,7 @@ $AdminPage->setting->class = "large-text"; // The class attribute of input tag (
 
 $AdminPage->setting = "Thumnail Size"; // Make New Input Field
 ```
-You can get the setting data by calling $AdminPage->value.
+You can get the setting data by calling ```$AdminPage->value```.
 ```php
 $setting = $AdminPage->value;
 ```
@@ -76,4 +54,28 @@ $AdminPage->set = 'Height';
 $AdminPage->set->type = 'number';
 $AdminPage->set->default = 250;
 $AdminPage->set->class = 'small-text';
+```
+
+## Saving Callback
+The saving values are automatically stored into WP options (see the explanation on your Options Page). If you have something to do when the saving action is triggered, this saving callback can be used.
+```php
+$AdminPage->save = 'saveAdminPage';
+
+function saveAdminPage() {
+	// Do Something,
+}
+```
+You can also call a method as well.
+```php
+class myPluginInit {
+	function __construct() {
+		include_once( 'wp_express/autoload.php' );
+		$AdminPage = new WE\AdminPage( 'My Admin Page' );
+		$AdminPage->save = array( $this, 'saveTemplate' );
+	}
+  
+	function saveTemplate() {
+		// Do Something,
+	}
+}
 ```

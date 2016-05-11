@@ -178,7 +178,7 @@ class AdminPage extends Extensions\Abs {
 		if ( $this->template ) {
 			ob_start();
 			call_user_func( $this->template );
-			$contents .= ob_get_clean();
+			$contents = ob_get_clean() . $contents;
 		}
 
 		printf( '<div class="wrap" id="admin-%s">', $this->key );
