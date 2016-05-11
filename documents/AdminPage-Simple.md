@@ -1,4 +1,4 @@
-* [Back to Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
+[Back to Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
 
 # AdminPage : Simple Page
 To add an empty page, just simply declare the reference.

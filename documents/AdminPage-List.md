@@ -1,8 +1,13 @@
+[Back to Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
+
 # AdminPage : List Page
 List Page makes an admin page which shows a list.
 ```php
 $AdminPage = new WE\AdminPage\ListPage( 'Page Name' );
 ```
+
+![List Page Example](https://github.com/sujin2f/wp_express/blob/master/documents/images/AdminList_001.png "List Page Example")
+
 ## Add Columns
 ```php
 $AdminPage->column = 'Number';
@@ -15,8 +20,8 @@ $AdminPage->sortable = 'Name';
 
 ## Set Data, Number of Items, and Items per Page
 ```php
-$AdminPage->data = 'patchData'; // Set Callback
-$AdminPage->count = 'patchCount'; // Set Callback
+$AdminPage->data = 'patchData'; // It has to be a callback
+$AdminPage->count = 'patchCount'; // It has to be a callback
 $AdminPage->per_page = 100;
 
 // The keys have to be matched with coulumn names.
