@@ -5,7 +5,7 @@
  *
  * @author	Sujin 수진 Choi
  * @package	wp-express
- * @version	4.0.0
+ * @version	4.5.0
  * @website	http://sujinc.com
  *
  * Licensed under The MIT License
@@ -180,8 +180,8 @@ class PostType extends Extensions\Abs {
 				$action = 'manage_pages_custom_column';
 				break;
 			default :
-				$filter = "manage_{$post_type}_posts_columns";
-				$action = "manage_{$post_type}_posts_custom_column";
+				$filter = "manage_{$this->key}_posts_columns";
+				$action = "manage_{$this->key}_posts_custom_column";
 				break;
 		}
 

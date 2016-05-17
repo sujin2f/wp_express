@@ -5,7 +5,7 @@
  *
  * @author	Sujin 수진 Choi
  * @package	wp-express
- * @version	4.0.0
+ * @version	4.5.0
  * @website	http://sujinc.com
  *
  * Licensed under The MIT License
