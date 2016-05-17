@@ -68,6 +68,12 @@ class ListPage extends \WE\AdminPage {
 
 		ob_start();
 
+		if ( $this->template ) {
+			$template = array_shift( $this->template );
+
+			if ( $template ) call_user_func( $template );
+		}
+
 		$table->views();
 		$table->display();
 

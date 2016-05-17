@@ -23,7 +23,6 @@ if ( !defined( 'ABSPATH' ) ) {
 
 class Options extends \WE\AdminPage {
 	use \WE\Extensions\HtmlHelper;
-	use \WE\Extensions\StoredInfoSet;
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
@@ -69,6 +68,12 @@ class Options extends \WE\AdminPage {
 		ob_start();
 		if ( $this->version === '0.0.0' ) {
 			printf( '<div class="description">The setting will be stored in <code>_%s_</code> option value. You can call <code>view</code> member attribute as well. This message will be disappeared when you set <code>version</code> value. ( ig. 1.0.0 )</div>', $this->key );
+		}
+
+		if ( $this->template ) {
+			$template = array_shift( $this->template );
+
+			if ( $template ) call_user_func( $template );
 		}
 
 		?>
