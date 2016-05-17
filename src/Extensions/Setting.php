@@ -22,15 +22,19 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 class Setting extends Abs {
-	private $allowed_type = [ 'file', 'text', 'number', 'checkbox', 'select', 'html', 'textarea', 'set' ];
+	private $allowed_type = [ 'file', 'text', 'number', 'checkbox', 'radio', 'select', 'html', 'textarea','editor', 'set' ];
 	protected $defaultName = 'New Setting';
+	private $option = [];
+	private $isSet = false;
 
-	private $default;
+	private $default, $placeHolder;
 	public $description, $html, $class;
 	public $type = 'text';
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
+		$this->isSet = ( func_num_args() > 1 && func_get_arg(1) !== false ) ? func_get_arg(1) : false;
+
 		parent::__construct( $name );
 	}
 
@@ -47,14 +51,30 @@ class Setting extends Abs {
 				if ( empty( $this->values ) ) $this->values = $value;
 				$this->default = $value;
 				break;
+
+			case 'placeholder' :
+			case 'placeHolder' :
+				$this->placeHolder = $value;
+				break;
+
+			case 'option' :
+				$this->option[] = $value;
+				break;
 		}
 	}
 
 	public function printSettingsField() {
-		$class = ( !empty( $this->class ) ) ? $this->class : 'regular-text';
+		$style = ( $this->isSet ) ? [ 'float:left', 'margin-bottom:8px', 'margin-right:5px' ] : [];
+		if ( $this->isSet && !$this->placeHolder ) $this->placeHolder = $this->isSet;
 
 		switch ( $this->type ) {
 			case 'file' :
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = ( $this->isSet ) ? 'small-text' : 'regular-text';
+				}
+
 				$upload_link = get_upload_iframe_src();
 				$media_arr = wp_get_attachment_image_src( $this->value );
 
@@ -69,48 +89,88 @@ class Setting extends Abs {
 				<?php
 
 				add_action( 'admin_footer', array( $this, 'printMediaUploadScript' ) );
-				add_action( 'admin_enqueue_scripts', 'wp_enqueue_media' );
+				wp_enqueue_media();
 			break;
 
 			case 'text' :
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = ( $this->isSet ) ? 'small-text' : 'regular-text';
+				}
+
 				?>
-				<input type="text" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" value="<?php echo $this->value ?>" class="<?php echo $class ?>" />
+				<input type="text" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" value="<?php echo $this->value ?>" class="<?php echo $class ?>" placeholder="<?php echo $this->placeHolder ?>" style="<?php echo implode( '; ', $style) ?>" />
 				<?php
 			break;
 
 			case 'number' :
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = ( $this->isSet ) ? 'small-text' : 'regular-text';
+				}
+
 				?>
-				<input type="number" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" value="<?php echo $this->value ?>" class="<?php echo $class ?>" />
+				<input type="number" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" value="<?php echo $this->value ?>" class="<?php echo $class ?>" placeholder="<?php echo $this->placeHolder ?>" style="<?php echo implode( '; ', $style) ?>" />
 				<?php
 			break;
 
+			case 'radio' :
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = ( $this->isSet ) ? 'small-text' : 'regular-text';
+				}
+
+				$style[] = ' margin-right:8px';
+				if ( !empty( $this->option ) ) {
+					foreach( $this->option as $key => $option ) {
+						if ( !is_array( $option ) ) $option = [ $option, $option ];
+
+						printf( '<label for="%s[%s]" class="%s" style="%s"><input type="radio" id="%s[%s]" name="%s" value="%s" %s />%s</label>', $this->key, $key, $class, implode( '; ', $style ), $this->key, $key, $this->key, $option[0], ( $option[0] == $this->value ) ? 'checked="checked"' : '', $option[1] );
+					}
+				}
+			break;
+
 			case 'checkbox' :
-				$class = ( !empty( $this->class ) ) ? $this->class : '';
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = 'regular-text';
+				}
+
+				if ( $this->option ) {
+					$text = $this->option[0];
+				} else if ( $this->isSet ) {
+					$text = $this->isSet;
+				} else {
+					$text = $this->name;
+				}
+
 				?>
-				<label for="<?php echo $this->key ?>">
-					<input type="checkbox" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" class="<?php echo $class ?>" <?php if ( $this->value ) echo 'checked="checked"'; ?> />
-					<?php echo $this->name ?>
+				<label for="<?php echo $this->key ?>" class="<?php echo $class ?>" style="<?php echo implode( '; ', $style) ?>">
+					<input type="checkbox" name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" <?php if ( $this->value ) echo 'checked="checked"'; ?> />
+					<?php echo $text ?>
 				</label>
 				<?php
 			break;
 
 			case 'select' :
-				$class = ( !empty( $this->class ) ) ? $this->class : '';
+				if ( !empty( $this->class ) ) {
+					$class = $this->class;
+				} else {
+					$class = ( $this->isSet ) ? 'small-text' : 'regular-text';
+				}
+
 				?>
-				<select name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" class="<?php echo $class ?>">
+				<select name="<?php echo $this->key ?>" id="<?php echo $this->key ?>" class="<?php echo $class ?>" style="<?php echo implode( '; ', $style) ?>">
 					<?php
-					if ( !empty( $this->values['options'] ) ) {
-						foreach( $this->values['options'] as $options ) {
-							if ( is_array( $options ) && ( !array_key_exists( 'value', $options ) || !array_key_exists( 'name', $options ) ) ) {
-								$options["value"] = $options["name"] = array_shift( $options );
+					if ( !empty( $this->option ) ) {
+						foreach( $this->option as $option ) {
+							if ( !is_array( $option ) ) $option = [ $option, $option ];
 
-							} else if ( !is_array( $options ) ) {
-								$options = array( 'value' => $options, 'name' => $options );
-
-							}
-							?>
-							<option value="<?php echo $options["value"] ?>" <?php if ( $options["value"] === $this->value ) echo 'selected="selected"'; ?>><?php echo $options["name"] ?></option>
-						<?php
+							printf( '<option value="%s" %s>%s</option>', $option[0], ( $option[0] == $this->value) ? 'selected="selected"': '', $option[1] );
 						}
 					}
 					?>
@@ -129,14 +189,19 @@ class Setting extends Abs {
 				<?php
 			break;
 
+			case 'editor' :
+				wp_editor( stripcslashes( $this->value), $this->key );
+			break;
+
 		}
 
 		if ( !empty( $this->description ) ) {
-			echo '<p class="description">' . $this->description . '</p>';
+			printf( '<p class="description" %s>%s</p>', ( $this->isSet ) ? 'style="position:absolute; margin-top:33px"' : '',  $this->description );
 		}
 	}
 
 	public function printMediaUploadScript() {
+
 		?>
 		<script type="text/javascript">
 			jQuery( document ).ready( function($) {
@@ -176,5 +241,54 @@ class Setting extends Abs {
 			});
 		</script>
 		<?php
+	}
+
+	public function PrintColumnVaue( $value ) {
+		switch ( $this->type ) {
+			case 'file' :
+			console($value);
+				echo wp_get_attachment_image( $value, array( 50, 50 ) );
+			break;
+
+			case 'text' :
+			case 'number' :
+				echo $value;
+			break;
+
+			case 'radio' :
+			case 'select' :
+				if ( !empty( $this->option ) ) {
+					foreach( $this->option as $key => $option ) {
+						if ( !is_array( $option ) ) $option = [ $option, $option ];
+
+						if ( $option[0] == $value ) {
+							echo $option[1];
+							break;
+						}
+					}
+				}
+			break;
+
+			case 'checkbox' :
+				if ( $this->option ) {
+					$text = $this->option[0];
+				} else if ( $this->isSet ) {
+					$text = $this->isSet;
+				} else {
+					$text = $this->name;
+				}
+
+				echo $text;
+			break;
+
+			case 'html' :
+				echo $this->html;
+			break;
+
+			case 'textarea' :
+			case 'editor' :
+				echo $value;
+			break;
+		}
 	}
 }

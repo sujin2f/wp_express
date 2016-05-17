@@ -22,25 +22,24 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 trait StoredInfoSet {
-	private $transientKey, $transient, $save, $isSaving, $tempSetting, $isSet, $setItem;
-	private $version = '0.0.0';
-	private $options = [];
-	private $sections = [];
+	protected $transientKey, $transient, $save, $isSaving, $tempSetting, $isSet, $setItem;
+	public $version = '0.0.0';
+	protected $options = [];
+	protected $sections = [];
 
-	private function initOptionSetting( $transientKey ) {
+	protected function initOptionSetting( $transientKey ) {
 		$this->tempSetting = new \WE\Extensions\Setting();
 
 		if ( !$transientKey ) return;
 
 		$this->transientKey = $transientKey;
-		$this->transient = get_transient( $this->transientKey );
+		$this->transient = get_transient( $transientKey );
 		$this->isSaving = $this->checkIsSaving();
-		$this->isSet = ( $this->version !== '0.0.0' && $this->transient && $this->transient[0] === $this->version && !$this->isSaving );
 
 		add_action( 'shutdown', array( $this, 'saveTransient' ) );
 	}
 
-	private function getOptionSetting( $name ) {
+	protected function getOptionSetting( $name ) {
 		switch( $name ) {
 			case 'setting' :
 			case 'settings' :
@@ -62,7 +61,14 @@ trait StoredInfoSet {
 		return false;
 	}
 
-	private function setOptionSetting( $name, $value ) {
+	protected function setOptionSetting( $name, $value ) {
+		$this->isSet = ( $this->version !== '0.0.0' && $this->transient && $this->transient[0] === $this->version && !$this->isSaving );
+
+		if ( $this->isSet && !$this->options ) {
+			$this->options = $this->transient[1];
+			$this->sections = $this->transient[2];
+		}
+
 		switch( $name ) {
 			case 'section' :
 				if ( $this->isSet ) return true;
@@ -101,7 +107,7 @@ trait StoredInfoSet {
 
 				$name = $this->setItem->name . ' ' . $value;
 
-				$optionKey = $this->addOption( $name, true );
+				$optionKey = $this->addOption( $name, $value );
 
 				// Add into Section
 				end( $this->sections );
@@ -148,7 +154,7 @@ trait StoredInfoSet {
 		$optionKey = sanitize_title( $optionName );
 		if ( in_array( $optionName, array_keys( $this->options ) ) ) return;
 
-		$this->options[ $optionKey ] = new \WE\Extensions\Setting( $optionName );
+		$this->options[ $optionKey ] = new \WE\Extensions\Setting( $optionName, $isSet );
 
 		if ( !$this->sections )
 			$this->addSection();
@@ -166,7 +172,7 @@ trait StoredInfoSet {
 			$this->transient = get_transient( $this->transientKey );
 
 			if ( !$this->transient || $this->transient[0] !== $this->version ) {
-				$this->transient = [ $this->version, $this->options ];
+				$this->transient = [ $this->version, $this->options, $this->sections ];
 				set_transient( $this->transientKey, $this->transient, HOUR_IN_SECONDS );
 			}
 		} else {
