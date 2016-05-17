@@ -164,6 +164,7 @@ class PostType extends Extensions\Abs {
 		} else {
 			// New Post Type
 			$this->arguments = array_merge( $this->arguments, $this->additional_args );
+
 			if ( $this->arguments[ 'rewrite' ] == 'rewrite' )
 				$this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
 			register_post_type( $this->key, $this->arguments );
@@ -213,11 +214,11 @@ class PostType extends Extensions\Abs {
 	}
 
 	public function ManageCustiomColumns( $column, $post_id ) {
-		if ( $this->column_after && $this->column_after[ $column ] ) {
+		if ( $this->column_after && isset( $this->column_after[ $column ] ) ) {
 			$this->PrintColumn( $column, $this->column_after[ $column ], $post_id );
 		}
 
-		if ( $this->column_before && $this->column_before[ $column ] ) {
+		if ( $this->column_before && isset( $this->column_before[ $column ] ) ) {
 			$this->PrintColumn( $column, $this->column_before[ $column ], $post_id );
 		}
 	}

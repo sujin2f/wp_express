@@ -60,13 +60,33 @@ class ListPage extends \WP_List_Table {
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
+		$data = '';
+		$count = 0;
 
-		$data = call_user_func( $this->data );
+		if ( is_array( $this->data ) ) {
+			if ( method_exists( $this->data[0], $this->data[1] ) ) {
+				$data = call_user_func( $this->data );
+			}
+		} else {
+			if ( function_exists( $this->data ) ) {
+				$data = call_user_func( $this->data );
+			}
+		}
 
  		$this->items = $data;
 
+		if ( is_array( $this->count ) ) {
+			if ( method_exists( $this->count[0], $this->count[1] ) ) {
+				$count = call_user_func( $this->count );
+			}
+		} else {
+			if ( function_exists( $this->count ) ) {
+				$count = call_user_func( $this->count );
+			}
+		}
+
 		$this->set_pagination_args( array(
-			'total_items' => call_user_func( $this->count ),
+			'total_items' => $count,
 			'per_page' => ( $this->per_page ) ? $this->per_page : 100
 		) );
 	}

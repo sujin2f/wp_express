@@ -246,7 +246,6 @@ class Setting extends Abs {
 	public function PrintColumnVaue( $value ) {
 		switch ( $this->type ) {
 			case 'file' :
-			console($value);
 				echo wp_get_attachment_image( $value, array( 50, 50 ) );
 			break;
 

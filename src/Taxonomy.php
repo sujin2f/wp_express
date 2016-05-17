@@ -159,11 +159,11 @@ class Taxonomy extends Extensions\Abs {
 	}
 
 	public function ManageCustiomColumns( $tem, $column, $term_id ) {
-		if ( $this->column_after && $this->column_after[ $column ] ) {
+		if ( $this->column_after && isset( $this->column_after[ $column ] ) ) {
 			$this->PrintColumn( $column, $this->column_after[ $column ], $term_id );
 		}
 
-		if ( $this->column_before && $this->column_before[ $column ] ) {
+		if ( $this->column_before && isset( $this->column_before[ $column ] ) ) {
 			$this->PrintColumn( $column, $this->column_before[ $column ], $term_id );
 		}
 	}
@@ -173,7 +173,7 @@ class Taxonomy extends Extensions\Abs {
 		if ( array_key_exists( $key, $this->options ) ) {
 			$meta = get_term_meta( $term_id, '_WE-meta_', true );
 
-			if ( $meta[ $key ] ) {
+			if ( isset( $meta[ $key ] ) ) {
 				$this->options[ $key ]->PrintColumnVaue( $meta[ $key ] );
 			}
 
