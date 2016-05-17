@@ -24,7 +24,9 @@ if ( !defined( 'ABSPATH' ) ) {
 class AdminPage extends Extensions\Abs {
 	use \WE\Extensions\StoredInfoSet;
 
-	private $url, $template, $scripts, $styles, $plugin;
+	private $url, $scripts, $styles, $plugin;
+	protected $template = [];
+
 	protected $defaultName = 'Admin Page';
 
 	private $position = 'settings';
@@ -50,6 +52,9 @@ class AdminPage extends Extensions\Abs {
 			break;
 
 			case 'template' :
+				$this->template[] = $value;
+			break;
+
 			case 'position' :
 			case 'version' :
 			case 'plugin' :
@@ -177,8 +182,10 @@ class AdminPage extends Extensions\Abs {
 	public function printTemplate( $contents = "" ) {
 		if ( $this->template ) {
 			ob_start();
-			call_user_func( $this->template );
-			$contents = ob_get_clean() . $contents;
+			foreach( $this->template as $template ) {
+				if ( $template ) call_user_func( $template );
+			}
+			$contents = $contents . ob_get_clean();
 		}
 
 		printf( '<div class="wrap" id="admin-%s">', $this->key );
