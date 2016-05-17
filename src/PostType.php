@@ -25,7 +25,12 @@ class PostType extends Extensions\Abs {
 	use \WE\Extensions\StoredInfoSet;
 
 	private $arguments;
+	private $additional_args = [];
+
 	private $taxonomies = [];
+	private $column_after = [];
+	private $column_before = [];
+
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
@@ -50,7 +55,7 @@ class PostType extends Extensions\Abs {
 
 		$this->arguments = array(
 			'labels' => $labels,
-			'supports' => [ 'title' ],
+			'supports' => array( 'title' ),
 			'public' => true,
 			'rewrite' => 'rewrite'
 		);
@@ -112,14 +117,16 @@ class PostType extends Extensions\Abs {
 			case 'rest_controller_class' :
 			case '_builtin' :
 			case '_edit_link' :
-				$this->arguments[ $name ] = $value;
+				$this->additional_args[ $name ] = $value;
 			break;
 
 			case 'supports' :
+				if ( !isset( $this->additional_args[ 'supports' ] ) ) $this->additional_args[ 'supports' ] = [];
+
 				if ( is_array( $value ) ) {
-					$this->arguments[ 'supports' ] = array_merge( $this->arguments[ 'supports' ], $value );
+					$this->additional_args[ 'supports' ] = array_merge( $this->additional_args[ 'supports' ], $value );
 				} else {
-					$this->arguments[ 'supports' ][] = $value;
+					$this->additional_args[ 'supports' ][] = $value;
 				}
 			break;
 
@@ -134,13 +141,117 @@ class PostType extends Extensions\Abs {
 					$this->taxonomies[ $key ]->post_type = $this->key;
 				}
 			break;
+
+			case 'column_before' :
+				$key = sanitize_title( $value );
+				$this->column_before[ $key ] = $value;
+			break;
+
+			case 'column' :
+			case 'column_after' :
+				$key = sanitize_title( $value );
+				$this->column_after[ $key ] = $value;
+			break;
 		}
 	}
 
 	public function registerPostType() {
-		if ( $this->arguments[ 'rewrite' ] == 'rewrite' ) $this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
-		// Post Type
-		register_post_type( $this->key, $this->arguments );
+		if ( post_type_exists( $this->key ) ) {
+			// Modify an Exist Post Type
+			$arguments = array_merge( (array) get_post_type_object( $this->key ), $this->additional_args );
+			register_post_type( $this->key, $arguments );
+
+		} else {
+			// New Post Type
+			$this->arguments = array_merge( $this->arguments, $this->additional_args );
+			if ( $this->arguments[ 'rewrite' ] == 'rewrite' )
+				$this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
+			register_post_type( $this->key, $this->arguments );
+		}
+
+		//<-- Modify List Column
+		switch( $this->key ) {
+			case 'post' :
+				$filter = 'manage_posts_columns';
+				$action = 'manage_posts_custom_column';
+				break;
+			case 'page' :
+				$filter = 'manage_pages_columns';
+				$action = 'manage_pages_custom_column';
+				break;
+			default :
+				$filter = "manage_{$post_type}_posts_columns";
+				$action = "manage_{$post_type}_posts_custom_column";
+				break;
+		}
+
+		add_filter( $filter, array( $this, 'ManageColumns' ) );
+		add_action( $action, array( $this, 'ManageCustiomColumns' ), 10, 2 );
+		// Modify List Column -->
+
+		// Term Versions
+		foreach( $this->taxonomies as $taxonomy ) {
+			$taxonomy->version = $this->version;
+		}
+	}
+
+	// Manage Columns
+	public function ManageColumns( $columns ) {
+		if ( $this->column_after ) {
+			foreach( $this->column_after as $key => $column ) {
+				$columns[ $key ] = __( $column );
+			}
+		}
+
+		if ( $this->column_before ) {
+			foreach( $this->column_before as $key => $column ) {
+				$columns = array( $key => $column ) + $columns;
+			}
+		}
+
+		return  $columns;
+	}
+
+	public function ManageCustiomColumns( $column, $post_id ) {
+		if ( $this->column_after && $this->column_after[ $column ] ) {
+			$this->PrintColumn( $column, $this->column_after[ $column ], $post_id );
+		}
+
+		if ( $this->column_before && $this->column_before[ $column ] ) {
+			$this->PrintColumn( $column, $this->column_before[ $column ], $post_id );
+		}
+	}
+
+	private function PrintColumn( $key, $column, $post_id ) {
+		// Tthumbnail
+		if ( $key == 'thumbnail' ) {
+			echo get_the_post_thumbnail( $post_id, array( 50, 50 ) );
+			return;
+		}
+
+		// Taxonomies
+		if ( array_key_exists( $key, $this->taxonomies ) ) {
+			if ( $terms = wp_get_post_terms( $post_id, $key ) ) {
+				$text = [];
+
+				foreach( $terms as $term ) {
+					$text[] = sprintf( '<a href="%s">%s</a>', add_query_arg( $key, $term->slug ), $term->name );
+				}
+
+				echo implode( ', ', $text );
+			}
+		}
+
+		// Post Meta
+		if ( array_key_exists( $key, $this->options ) ) {
+			$meta = get_post_meta( $post_id, '_WE-meta_', true );
+
+			if ( $meta[ $key ] ) {
+				$this->options[ $key ]->PrintColumnVaue( $meta[ $key ] );
+			}
+
+			return;
+		}
 	}
 
 	public function registerMetaBoxes() {
@@ -158,7 +269,7 @@ class PostType extends Extensions\Abs {
 		if ( !$post ) return;
 		if ( $post->post_type !== $this->key ) return;
 
- 		if ( !$this->values && $this->values = get_post_meta( $post->ID, '_' . $this->key . '_', true ) ) {
+ 		if ( !$this->values && $this->values = get_post_meta( $post->ID, '_WE-meta_', true ) ) {
 			foreach( $this->options as $key => $option ) {
 				if ( array_key_exists( $key, $this->values ) )
 					$option->value = $this->values[ $key ];
@@ -168,6 +279,10 @@ class PostType extends Extensions\Abs {
 
 	public function echoPostMetaBox( $sectionKey ) {
 		$this->readFromDb();
+
+		if ( $this->version === '0.0.0' ) {
+			printf( '<div class="description">The setting will be stored in post meta - _WE-meta_ value. This message will be disappeared when you set <code>version</code> value. ( ig. 1.0.0 )</div>' );
+		}
 
 		echo '<table class="form-table">';
 		foreach( $this->sections[ $sectionKey ][ 'fields' ] as $field ) {
@@ -214,7 +329,7 @@ class PostType extends Extensions\Abs {
 			$metas[ $option->key ] = $_POST[ $option->key ];
 		}
 
-		update_post_meta( $post_id, '_' . $this->key . '_', $metas );
+		update_post_meta( $post_id, '_WE-meta_', $metas );
 	}
 
 	public function parseQuery( $query ) {
