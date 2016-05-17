@@ -1,8 +1,9 @@
-[Back to Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
+* [Back to Top](https://github.com/sujin2f/wp_express/blob/master/README.md)
+* [Back to Admin Page](https://github.com/sujin2f/wp_express/blob/master/documents/AdminPage.md)
 
 # AdminPage : Options Page
 ```php
-$AdminPage = new WE\AdminPage\Options( 'Page Name' );
+$AdminPage = new WE\AdminPage\Options( 'My Admin Page' );
 ```
 Options Page is the page which provides input fields.
 
@@ -13,6 +14,13 @@ The version is important for the perfomance. When version value isn't declared o
 
 ## Settings
 [See the Settings Document](https://github.com/sujin2f/wp_express/blob/master/documents/Settings.md)
+
+## Template Callback
+The first template callback executes before the form, and others execute after the form.
+```php
+$AdminPage->template = 'templateAdminPage01';
+$AdminPage->template = 'templateAdminPage02';
+```
 
 ## Saving Callback
 The saving values are automatically stored into WP options (see the explanation on your Options Page). If you have something to do when the saving action is triggered, this saving callback can be used.

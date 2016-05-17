@@ -1,3 +1,5 @@
+* [Back to Top](https://github.com/sujin2f/wp_express/blob/master/README.md)
+
 # Admin Page
 Admin Page has three options: Simple, Options, and List.
 
@@ -15,12 +17,12 @@ $AdminPage->position = 'Appearance';
 ```
 You can also set number to put it as a new menu as well.
 ```php
-$AdminPage->position = 25;
+$AdminPage->position = 24;
 ```
 This means you can apply submenus into your main menu.
 ```php
 $RootPage = new WE\AdminPage( 'Root Page' );
-$RootPage->position = 100;
+$RootPage->position = 1;
 
 $SubPage = new WE\AdminPage( 'Sub Page' );
 $SubPage->position = 'Root Page';
@@ -29,10 +31,15 @@ $SubPage->position = 'Root Page';
 ## Template Callback
 You can add contents by assigning a template callback property.
 ```php
-$AdminPage->template = 'echoAdminPage';
+$AdminPage->template = 'echoAdminPage1';
+$AdminPage->template = 'echoAdminPage2';
 
-function echoAdminPage() {
-	echo 'This is your admin page';
+function echoAdminPage1() {
+	echo 'This is your admin page<br />';
+}
+
+function echoAdminPage2() {
+	echo 'You can add multiple templates as well<br />';
 }
 ```
 You can also call a method as well.
