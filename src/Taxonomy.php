@@ -26,13 +26,18 @@ class Taxonomy extends Extensions\Abs {
 	use \WE\Extensions\StoredInfoSet;
 
 	private $arguments;
+	private $additional_args = [];
+
 	private $post_type = 'post';
+
+	private $column_after = [];
+	private $column_before = [];
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
 
-		$this->initOptionSetting( 'WP_TaxMeta_Settings-' . $this->key );
+		$this->initOptionSetting( 'WP_TermMeta_Settings-' . $this->key );
 
 		$this->arguments = array(
 			'name' => _x( $name, 'taxonomy general name' ),
@@ -82,7 +87,7 @@ class Taxonomy extends Extensions\Abs {
 			case 'show_ui' :
 			case 'query_var' :
 			case 'rewrite' :
-				$this->arguments[ $name ] = $value;
+				$this->additional_args[ $name ] = $value;
 				return;
 			break;
 
@@ -92,17 +97,87 @@ class Taxonomy extends Extensions\Abs {
 				$this->post_type = sanitize_title( $value );
 				return;
 			break;
+
+			case 'column_before' :
+				$key = sanitize_title( $value );
+				$this->column_before[ $key ] = $value;
+			break;
+
+			case 'column' :
+			case 'column_after' :
+				$key = sanitize_title( $value );
+				$this->column_after[ $key ] = $value;
+			break;
 		}
 	}
 
 	public function registerTaxonomy() {
 		if ( $this->post_type && array_key_exists( $this->post_type, get_post_types() ) ) {
-			if ( $this->arguments[ 'rewrite' ] == 'rewrite' ) $this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
-			register_taxonomy( $this->key, array( $this->post_type ), $this->arguments );
+			$taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' );
+
+			if ( $this->post_type == 'post' && $this->key == 'tags' ) $this->key = 'post_tag';
+			if ( $this->post_type == 'post' && $this->key == 'categories' ) $this->key = 'category';
+
+			if ( array_key_exists( $this->key, $taxonomy_objects ) ) {
+				// Modify an Exist Post Type
+				$arguments = array_merge( (array) $taxonomy_objects[ $this->key ], $this->additional_args );
+				register_taxonomy( $this->key, array( $this->post_type ), $this->arguments );
+			} else {
+				// Add New Post Type
+				$this->arguments = array_merge( $this->arguments, $this->additional_args );
+				if ( $this->arguments[ 'rewrite' ] == 'rewrite' )
+					$this->arguments[ 'rewrite' ] = array( 'slug' => $this->key );
+
+				register_taxonomy( $this->key, array( $this->post_type ), $this->arguments );
+			}
 
 			// Meta Edit & Save
 			add_action( "{$this->key}_edit_form", array( $this, 'printTermMeta' ), 10 );
 			add_action( "edited_{$this->key}", array( $this, 'saveMetas' ), 10 );
+
+
+			add_filter( "manage_edit-{$this->key}_columns", array( $this, 'ManageColumns' ) );
+			add_action( "manage_{$this->key}_custom_column", array( $this, 'ManageCustiomColumns' ), 10, 3 );
+		}
+	}
+
+	// Manage Columns
+	public function ManageColumns( $columns ) {
+		if ( $this->column_after ) {
+			foreach( $this->column_after as $key => $column ) {
+				$columns[ $key ] = __( $column );
+			}
+		}
+
+		if ( $this->column_before ) {
+			foreach( $this->column_before as $key => $column ) {
+				$columns = array( $key => $column ) + $columns;
+			}
+		}
+
+		return  $columns;
+	}
+
+	public function ManageCustiomColumns( $tem, $column, $term_id ) {
+		if ( $this->column_after && $this->column_after[ $column ] ) {
+			$this->PrintColumn( $column, $this->column_after[ $column ], $term_id );
+		}
+
+		if ( $this->column_before && $this->column_before[ $column ] ) {
+			$this->PrintColumn( $column, $this->column_before[ $column ], $term_id );
+		}
+	}
+
+	private function PrintColumn( $key, $column, $term_id ) {
+		// Term Meta
+		if ( array_key_exists( $key, $this->options ) ) {
+			$meta = get_term_meta( $term_id, '_WE-meta_', true );
+
+			if ( $meta[ $key ] ) {
+				$this->options[ $key ]->PrintColumnVaue( $meta[ $key ] );
+			}
+
+			return;
 		}
 	}
 
@@ -112,7 +187,7 @@ class Taxonomy extends Extensions\Abs {
 	}
 
 	private function readFromDb( $term_id ) {
-		if ( $this->value = get_term_meta( $term_id, '_' . $this->key . '_', true ) ) {
+		if ( $this->value = get_term_meta( $term_id, '_WE-meta_', true ) ) {
 			foreach( $this->options as $key => $option ) {
 				if ( array_key_exists( $key, $this->values ) )
 					$option->value = $this->values[ $key ];
@@ -129,6 +204,10 @@ class Taxonomy extends Extensions\Abs {
 		if ( !$this->options ) return false;
 
 		$this->readFromDb( $term->term_id );
+
+		if ( $this->version === '0.0.0' ) {
+			printf( '<div class="description">The setting will be stored in term meta - _WE-meta_ value. This message will be disappeared when you set <code>version</code> value. ( ig. 1.0.0 )</div>' );
+		}
 
 		printf( '<table class="form-table" id="term-%s"><tbody>', $this->key );
 
@@ -170,6 +249,6 @@ class Taxonomy extends Extensions\Abs {
 			$metas[ $option->key ] = $_POST[ $option->key ];
 		}
 
-		update_term_meta( $term_id, '_' . $this->key . '_', $metas );
+		update_term_meta( $term_id, '_WE-meta_', $metas );
 	}
 }
