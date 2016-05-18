@@ -31,7 +31,6 @@ class PostType extends Extensions\Abs {
 	private $column_after = [];
 	private $column_before = [];
 
-
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
@@ -189,11 +188,6 @@ class PostType extends Extensions\Abs {
 		add_filter( $filter, array( $this, 'ManageColumns' ) );
 		add_action( $action, array( $this, 'ManageCustiomColumns' ), 10, 2 );
 		// Modify List Column -->
-
-		// Term Versions
-		foreach( $this->taxonomies as $taxonomy ) {
-			$taxonomy->version = $this->version;
-		}
 	}
 
 	// Manage Columns
