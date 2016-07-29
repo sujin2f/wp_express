@@ -68,6 +68,12 @@ $AdminPage->style = 'http://where.is/file1.css';
 $AdminPage->style = 'http://where.is/file2.css';
 ```
 
+## Icon
+The icon when the menu is at the top level. It can be both [Wordpress Dashicons](https://developer.wordpress.org/resource/dashicons/ "Wordpress Dashicons") helper class and Image URL.
+```php
+$AdminPage->icon = 'dashicons-dashboard';
+```
+
 ## Version
 The version property affects to javascripts and css versions. The default value is ```0.0.0```
 ```php

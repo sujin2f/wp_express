@@ -65,6 +65,7 @@ class AdminPage extends Extensions\Abs {
 			case 'version' :
 			case 'plugin' :
 			case 'capability' :
+			case 'icon' :
 				$this->{$name} = $value;
 				return true;
 			break;
