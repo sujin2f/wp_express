@@ -28,6 +28,8 @@ class ListPage extends \WP_List_Table {
 	private $columns = [];
 	private $sortable_columns = [];
 
+	private $extra_tablenav = false;
+
 	public function __construct( $args = array() ) {
 		parent::__construct();
 	}
@@ -50,6 +52,10 @@ class ListPage extends \WP_List_Table {
 						$this->sortable_columns[ $key ] = array( $key, true );
 					}
 				}
+				break;
+
+			case 'extra_tablenav' :
+				$this->extra_tablenav = $value;
 				break;
 		}
 	}
@@ -111,7 +117,8 @@ class ListPage extends \WP_List_Table {
 			$r .= "<td>";
 
 			if ( array_key_exists( $column_name, $this->columns ) ) {
-				$r.= $row[ $this->columns[ $column_name ] ];
+				if ( isset( $this->columns[ $column_name ] ) && isset( $row[ $this->columns[ $column_name ] ] ) )
+					$r.= $row[ $this->columns[ $column_name ] ];
 			}
 
 			$r .= "</td>";
@@ -134,6 +141,10 @@ class ListPage extends \WP_List_Table {
 		foreach ( $this->items as $group ) {
 			echo "\n\t" . $this->single_row( $group );
 		}
+	}
+
+	protected function extra_tablenav( $which ) {
+		if ( $this->extra_tablenav ) call_user_func( $this->extra_tablenav, $which );
 	}
 
 }

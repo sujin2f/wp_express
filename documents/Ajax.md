@@ -4,7 +4,7 @@ Create an Ajax communication.
 ```php
 $myAjax = new WE\Ajax( 'My Ajax' ); // Make a new Ajax connection.
 ```
-In this case, the ajax key is ```my_ajax```, and security nonce is ```wp_create_nonce( $'my_ajax', 'security' )```.
+In this case, the ajax key is ```my_ajax```, and security nonce is ```wp_create_nonce( 'my_ajax', 'security' )```.
 
 # Server Callback
 Get the Ajax request by setting a callback function or method.

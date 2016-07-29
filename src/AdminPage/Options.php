@@ -24,14 +24,29 @@ if ( !defined( 'ABSPATH' ) ) {
 class Options extends \WE\AdminPage {
 	use \WE\Extensions\HtmlHelper;
 
+	protected $isWpSetting = false;
+
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
 
-		$this->initOptionSetting( 'WP_Admin_Page_Settings-' . $this->key );
-
 		add_action( 'init', array( $this, 'saveSettings' ), 5 );
 		add_action( 'init', array( $this, 'readFromDb' ), 50 );
+		add_action( 'admin_init', array( $this, 'CheckWPSetting' ) );
+	}
+
+	public function CheckWPSetting() {
+		switch ( strtolower( $this->position ) ) {
+			case 'general' :
+				remove_action( 'admin_menu', array( $this, 'setAdminMenu' ) );
+				$this->key = 'general';
+				$this->initOptionSetting( 'WP_Admin_Page_Settings-' . $this->key );
+				$this->setSettingsSection();
+				return;
+			break;
+		}
+
+		$this->initOptionSetting( 'WP_Admin_Page_Settings-' . $this->key );
 	}
 
 	public function __get( $name ) {
@@ -140,7 +155,12 @@ class Options extends \WE\AdminPage {
 			call_user_func( $this->save );
 
 		} else {
-			update_option( '_' . $this->key . '_', $_POST );
+			$options = [];
+			foreach( $this->options as $key => $value ) {
+				if ( isset( $_POST[ $key ] ) )
+					$options[ $key ] = $_POST[ $key ];
+			}
+			update_option( '_' . $this->key . '_', $options );
 			$this->showMessage( 'Option Saved!' );
 		}
 	}

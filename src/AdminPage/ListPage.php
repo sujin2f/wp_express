@@ -24,11 +24,15 @@ if ( !defined( 'ABSPATH' ) ) {
 class ListPage extends \WE\AdminPage {
 	private $columns = [];
 	private $sortable_columns = [];
-	public $data, $count, $per_page;
+	public $data, $count;
+	private $actions;
+	private $default_per_page = 25;
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
+
+		add_filter( 'set-screen-option', array( $this, 'SetScreenOption' ), 10, 3);
 	}
 
 	public function __get( $name ) {
@@ -49,7 +53,27 @@ class ListPage extends \WE\AdminPage {
 				$this->columns[] = $value;
 				$this->sortable_columns[] = $value;
 				break;
+
+			case 'actions' :
+				$this->actions = $value;
+				break;
+
+			case 'default_per_page' :
+				$this->default_per_page = $value;
+				break;
 		}
+	}
+
+	public function GetPerPage() {
+		$screen = get_current_screen();
+		$user = get_current_user_id();
+		$screen_option = $screen->get_option( 'per_page', 'option' );
+		$per_page = get_user_meta( $user, $screen_option, true );
+
+		if ( empty ( $per_page) || $per_page < 1 )
+			$per_page = $screen->get_option( 'per_page', 'default' );
+
+		return $per_page;
 	}
 
 	public function printTemplate( $contents = '' ) {
@@ -62,7 +86,9 @@ class ListPage extends \WE\AdminPage {
 		$table->sortable_columns = $this->sortable_columns;
 		$table->data = $this->data;
 		$table->count = $this->count;
-		$table->per_page = $this->per_page;
+		$table->per_page = $this->GetPerPage();
+
+		$table->extra_tablenav = $this->actions;
 
 		$table->prepare_items();
 
@@ -75,10 +101,39 @@ class ListPage extends \WE\AdminPage {
 		}
 
 		$table->views();
+// 		$table->search_box( 'Search', '2' );
 		$table->display();
 
 		$contents = ob_get_clean();
 
 		parent::printTemplate( $contents );
 	}
+
+	// Screen Option
+	public function ScreenOptions() {
+		$screen = get_current_screen();
+
+		if( !is_object($screen) || $screen->id != $this->this_page )
+			return;
+
+		$key = str_replace( '-', '_', $this->key );
+		$args = array(
+			'label' => __('Items per Page', $key ),
+			'default' => $this->default_per_page,
+			'option' => $key . '_per_page'
+		);
+
+		add_screen_option( 'per_page', $args );
+	}
+
+	public function SetScreenOption( $status, $option, $value ) {
+		$key = str_replace( '-', '_', $this->key );
+
+		if ( $option == $key . '_per_page' )
+			return $value;
+	}
 }
+
+
+
+
