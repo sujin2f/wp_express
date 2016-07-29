@@ -22,7 +22,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs {
-	protected $key, $name, $values;
+	public $key, $name, $values;
 	protected $defaultName = 'New';
 
 	public function __construct() {
