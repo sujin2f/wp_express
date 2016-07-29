@@ -67,7 +67,6 @@ class Taxonomy extends Extensions\Abs {
 	}
 
 	public function __set( $name, $value ) {
-		if ( parent::__set( $name, $value ) ) return;
 		if ( $this->setOptionSetting( $name, $value ) ) return;
 
 		switch( $name ) {
