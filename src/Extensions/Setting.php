@@ -30,6 +30,7 @@ class Setting extends Abs {
 	private $default, $placeHolder;
 	public $description, $html, $class;
 	public $type = 'text';
+	public $value = false;
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
