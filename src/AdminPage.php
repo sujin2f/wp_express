@@ -29,16 +29,22 @@ class AdminPage extends Extensions\Abs {
 
 	protected $defaultName = 'Admin Page';
 
-	private $position = 'settings';
+	protected $position = 'settings';
 	private $icon = 'dashicons-admin-generic';
 	private $menu_icon = '';
 	private $capability = 'activate_plugins';
+
+	protected $this_page;
 
 	public function __construct() {
 		$name = ( !func_num_args() ) ? false : func_get_arg(0);
 		parent::__construct( $name );
 
-		add_action( 'admin_menu', array( $this, 'setAdminMenu' ) );
+		if ( is_network_admin() ) {
+			add_action( 'network_admin_menu', array( $this, 'setAdminMenu' ) );
+		} else {
+			add_action( 'admin_menu', array( $this, 'setAdminMenu' ) );
+		}
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueScripts' ) );
 		add_action( 'plugin_action_links', array( $this, 'setPluginActionLinks' ), 15, 3 );
 	}
@@ -59,6 +65,7 @@ class AdminPage extends Extensions\Abs {
 			case 'version' :
 			case 'plugin' :
 			case 'capability' :
+			case 'icon' :
 				$this->{$name} = $value;
 				return true;
 			break;
@@ -87,61 +94,61 @@ class AdminPage extends Extensions\Abs {
 			case 'option' :
 			case 'settings' :
 			case 'Settings' :
-				add_options_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_options_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'options-general.php?page=' . $this->key );
 			break;
 
 			case 'tools' :
 			case 'Tools' :
-				add_management_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_management_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'tools.php?page=' . $this->key );
 			break;
 
 			case 'users' :
 			case 'Users' :
-				add_users_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_users_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'users.php?page=' . $this->key );
 			break;
 
 			case 'plugins' :
 			case 'Plugins' :
-				add_plugins_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_plugins_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'plugins.php?page=' . $this->key );
 			break;
 
 			case 'comments' :
 			case 'Comments' :
-				add_comments_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_comments_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'comments.php?page=' . $this->key );
 			break;
 
 			case 'pages' :
 			case 'Pages' :
-				add_pages_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_pages_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'edit.php?post_type=page&page=' . $this->key );
 			break;
 
 			case 'posts' :
 			case 'Posts' :
-				add_posts_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_posts_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'edit.php?page=' . $this->key );
 			break;
 
 			case 'media' :
 			case 'Media' :
-				add_media_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_media_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'upload.php?page=' . $this->key );
 			break;
 
 			case 'dashboard' :
 			case 'Dashboard' :
-				add_dashboard_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_dashboard_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'index.php?page=' . $this->key );
 			break;
 
 			case 'appearance' :
 			case 'Appearance' :
-				add_theme_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+				$this->this_page = add_theme_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 				$this->url = admin_url( 'themes.php?page=' . $this->key );
 			break;
 
@@ -152,9 +159,9 @@ class AdminPage extends Extensions\Abs {
 				if ( is_numeric( $this->position ) ) {
 					if ( isset( $menu[ $this->position ] ) ) {
 						$position_key = $menu[ $this->position ][2];
-						add_submenu_page( $position_key, $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+						$this->this_page = add_submenu_page( $position_key, $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 					} else {
-						add_menu_page( $this->name, $this->name, $this->capability, $position_key, array( $this, 'printTemplate' ), $this->icon, $this->position );
+						$this->this_page = add_menu_page( $this->name, $this->name, $this->capability, $position_key, array( $this, 'printTemplate' ), $this->icon, $this->position );
 					}
 				} else {
 					$detected = false;
@@ -163,19 +170,37 @@ class AdminPage extends Extensions\Abs {
 						if ( $this->position == $menu_[0] ) {
 							$position_key = $menu_[2];
 							$detected = true;
-							add_submenu_page( $position_key, $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
+							$this->this_page = add_submenu_page( $position_key, $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ) );
 							break;
 						}
 					}
 
 					if ( !$detected ) {
-						add_menu_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ), $this->icon );
+						$this->this_page = add_menu_page( $this->name, $this->name, $this->capability, $this->key, array( $this, 'printTemplate' ), $this->icon );
 					}
 				}
 
 				$this->url = admin_url( 'admin.php?page=' . $this->key );
 			break;
 		}
+
+		add_action( "load-{$this->this_page}", array( $this, "ScreenOptions") );
+	}
+
+	public function ScreenOptions() {
+		$screen = get_current_screen();
+
+		if( !is_object($screen) || $screen->id != $this->this_page )
+			return;
+
+/*
+$args = array(
+		'label' => __('Members per page', 'pippin'),
+		'default' => 10,
+		'option' => 'pippin_per_page'
+	);
+	add_screen_option( 'per_page', $args );
+*/
 	}
 
 	// Admin Page
@@ -211,7 +236,7 @@ class AdminPage extends Extensions\Abs {
 	}
 
 	public function setPluginActionLinks( $actions, $plugin_file, $plugin ) {
-		if ( $this->plugin && $this->plugin == $plugin[ 'Name' ] ) {
+		if ( $this->plugin && sanitize_title( $this->plugin ) == sanitize_title( $plugin[ 'Name' ] ) ) {
 			$actions[ 'setting' ] = sprintf( '<a href="%s"><span class="dashicons dashicons-admin-settings"></span> Setting</a>', $this->url );
 		}
 

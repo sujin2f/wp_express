@@ -22,19 +22,11 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs {
-	protected $key, $name, $values;
+	public $key, $name, $values;
 	protected $defaultName = 'New';
 
 	public function __construct() {
 		$this->name = ( !func_num_args() ) ? $this->defaultName : func_get_arg(0);
 		$this->key = sanitize_title( $this->name );
-	}
-
-	public function __set( $name, $value ) {
-		if ( $name == 'value' ) $this->values = $value;
-	}
-
-	public function __get( $name ) {
-		if ( $name == 'value' ) return $this->values;
 	}
 }
