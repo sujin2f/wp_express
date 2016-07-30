@@ -91,6 +91,10 @@ class AdminPage extends Extensions\Abs {
 
 	public function setAdminMenu() {
 		switch ( $this->position ) {
+			case 'general' :
+			case 'General' :
+			break;
+
 			case 'option' :
 			case 'settings' :
 			case 'Settings' :
