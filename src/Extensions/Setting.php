@@ -39,8 +39,6 @@ class Setting extends Abs {
 	}
 
 	public function __set( $name, $value ) {
-		parent::__set( $name, $value );
-
 		switch( $name ) {
 			case 'type' :
 				if ( !in_array( strtolower( $value ), $this->allowed_type ) ) return;
