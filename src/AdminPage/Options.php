@@ -38,7 +38,6 @@ class Options extends \WE\AdminPage {
 	public function CheckWPSetting() {
 		switch ( strtolower( $this->position ) ) {
 			case 'general' :
-				remove_action( 'admin_menu', array( $this, 'setAdminMenu' ) );
 				$this->key = 'general';
 				$this->initOptionSetting( 'WP_Admin_Page_Settings-' . $this->key );
 				$this->setSettingsSection();
