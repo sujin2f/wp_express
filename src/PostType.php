@@ -157,11 +157,19 @@ class PostType extends Extensions\Abs {
 	public function registerPostType() {
 		if ( post_type_exists( $this->key ) ) {
 			// Modify an Exist Post Type
-			$arguments = array_merge( (array) get_post_type_object( $this->key ), $this->additional_args );
+			$arguments = (array) get_post_type_object( $this->key );
+
+			if ( !empty( $this->additional_args['supports'] ) )
+				$this->additional_args['supports'] = array_merge( $arguments, $this->additional_args['supports'] );
+
+			$arguments = array_merge( $arguments, $this->additional_args );
 			register_post_type( $this->key, $arguments );
 
 		} else {
 			// New Post Type
+			if ( !empty( $this->additional_args['supports'] ) )
+				$this->additional_args['supports'] = array_merge( $this->arguments['supports'], $this->additional_args['supports'] );
+
 			$this->arguments = array_merge( $this->arguments, $this->additional_args );
 
 			if ( $this->arguments[ 'rewrite' ] == 'rewrite' )
