@@ -50,7 +50,6 @@ class Options extends \WE\AdminPage {
 	}
 
 	public function __get( $name ) {
-		if ( $value = parent::__get( $name ) ) return $value;
 		return $this->getOptionSetting( $name );
 	}
 
