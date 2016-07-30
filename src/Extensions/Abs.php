@@ -29,4 +29,12 @@ abstract class Abs {
 		$this->name = ( !func_num_args() ) ? $this->defaultName : func_get_arg(0);
 		$this->key = sanitize_title( $this->name );
 	}
+
+	public function __set( $name, $value ) {
+		$this->{$name} = $value;
+	}
+
+	public function __get( $name ) {
+		return $this->{$name};
+	}
 }
