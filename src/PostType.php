@@ -328,7 +328,8 @@ class PostType extends Extensions\Abs {
 		foreach( $this->options as $option ) {
 			if ( $option->type === 'set' ) continue;
 
-			$metas[ $option->key ] = $_POST[ $option->key ];
+			if ( isset( $_POST[ $option->key ] ) )
+				$metas[ $option->key ] = $_POST[ $option->key ];
 		}
 
 		update_post_meta( $post_id, '_WE-meta_', $metas );
