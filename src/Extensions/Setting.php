@@ -27,7 +27,7 @@ class Setting extends Abs {
 	private $option = [];
 	private $isSet = false;
 
-	private $default, $placeHolder;
+	public $default, $placeHolder;
 	public $description, $html, $class;
 	public $type = 'text';
 	public $value = false;
@@ -47,7 +47,7 @@ class Setting extends Abs {
 				break;
 
 			case 'default' :
-				if ( empty( $this->values ) ) $this->values = $value;
+				if ( empty( $this->value ) ) $this->value = $value;
 				$this->default = $value;
 				break;
 

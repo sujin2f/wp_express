@@ -49,8 +49,26 @@ class Options extends \WE\AdminPage {
 	}
 
 	public function __get( $name ) {
-		if ( $name == 'value' || $name == 'values' && $this->values )
-			return $this->values;
+		if ( $name == 'value' || $name == 'values' ) {
+			if ( $this->values )
+				return $this->values;
+
+			$option_value = get_option( '_' . $this->key . '_', false );
+			if ( $option_value )
+				return $option_value;
+
+			if ( $this->options ) {
+				$option_value = array();
+
+				foreach( $this->options as $key => $value ) {
+					$option_value[ $key ] = $value->default;
+				}
+
+				return $option_value;
+			}
+
+			return array();
+		}
 
 		return $this->getOptionSetting( $name );
 	}
