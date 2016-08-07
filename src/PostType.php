@@ -346,7 +346,7 @@ class PostType extends Extensions\Abs {
 		}
 
 		# add the slug to the body class
-		if ( $query->is_posttype[ $this->key ] )
+		if ( !empty( $query->is_posttype[ $this->key ] ) )
 			add_filter( 'body_class', array( $this, 'themeBodyClass' ) );
 	}
 
