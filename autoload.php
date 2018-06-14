@@ -1,68 +1,68 @@
 <?php
 /**
- * WP Express Autoloader & Redirect
+ * Autoload
  *
- * @author  Sujin 수진 Choi
- * @package wp-express
- * @version 5.0
- * @website http://sujinc.com
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice
- *
+ * @project WP-Express 2
+ * @since   1.0.0
+ * @author  Sujin 수진 Choi http://www.sujinc.com/
  */
 
-global $WP_Express_Version;
+if ( ! defined( 'WP_EXPRESS_ASSET_URL' ) ) {
+	$dir = __DIR__ . '/assets/dist';
+	$dir = explode( '/wp-content', $dir );
+	array_shift( $dir );
+	$baseurl = content_url() . implode( '', $dir );
 
-if ( empty( $WP_Express_Version ) )
-	$WP_Express_Version = array();
+	define( 'WP_EXPRESS_ASSET_URL', $baseurl );
+}
 
-$WP_Express_Version[] = 5.0;
+if ( !function_exists( 'sujin_wp_express_2_autoloader' ) ) {
+	function sujin_wp_express_2_autoloader() {
+		spl_autoload_register( function( $class_name ) {
+			$namespace = 'Sujin\\Wordpress\\WP_Express\\';
 
-add_action( 'after_setup_theme', 'load_wordpress_express_5_0' );
-
-if ( !function_exists( 'load_wordpress_express_5_0' ) ) {
-	function load_wordpress_express_5_0() {
-		// Check the latest version
-		global $WP_Express_Version;
-		arsort( $WP_Express_Version );
-
-		if ( $WP_Express_Version[0] != 5.0 )
-			return;
-
-		spl_autoload_register( function( $className ) {
-			$namespace = 'WE\\';
-			if ( stripos( $className, $namespace ) === false ) {
+			if ( stripos( $class_name, $namespace ) === false ) {
 				return;
 			}
 
-			$sourceDir = __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
-			$fileName  = str_replace( [ $namespace, '\\' ], [ $sourceDir, DIRECTORY_SEPARATOR ], $className ) . '.php';
+			$source_dir = __DIR__ . DIRECTORY_SEPARATOR . 'classes';
 
-			if ( is_readable( $fileName ) ) {
-				include $fileName;
+			// Delete Namespace
+			$path = str_replace( $namespace, '', $class_name ) . '.php';
+			$path = explode( '\\', $path );
+
+			// Separate Filename and Path
+			$file_name = array_pop( $path );
+
+			// Change Path to path-name/path-name
+			$path = array_map( 'sujin_wp_express_2_autoloader_callback', $path );
+			$path = implode( DIRECTORY_SEPARATOR, $path );
+
+			// Change Filename to class-class-name.php
+			$file_name = strtolower( $file_name );
+			$file_name = str_replace( '_', '-', $file_name );
+			$file_name = 'class-' . $file_name;
+
+			$file_segs = array( $source_dir, $path, $file_name );
+			$file_segs = array_filter( $file_segs );
+			$file_name = implode( DIRECTORY_SEPARATOR, $file_segs );
+
+			if ( is_readable( $file_name ) ) {
+				include_once( $file_name );
 			}
 		});
-
-		new WE_Redirect_5_0;
 	}
 
-	class WE_Redirect_5_0 {
-		public function __construct() {
-			add_filter( 'wp_redirect', array( $this, 'wp_redirect' ) );
+	function sujin_wp_express_2_autoloader_callback( $string ) {
+		$out = array();
+
+		preg_match_all( '/((?:^|[A-Z])[a-z]+)/', $string, $matches );
+		foreach( $matches[0] as $match ) {
+			$out[] = strtolower( $match );
 		}
 
-		public function wp_redirect( $location = false ) {
-			if ( !$location ) $location = $_SERVER[ 'REQUEST_URI' ];
-
-			if ( headers_sent() ) {
-				printf( '<meta http-equiv="refresh" content="0; url=%s">', $location );
-				printf( '<script>window.location="%s"</script>', $location );
-
-				die;
-			}
-
-			return $location;
-		}
+		return implode( '-', $out );
 	}
+
+	sujin_wp_express_2_autoloader();
 }
