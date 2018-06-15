@@ -27,7 +27,9 @@ class Term_Meta extends Base {
 	private $taxonomies = array();
 
 	public function __construct( $name ) {
+		parent::__construct();
 		$this->constructor( $name );
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
 	private function is_termmeta_enabled() {
@@ -51,6 +53,30 @@ class Term_Meta extends Base {
 		return $this;
 	}
 
+	public function get_value( $tax_slug, $term_slug ) {
+		if ( ! in_array( $tax_slug, $this->taxonomies ) ) {
+			$this->show_message( 'Second parameter (taxonomy) is not matched you assigned.', 'error' );
+			return;
+		}
+
+		$term = get_term_by( 'slug', $term_slug, $tax_slug );
+		$value = get_term_meta( $term->term_id, $this->id, true );
+
+		if ( $this->type === 'checkbox' ) {
+			$value = boolval( $value );
+		}
+
+		return $value;
+	}
+
+	public function register_meta() {
+		register_meta( 'post', $this->id, array(
+			'show_in_rest' => $this->show_in_rest,
+			'single' => true,
+			'type' => $this->type === 'checkbox' ? 'boolean' : 'string',
+		) );
+	}
+
 	public function print_meta( $term ) {
 		$value = get_term_meta( $term->term_id, $this->id, true );
 		$this->print_field( $value );
@@ -59,15 +85,5 @@ class Term_Meta extends Base {
 	public function save_meta( $term_id ) {
 		$value = isset( $_POST[ $this->id ] ) ? $_POST[ $this->id ]  : false;
 		update_term_meta( $term_id, $this->id, $value );
-	}
-
-	public function get_value( $term_slug, $tax_slug ) {
-		if ( ! in_array( $tax_slug, $this->taxonomies ) ) {
-			$this->show_message( 'Second parameter (taxonomy) is not matched you assigned.', 'error' );
-			return;
-		}
-
-		$term = get_term_by( 'slug', $term_slug, $tax_slug );
-		return get_term_meta( $term->term_id, $this->id, true );
 	}
 }

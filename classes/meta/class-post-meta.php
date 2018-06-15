@@ -26,6 +26,7 @@ class Post_Meta extends Base {
 	public function __construct( $name ) {
 		parent::__construct();
 		$this->constructor( $name );
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
 	public function set_metabox( $metabox ) {
@@ -51,14 +52,31 @@ class Post_Meta extends Base {
 	}
 
 	public function get_value( $post_id ) {
-		return get_post_meta( $post_id, $this->id, true );
+		$value = get_post_meta( $post_id, $this->id, true );
+
+		if ( $this->type === 'checkbox' ) {
+			$value = boolval( $value );
+		}
+
+		return $value;
+	}
+
+	public function register_meta() {
+		register_meta( 'post', $this->id, array(
+			'show_in_rest' => $this->show_in_rest,
+			'single' => true,
+			'type' => $this->type === 'checkbox' ? 'boolean' : 'string',
+		) );
 	}
 
 	public function get_rest_metadata( $value, $object_id, $meta_key, $single ) {
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST )
+			return $value;
+
 		if ( $meta_key != $this->id )
 			return $value;
 
-		if ( $this->type !== 'file' )
+		if ( ! in_array( $this->type, array( 'file' ) ) )
 			return $value;
 
 		$meta_cache = wp_cache_get($object_id, 'post_meta');
@@ -71,8 +89,9 @@ class Post_Meta extends Base {
 		if ( ! isset( $meta_cache[ $this->id ] ) )
 			return $value;
 
-		$thumbnail_url = wp_get_attachment_image_src( (int) $meta_cache[ $this->id ][0], $this->thumbnail_size );
+		if ( $this->type === 'file' )
+			$value = wp_get_attachment_image_src( (int) $meta_cache[ $this->id ][0], $this->thumbnail_size );
 
-		return $thumbnail_url;
+		return $value;
 	}
 }

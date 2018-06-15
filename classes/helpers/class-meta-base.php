@@ -26,6 +26,7 @@ trait Meta_Base {
 
 	protected $type = 'text';
 	protected $show_label = true;
+	protected $show_in_rest = false;
 
 	private $default;
 	private $placeholder;
@@ -79,7 +80,7 @@ trait Meta_Base {
 
 	// Rest API
 	public function set_show_in_rest( $bool, $thumbnail_size = null ) {
-		register_meta( 'post', $this->id, array( 'show_in_rest' => $bool, 'single' => true ) );
+		$this->show_in_rest = $bool;
 
 		if ( $thumbnail_size ) {
 			$this->thumbnail_size = $thumbnail_size;
