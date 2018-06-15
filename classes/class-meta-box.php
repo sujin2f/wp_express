@@ -37,6 +37,10 @@ class Meta_Box extends Base {
 	}
 
 	public function set_post_type( $post_type ) {
+		if ( $post_type instanceof Post_Type ) {
+			$post_type = $post_type->id;
+		}
+
 		add_action( 'save_post_' . $post_type, array( $this, 'save_post'), 10, 2 );
 		$this->post_types[] = $post_type;
 		return $this;

@@ -69,5 +69,3 @@ typings/
 
 # dotenv environment variables file
 .env
-
-assets/dist/**
