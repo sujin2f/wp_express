@@ -33,7 +33,7 @@ class Post_Meta extends Base {
 		add_action( "wp-express-save-post-meta-{$metabox->id}", array( $this, 'save_meta' ) );
 
 		foreach ( $metabox->post_types as $post_type ) {
-			add_filter( "rest_{$post_type}_query", array( $this, 'tweak_rest_metadata' ) );
+			add_filter( "get_{$post_type}_metadata", array( $this, 'get_rest_metadata' ), 15, 4 );
 		}
 		return $this;
 	}
@@ -52,12 +52,6 @@ class Post_Meta extends Base {
 
 	public function get_value( $post_id ) {
 		return get_post_meta( $post_id, $this->id, true );
-	}
-
-	public function tweak_rest_metadata( $args ) {
-		add_filter( "get_post_metadata", array( $this, 'get_rest_metadata' ), 15, 4 );
-		add_filter( "get_page_metadata", array( $this, 'get_rest_metadata' ), 15, 4 );
-		return $args;
 	}
 
 	public function get_rest_metadata( $value, $object_id, $meta_key, $single ) {
