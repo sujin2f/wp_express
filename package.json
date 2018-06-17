@@ -1,21 +1,28 @@
 {
-  "name": "simple-gulp-setup",
-  "version": "1.0.0",
-  "description": "Gulp setting for simple js development",
+  "name": "WP Express",
+  "version": "6.0.0",
+  "description": "Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies.	",
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sujin2f/Simple-Gulp-Setup.git"
+    "url": "git+https://github.com/sujin2f/wp_express.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "email": "sujin.2f@google.com",
+    "name": "Sujin Choi",
+    "url": "http://sujinc.com"
+  },
+  "license": {
+    "type": "Apache-2.0",
+    "url": "https://opensource.org/licenses/apache2.0.php"
+  },
   "bugs": {
-    "url": "https://github.com/sujin2f/Simple-Gulp-Setup/issues"
+    "url": "https://github.com/sujin2f/wp_express/issues"
   },
-  "homepage": "https://github.com/sujin2f/Simple-Gulp-Setup#readme",
+  "homepage": "https://github.com/sujin2f/wp_express",
   "devDependencies": {
     "ansi-colors": "^2.0.1",
     "babel-core": "^6.26.3",
