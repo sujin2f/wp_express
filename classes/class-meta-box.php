@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Class
+ * Metabox Class
  *
  * @project WP-Express
  * @since   1.0.0
@@ -9,74 +9,92 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Helpers\Messageable;
-use Sujin\Wordpress\WP_Express\Helpers\Multiton;
+use Sujin\Wordpress\WP_Express\Abs_Base;
+use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use WP_Post;
 
-if ( !defined( "ABSPATH" ) ) {
-	header( "Status: 404 Not Found" );
-	header( "HTTP/1.1 404 Not Found" );
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 404 Not Found' );
+	header( 'HTTP/1.1 404 Not Found' );
 	exit();
 }
 
-class Meta_Box extends Base {
-	use Messageable;
-	use Multiton;
+class Meta_Box extends Abs_Base {
+	private const DEFAULT_POST_TYPE = 'post';
 
-	const DEFAULT_POST_TYPE = 'post';
-
-	public $post_types = array();
-
-	private $scripts = array();
-	private $styles  = array();
+	public const POST_TYPE = 'post_type';
+	private $_post_types   = array();
+	private $_fields       = array();
 
 	public function __construct( $name ) {
-		$this->name = $name;
-		$this->id   = sanitize_title( $this->name );
-
-		add_action( 'admin_head', array( $this, 'register_meta_box' ) );
+		parent::__construct( $name );
+		add_action( 'add_meta_boxes', array( $this, '_register_meta_box' ) );
+		add_action( 'save_post', array( $this, '_save_post' ), 10, 2 );
 	}
 
-	public function set_post_type( $post_type ) {
-		if ( $post_type instanceof Post_Type ) {
-			$post_type = $post_type->id;
+	public function __call( string $name, array $arguments ): Meta_Box {
+		switch ( strtolower( $name ) ) {
+			case self::POST_TYPE:
+				if ( empty( $arguments ) ) {
+					return $this->_post_types;
+				}
+
+				$this->_post_types[] = $arguments[0];
+				break;
 		}
 
-		add_action( 'save_post_' . $post_type, array( $this, 'save_post'), 10, 2 );
-		$this->post_types[] = $post_type;
 		return $this;
 	}
 
-	public function set_script( $script ) {
-		$this->scripts[] = $script;
+	public function _register_meta_box() {
+		$post_types = $this->_get_post_types_strings();
+		add_meta_box( $this->get_id(), $this->get_name(), array( $this, '_show_meta_box' ), $post_types );
+	}
+
+	public function add( Abs_Post_Meta_Element $field ): Meta_Box {
+		$this->_fields[] = $field;
 		return $this;
 	}
 
-	public function set_style( $style ) {
-		$this->styles[] = $style;
-		return $this;
-	}
+	public function _show_meta_box() {
+		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
 
-	public function register_meta_box() {
-		if ( ! $this->post_types ) {
-			$this->post_types[] = self::DEFAULT_POST_TYPE;
+		foreach ( $this->_fields as $field ) {
+			$field->_render();
 		}
-
-		add_meta_box( $this->id, $this->name, array( $this, 'show_meta_box' ), $this->post_types );
 	}
 
-	public function show_meta_box() {
-		echo '<div class="meta-box-wp-express">';
-		do_action( 'wp-express-show-meta-box-' . $this->id );
-		echo '</div>';
-	}
+	public function _save_post( int $post_id, WP_Post $post ) {
+		$nonce = $_POST[ $this->get_id() . '_nonce' ] ?? null;
 
-	public function save_post( $post_id, $post ) {
-		if( !$_POST )
-			return false;
-
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST[ 'bulk_edit' ] ) )
+		if ( ! wp_verify_nonce( $nonce, $this->get_id() ) ) {
 			return;
+		}
 
-		do_action( 'wp-express-save-post-meta-' . $this->id, $post_id );
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
+			return;
+		}
+
+		foreach ( $this->_get_post_types_strings() as $post_type ) {
+			if ( $post->post_type === $post_type ) {
+				foreach ( $this->_fields as $field ) {
+					$field->update( $post_id, $_POST[ $field->get_id() ] );
+				}
+			}
+		}
+	}
+
+	private function _get_post_types_strings(): array {
+		$post_types = array();
+
+		foreach ( $this->_post_types as $post_type ) {
+			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
+		}
+
+		if ( empty( $post_types ) ) {
+			$post_types = array( self::DEFAULT_POST_TYPE );
+		}
+
+		return $post_types;
 	}
 }

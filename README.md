@@ -3,6 +3,8 @@
   <img src="logo.png">
 </p>
 
+NOTE This repo is in dev.
+
 Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies. This module is on development, so some of its features are not perfect. However, I think it's still quite useful. Please send me the request if you want to improve WP Express together.
 
 ## Initialize

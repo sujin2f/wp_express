@@ -9,59 +9,47 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Helpers\Meta_Base;
+use Sujin\Wordpress\WP_Express\Abs_Base;
+use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Fields\Abs_Setting_Element;
 
-if ( !defined( "ABSPATH" ) ) {
-	header( "Status: 404 Not Found" );
-	header( "HTTP/1.1 404 Not Found" );
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 404 Not Found' );
+	header( 'HTTP/1.1 404 Not Found' );
 	exit();
 }
 
-class Setting extends Base {
-	use Meta_Base;
+class Setting extends Abs_Base {
+	public const ADMIN_PAGE = 'admin_page';
+	private $_admin_page    = 'general';
 
-	public $section = 'Additional Settings';
-	private $page = 'general';
-
-	public function __construct( $name ) {
-		$this->name       = $name;
-		$this->id         = 'wp-express-' . sanitize_title( $this->name );
-		$this->show_label = false;
-
-		add_action( 'admin_init', array( $this, 'register_setting' ) );
+	public function __construct( string $name ) {
+		parent::__construct( $name );
+		add_action( 'admin_init', array( $this, '_register_setting' ) );
 	}
 
-	public function set_section( $section ) {
-		$this->section = $section;
-		return $this;
-	}
+	public function __call( string $name, array $arguments ) {
+		switch ( strtolower( $name ) ) {
+			case self::ADMIN_PAGE:
+				$name = '_' . $name;
+				if ( empty( $arguments ) ) {
+					return $this->{$name};
+				}
 
-	public function set_page( $page ) {
-		$this->page = $page;
-		return $this;
-	}
-
-	public function register_setting() {
-		global $wp_settings_sections;
-
-		$section_id = sanitize_title( $this->section );
-
-		if ( ! isset( $wp_settings_sections[$this->page][$section_id] ) ) {
-			add_settings_section( $section_id, $this->section, null, $this->page );
+				$this->{$name} = $arguments[0];
+				break;
 		}
 
-		add_settings_field(
-			$this->id,
-			$this->name,
-			array( $this, 'print_field' ),
-			$this->page,
-			$section_id
-		);
+		return $this;
+	}
 
-        if ( false === get_option( $this->id ) ) {
-            add_option( $this->id );
-        }
+	public function add( Abs_Setting_Element $field ): Setting {
+		$field->_attach_to( $this );
+		return $this;
+	}
 
-		register_setting( $section_id, $this->id );
+	public function _register_setting() {
+		$admin_page = ( $this->_admin_page instanceof Admin ) ? $this->_admin_page->get_id() : $this->_admin_page;
+		add_settings_section( $this->get_id(), $this->get_name(), null, $admin_page );
 	}
 }

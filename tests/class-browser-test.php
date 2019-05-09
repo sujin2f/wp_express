@@ -1,0 +1,120 @@
+<?php
+/**
+ * Admin Class
+ *
+ * @project WP-Express
+ * @since   1.0.0
+ * @author  Sujin 수진 Choi http://www.sujinc.com/
+ */
+
+use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Post_Type;
+
+use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Input as Option_Input;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Textarea as Option_Textarea;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Editor as Option_Editor;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Attachment as Option_Attachment;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Checkbox as Option_Checkbox;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Radio as Option_Radio;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Select as Option_Select;
+
+use Sujin\Wordpress\WP_Express\Meta_Box;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input as Meta_Input;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Textarea as Meta_Textarea;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Editor as Meta_Editor;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Attachment as Meta_Attachment;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Checkbox as Meta_Checkbox;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Radio as Meta_Radio;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select as Meta_Select;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 404 Not Found' );
+	header( 'HTTP/1.1 404 Not Found' );
+	exit();
+}
+
+class BrowserTest {
+	public function __construct() {
+		// Admin Pages
+		$first_depth = Admin::get_instance( '1st Depth' )
+			->position( 100 )
+			->icon( 'dashicons-awards' );
+		Admin::get_instance( 'POSITION_OPTION' )
+			->position( Admin::POSITION_OPTION );
+		Admin::get_instance( 'POSITION_TOOLS' )
+			->position( Admin::POSITION_TOOLS );
+		Admin::get_instance( 'POSITION_USERS' )
+			->position( Admin::POSITION_USERS );
+		Admin::get_instance( 'POSITION_PLUGINS' )
+			->position( Admin::POSITION_PLUGINS );
+		Admin::get_instance( 'POSITION_COMMENTS' )
+			->position( Admin::POSITION_COMMENTS );
+		Admin::get_instance( 'POSITION_PAGES' )
+			->position( Admin::POSITION_PAGES );
+		Admin::get_instance( 'POSITION_POSTS' )
+			->position( Admin::POSITION_POSTS );
+		Admin::get_instance( 'POSITION_MEDIA' )
+			->position( Admin::POSITION_MEDIA );
+		Admin::get_instance( 'POSITION_DASHBOARD' )
+			->position( Admin::POSITION_DASHBOARD );
+		Admin::get_instance( 'POSITION_APPEARANCE' )
+			->position( Admin::POSITION_APPEARANCE );
+		Admin::get_instance( 'By Name' )
+			->position( 'Test' )
+			->plugin( 'Akismet Anti-Spam' );
+		Admin::get_instance( 'By Admin' )
+			->position( $first_depth );
+
+		// Settings
+		$admin    = Admin::get_instance( 'Test Admin Page' );
+		$settings = Setting::get_instance( 'Test Setting Block' );
+
+		$option_input      = Option_Input::get_instance( 'Input Test' );
+		$option_textarea   = Option_Textarea::get_instance( 'Textarea Test' );
+		$option_editor     = Option_Editor::get_instance( 'Editor Test' );
+		$option_attachment = Option_Attachment::get_instance( 'Attachment Test' );
+		$option_checkbox   = Option_Checkbox::get_instance( 'Checkbox Test' );
+		$option_radio      = Option_Radio::get_instance( 'Radio Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+		$option_select     = Option_Select::get_instance( 'Select Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+
+		$settings->add( $option_input )
+			->add( $option_textarea )
+			->add( $option_editor )
+			->add( $option_attachment )
+			->add( $option_checkbox )
+			->add( $option_radio )
+			->add( $option_select );
+
+		$admin->add( $settings );
+
+		// Post Type
+		$post = Post_Type::get_instance( 'post' )
+			->menu_position( 30 );
+
+		$test = Post_Type::get_instance( 'Test' );
+
+		// Post Meta
+		$meta = Meta_Box::get_instance( 'Test Metabox' );
+
+		$meta_input      = Meta_Input::get_instance( 'Input Test' );
+		$meta_textarea   = Meta_Textarea::get_instance( 'Textarea Test' );
+		$meta_editor     = Meta_Editor::get_instance( 'Editor Test' );
+		$meta_attachment = Meta_Attachment::get_instance( 'Attachment Test' );
+		$meta_checkbox   = Meta_Checkbox::get_instance( 'Checkbox Test' );
+		$meta_radio      = Meta_Radio::get_instance( 'Radio Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+		$meta_select     = Meta_Select::get_instance( 'Select Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+
+		$meta->add( $meta_input )
+			->add( $meta_textarea )
+			->add( $meta_editor )
+			->add( $meta_attachment )
+			->add( $meta_checkbox )
+			->add( $meta_radio )
+			->add( $meta_select );
+	}
+}
