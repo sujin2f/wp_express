@@ -1,6 +1,6 @@
 function uploadButton() {
   jQuery('.wp_express.btn-upload').click((e) => {
-    const id = jQuery(this).attr('data-id');
+    const id = jQuery(e.currentTarget).attr('data-id');
     e.preventDefault();
 
     const frame = wp.media({
@@ -25,7 +25,7 @@ function uploadButton() {
 
 function removeButton() {
   jQuery('.wp_express.btn-remove').on('click', (e) => {
-    const id = jQuery(this).attr('data-id');
+    const id = jQuery(e.currentTarget).attr('data-id');
     e.preventDefault();
 
     jQuery(`#${id}-custom-img-container`).html('');
