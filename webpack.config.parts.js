@@ -15,7 +15,7 @@ exports.setBase = function(dist) {
 
   return {
     mode: production ? 'production' : 'development',
-    devtool: production ? false : 'inline-source-map',
+    devtool: production ? false : 'source-map',
     cache: production ? true : false,
     output: {
       path: dist,
