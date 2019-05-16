@@ -1,55 +1,10 @@
 <?php
-/**
- * Admin Class
- *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
- */
-
-namespace Sujin\Wordpress\WP_Express\Meta;
-
-use Sujin\Wordpress\WP_Express\Helpers\Meta_Base;
-use Sujin\Wordpress\WP_Express\Base;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-class Post_Meta extends Base {
-	use Meta_Base;
 
 	private $thumbnail_size = 'thumbnail';
-
-	public function __construct( $name ) {
-		parent::__construct();
-		$this->constructor( $name );
-		add_action( 'init', array( $this, 'register_meta' ) );
-	}
-
-	public function set_metabox( $metabox ) {
-		add_action( 'wp-express-show-meta-box-' . $metabox->id, array( $this, 'print_meta' ) );
-		add_action( 'wp-express-save-post-meta-', $metabox->id, array( $this, 'save_meta' ) );
 
 		foreach ( $metabox->post_types as $post_type ) {
 			add_filter( "get_{$post_type}_metadata", array( $this, 'get_rest_metadata' ), 15, 4 );
 		}
-		return $this;
-	}
-
-	public function print_meta() {
-		$value = $_GET && isset( $_GET['post'] )
-			? get_post_meta( $_GET['post'], $this->get_id(), true )
-			: null;
-		$this->print_field( $value );
-	}
-
-	public function save_meta( $post_id ) {
-		$value = isset( $_POST[ $this->get_id() ] ) ? $_POST[ $this->get_id() ] : false;
-		update_post_meta( $post_id, $this->get_id(), $value );
-	}
 
 	public function get_value( $post_id ) {
 		$value = get_post_meta( $post_id, $this->get_id(), true );
@@ -103,4 +58,3 @@ class Post_Meta extends Base {
 
 		return $value;
 	}
-}
