@@ -10,7 +10,8 @@ const config = [
     {
       // Entry points, resolver path, and output path
       entry: {
-        script: path.resolve(__dirname, 'assets', 'scripts', 'script.js'),
+        'media-upload': path.resolve(__dirname, 'assets', 'scripts', 'media-upload.js'),
+        'meta': path.resolve(__dirname, 'assets', 'styles', 'meta.scss'),
       },
     },
     parts.setBase(dist),
