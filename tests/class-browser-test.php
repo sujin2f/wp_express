@@ -28,6 +28,15 @@ use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Checkbox as Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Radio as Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select as Meta_Select;
 
+use Sujin\Wordpress\WP_Express\Taxonomy;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Input as Term_Meta_Input;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Textarea as Term_Meta_Textarea;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Editor as Term_Meta_Editor;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Attachment as Term_Meta_Attachment;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Checkbox as Term_Meta_Checkbox;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Radio as Term_Meta_Radio;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Select as Term_Meta_Select;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
 	header( 'HTTP/1.1 404 Not Found' );
@@ -116,5 +125,28 @@ class BrowserTest {
 			->add( $meta_checkbox )
 			->add( $meta_radio )
 			->add( $meta_select );
+
+		// Taxonomy
+		$taxonomy = Taxonomy::get_instance( 'New Taxonomy' );
+		$tag = Taxonomy::get_instance( 'Tag' );
+
+		$term_meta_input      = Term_Meta_Input::get_instance( 'Input Test' );
+		$term_meta_textarea   = Term_Meta_Textarea::get_instance( 'Textarea Test' );
+		$term_meta_editor     = Term_Meta_Editor::get_instance( 'Editor Test' );
+		$term_meta_attachment = Term_Meta_Attachment::get_instance( 'Attachment Test' );
+		$term_meta_checkbox   = Term_Meta_Checkbox::get_instance( 'Checkbox Test' );
+		$term_meta_radio      = Term_Meta_Radio::get_instance( 'Radio Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+		$term_meta_select     = Term_Meta_Select::get_instance( 'Select Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) );
+
+		$tag->add( $term_meta_input )
+			->add( $term_meta_textarea )
+			->add( $term_meta_editor )
+			->add( $term_meta_attachment )
+			->add( $term_meta_checkbox )
+			->add( $term_meta_radio )
+			->add( $term_meta_select );
+
 	}
 }

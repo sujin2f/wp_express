@@ -46,6 +46,13 @@
 	}
 }
 
+.wp-express.form-field.checkbox {
+	label {
+		display: flex;
+		align-items: center;
+	}
+}
+
 .wp-express.metabox {
 	.wp-express.post-meta-wrap {
 		margin-bottom: 1em;

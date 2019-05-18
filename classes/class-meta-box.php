@@ -82,7 +82,7 @@ class Meta_Box extends Abs_Base {
 		foreach ( $this->_get_post_types_strings() as $post_type ) {
 			if ( $post->post_type === $post_type ) {
 				foreach ( $this->_fields as $field ) {
-					$field->update( $post_id, $_POST[ $field->get_id() ] );
+					$field->_update( $post_id, $_POST[ $field->get_id() ] );
 				}
 			}
 		}
