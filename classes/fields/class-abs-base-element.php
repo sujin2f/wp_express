@@ -24,6 +24,8 @@ abstract class Abs_Base_Element extends Abs_Base {
 		'value'       => null,
 		'type'        => null,
 		'placeholder' => null,
+		'rows'        => null,
+		'cols'        => null,
 	);
 
 	protected $_options = array(
@@ -31,6 +33,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		'show_in_rest' => null,
 		'options'      => null,
 		'default'      => null,
+		'legend'       => null,
 	);
 
 	protected $_js_callback = array(
@@ -42,7 +45,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	public function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name );
 		$this->_parse_attributes( $attrs );
-		$this->add_style( WP_EXPRESS_ASSET_URL . '/css/meta.css', true );
+		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );
 	}
 
 	public function __call( string $name, array $arguments ) {
@@ -81,6 +84,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 
 	protected function _render_attributes() {
 		foreach ( $this->_attributes as $key => $value ) {
+			// var_dump($key, $value);
 			if ( ! empty( $value ) ) {
 				echo ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
 			}
@@ -90,8 +94,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	private function _parse_attributes( array $defaults ) {
 		foreach ( $defaults as $key => $value ) {
 			$property = $this->_get_property_by_child( $key );
-
-			if ( ! empty( $property ) && ! empty( $this->{$property}[ $key ] ) ) {
+			if ( empty( $this->{$property}[ $key ] ) ) {
 				$this->{$property}[ $key ] = $value;
 			}
 		}

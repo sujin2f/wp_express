@@ -57,11 +57,15 @@ class Meta_Box extends Abs_Base {
 	}
 
 	public function _show_meta_box() {
+		echo '<section class="' . esc_attr( self::PREFIX ) . ' metabox">';
+
 		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
 
 		foreach ( $this->_fields as $field ) {
 			$field->_render();
 		}
+
+		echo '</section>';
 	}
 
 	public function _save_post( int $post_id, WP_Post $post ) {

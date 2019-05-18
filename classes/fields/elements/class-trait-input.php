@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Trait_Input {
 	protected $_defaults_attributes = array(
-		'class' => 'regular-text',
+		'class' => 'regular-text code',
 		'type'  => 'text',
 	);
 
@@ -27,11 +27,13 @@ trait Trait_Input {
 
 	protected function _render_form() {
 		?>
-		<input
-			id="input--<?php echo esc_attr( $this->get_id() ); ?>"
-			name="<?php echo esc_attr( $this->get_id() ); ?>"
-			<?php $this->_render_attributes(); ?>
-		/>
+		<section class="<?php echo esc_attr( self::PREFIX ); ?> field input">
+			<input
+				id="<?php echo esc_attr( self::PREFIX ); ?>__field__input__<?php echo esc_attr( $this->get_id() ); ?>"
+				name="<?php echo esc_attr( $this->get_id() ); ?>"
+				<?php $this->_render_attributes(); ?>
+			/>
+		</section>
 		<?php
 	}
 }

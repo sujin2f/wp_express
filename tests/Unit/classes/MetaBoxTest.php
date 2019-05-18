@@ -35,7 +35,7 @@ class MetaBoxTest extends TestCase {
 
 		$expected1 = '_nonce';
 		$expected2 = '_wp_http_referer';
-		$expected3 = '<label for="input--text-input">';
+		$expected3 = '<label for="wp-express__field__input__text-input">';
 
 		$this->assertContains( $expected1, $html );
 		$this->assertContains( $expected2, $html );
