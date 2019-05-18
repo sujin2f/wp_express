@@ -3,7 +3,8 @@
   "version": "3.0.0",
   "description": "Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies.",
   "scripts": {
-    "start": "cross-env BABEL_ENV=default webpack --watch"
+    "start": "cross-env BABEL_ENV=default webpack --watch",
+    "build": "cross-env BABEL_ENV=production webpack"
   },
   "repository": {
     "type": "git",
@@ -36,8 +37,8 @@
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
+    "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "path": "^0.12.7",

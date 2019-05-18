@@ -4,17 +4,17 @@ import merge from 'webpack-merge';
 import parts from './webpack.config.parts';
 
 const dist = path.resolve(__dirname, 'assets', 'dist');
+const entry = {
+  'media-upload': path.resolve(__dirname, 'assets', 'scripts', 'media-upload.js'),
+  'meta': path.resolve(__dirname, 'assets', 'styles', 'meta.scss'),
+};
 
 const config = [
   merge.smart(
     {
-      // Entry points, resolver path, and output path
-      entry: {
-        'media-upload': path.resolve(__dirname, 'assets', 'scripts', 'media-upload.js'),
-        'meta': path.resolve(__dirname, 'assets', 'styles', 'meta.scss'),
-      },
+      entry,
     },
-    parts.setBase(dist),
+    parts.setBase(entry, dist),
   ),
 ];
 
