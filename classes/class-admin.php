@@ -187,7 +187,11 @@ class Admin extends Abs_Base {
 		}
 
 		if ( sanitize_title( $this->_plugin ) == sanitize_title( $plugin_data['Name'] ) ) {
-			$actions['setting'] = sprintf( '<a href="%s"><span class="dashicons-before dashicons-admin-settings"></span> Setting</a>', $this->_admin_url );
+			$actions['setting'] = sprintf(
+				'<a href="%s"><span class="dashicons-before %s"></span> Setting</a>',
+				$this->_admin_url,
+				$this->_get_dashicon()
+			);
 		}
 
 		return $actions;
@@ -195,8 +199,16 @@ class Admin extends Abs_Base {
 
 	public function _render() {
 		?>
-		<div class="wrap" id="admin-<?php echo esc_attr( $this->get_id() ); ?>">
-			<h2 class="page-title"><?php echo esc_html( $this->get_name() ); ?></h2>
+		<div
+			class="<?php echo esc_attr( self::PREFIX ); ?> admin wrap"
+			id="<?php echo esc_attr( self::PREFIX ); ?>-admin-<?php echo esc_attr( $this->get_id() ); ?>"
+		>
+			<h2
+				class="page-title <?php echo esc_attr( self::PREFIX ); ?>"
+			>
+				<span class="dashicons <?php echo esc_attr( $this->_get_dashicon() ); ?>"></span>
+				<?php echo esc_html( $this->get_name() ); ?>
+			</h2>
 
 			<form method="post" action="options.php">
 				<?php
@@ -211,4 +223,11 @@ class Admin extends Abs_Base {
 
 	// TODO
 	public function _render_screen_options() {}
+
+	private function _get_dashicon(): string {
+		return
+			false !== stripos( $this->_icon, 'dashicons-' )
+			? $this->_icon
+			: 'dashicons-admin-settings';
+	}
 }

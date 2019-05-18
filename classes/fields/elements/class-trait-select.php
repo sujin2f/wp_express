@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Trait_Select {
 	protected $_defaults_attributes = array(
-		'class' => 'regular-text',
+		'class' => 'postform',
 	);
 
 	protected function _is_available(): bool {
@@ -26,12 +26,13 @@ trait Trait_Select {
 
 	protected function _render_form() {
 		?>
-		<select
-			id="input--<?php echo esc_attr( $this->get_id() ); ?>"
-			name="<?php echo esc_attr( $this->get_id() ); ?>"
-			<?php $this->_render_attributes(); ?>
-		>
-			<option>== Select Option ==</option>
+		<section class="<?php echo esc_attr( self::PREFIX ); ?> field select">
+			<select
+				id="<?php echo esc_attr( self::PREFIX ); ?>__field__select__<?php echo esc_attr( $this->get_id() ); ?>"
+				name="<?php echo esc_attr( $this->get_id() ); ?>"
+				<?php $this->_render_attributes(); ?>
+			>
+				<option>== Select Option ==</option>
 		<?php
 		foreach ( $this->_options['options'] as $name => $option ) {
 			$name     = is_numeric( $name ) ? $option : $name;
@@ -41,5 +42,6 @@ trait Trait_Select {
 			echo '<option value="' . esc_attr( $name ) . '"' . $selected . '>' . esc_attr( $name ) . '</option>';
 		}
 		echo '</select>';
+		echo '</section>';
 	}
 }

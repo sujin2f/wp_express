@@ -33,37 +33,37 @@ trait Trait_Attachment {
 		$upload_link = get_upload_iframe_src();
 		$media_arr   = wp_get_attachment_image_src( $this->_attributes['value'] );
 
-		$img          = $this->_attributes['value'] ? '<img src="' . esc_attr( $media_arr[0] ) . '" width="150" />' : '';
+		$img          = $this->_attributes['value'] ? esc_attr( $media_arr[0] ) : '';
 		$class_upload = $img ? 'hidden' : '';
 		$class_remove = empty( $img ) ? 'hidden' : '';
 
 		?>
-		<div id="<?php echo esc_attr( $this->get_id() ); ?>-custom-img-container"><?php echo $img; ?></div>
-
-		<a
-			id="<?php echo esc_attr( $this->get_id() ); ?>-upload-custom-img"
-			class="wp_express <?php echo esc_attr( $class_upload ); ?> btn-upload"
-			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
-			href="<?php echo esc_url_raw( $upload_link ); ?>"
-		>
-			<?php echo __( 'No image selected', 'wp-express' ); ?>
-			<button class="button"><?php echo __( 'Add image', 'wp-express' ); ?></button>
-		</a>
-
-		<button
-			id="<?php echo esc_attr( $this->get_id() ); ?>-delete-custom-img"
-			class="wp_express <?php echo esc_attr( $class_remove ); ?> button btn-remove"
+		<section
+			class="<?php echo esc_attr( self::PREFIX ); ?> field attachment"
 			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
 		>
-			<?php echo __( 'Remove image', 'wp-express' ); ?>
-		</button>
+			<div
+				class="img-container <?php echo esc_attr( $class_remove ); ?>"
+				style="background-image: url('<?php echo $img; ?>');"
+			></div>
 
-		<input
-			id="<?php echo esc_attr( $this->get_id() ); ?>-custom-img-id"
-			name="<?php echo esc_attr( $this->get_id() ); ?>"
-			type="hidden"
-			value="<?php echo esc_attr( $this->_attributes['value'] ); ?>"
-		/>
+			<a
+				class="<?php echo esc_attr( $class_upload ); ?> button btn-upload"
+				href="<?php echo esc_url_raw( $upload_link ); ?>"
+			>
+				Add Image
+			</a>
+
+			<button class="<?php echo esc_attr( $class_remove ); ?> btn-remove">
+				<span class="dashicons dashicons-no"></span>
+			</button>
+
+			<input
+				name="<?php echo esc_attr( $this->get_id() ); ?>"
+				type="hidden"
+				value="<?php echo esc_attr( $this->_attributes['value'] ); ?>"
+			/>
+		</section>
 		<?php
 
 		wp_enqueue_media();

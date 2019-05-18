@@ -16,9 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Checkbox {
-	protected $_defaults_attributes = array(
-		'class' => 'regular-text',
-	);
+	protected $_defaults_attributes = array();
 
 	protected function _is_available(): bool {
 		return true;
@@ -27,12 +25,15 @@ trait Trait_Checkbox {
 	protected function _render_form() {
 		$checked = $this->_attributes['value'] ? 'checked="checked"' : '';
 		?>
-		<input
-			id="input--<?php echo esc_attr( $this->get_id() ); ?>"
-			name="<?php echo esc_attr( $this->get_id() ); ?>"
-			type="checkbox" <?php echo $checked; ?>
-			<?php $this->_render_attributes(); ?>
-		/>
+		<section class="<?php echo esc_attr( self::PREFIX ); ?> field checkbox">
+			<input
+				id="<?php echo esc_attr( self::PREFIX ); ?>__field__checkbox__<?php echo esc_attr( $this->get_id() ); ?>"
+				name="<?php echo esc_attr( $this->get_id() ); ?>"
+				type="checkbox"
+				<?php echo $checked; ?>
+				<?php $this->_render_attributes(); ?>
+			/>
+		</section>
 		<?php
 	}
 }

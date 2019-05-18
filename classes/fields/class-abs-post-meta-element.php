@@ -45,11 +45,18 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		$class = explode( '\\', get_called_class() );
 		$class = strtolower( array_pop( $class ) );
 
-		echo '<div id="input-wrap--' . esc_attr( $this->get_id() ) . '" class="wp_express field--' . esc_attr( $class ) . '">';
-		echo '<label for="input--' . esc_attr( $this->get_id() ) . '">' . esc_html( $this->get_name() ) . '</label>';
+		?>
+		<section
+			id="<?php echo esc_attr( self::PREFIX ); ?>--post-meta-wrap--<?php echo esc_attr( $class ); ?>--<?php echo esc_attr( $this->get_id() ); ?>"
+			class="<?php echo esc_attr( self::PREFIX ); ?> post-meta-wrap <?php echo esc_attr( $class ); ?>"
+		>
+			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__<?php echo esc_attr( $class ); ?>__<?php echo esc_attr( $this->get_id() ); ?>">
+				<?php echo esc_html( $this->get_name() ); ?>
+			</label>
+		<?php
 	}
 
 	protected function _render_wrapper_close() {
-		echo '</div>';
+		echo '</section>';
 	}
 }

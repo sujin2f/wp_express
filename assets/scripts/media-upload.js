@@ -1,42 +1,60 @@
-function uploadButton() {
-  jQuery('.wp_express.btn-upload').click((e) => {
-    const id = jQuery(e.currentTarget).attr('data-id');
-    e.preventDefault();
+function uploadButton(id, frame) {
+  frame.on('select', () => {
+    const attachment = frame.state().get('selection').first().toJSON();
 
-    const frame = wp.media({
-      title: 'Select or Upload Media Of Your Chosen Persuasion',
-      button: { text: 'Use this media' },
-      multiple: false,
-    });
 
-    frame.on('select', () => {
-      const attachment = frame.state().get('selection').first().toJSON();
-      jQuery(`#${id}-custom-img-container`)
-        .append(`<img src="${attachment.url}" width="150" />`);
-      jQuery(`#${id}-custom-img-id`).val(attachment.id);
-
-      jQuery(`#${id}-upload-custom-img`).addClass('hidden');
-      jQuery(`#${id}-delete-custom-img`).removeClass('hidden');
-    });
-
-    frame.open();
+    jQuery(`section[data-id="${id}"] .img-container`)
+      .attr('style', `background-image: url('${attachment.url}');`)
+      .removeClass('hidden');
+    jQuery(`section[data-id="${id}"] input[type="hidden"]`).val(attachment.id);
+    jQuery(`section[data-id="${id}"] .btn-upload`).addClass('hidden');
+    jQuery(`section[data-id="${id}"] .btn-remove`).removeClass('hidden');
   });
+
+  frame.open();
 }
 
-function removeButton() {
-  jQuery('.wp_express.btn-remove').on('click', (e) => {
-    const id = jQuery(e.currentTarget).attr('data-id');
-    e.preventDefault();
-
-    jQuery(`#${id}-custom-img-container`).html('');
-    jQuery(`#${id}-custom-img-id`).val('');
-
-    jQuery(`#${id}-upload-custom-img`).removeClass('hidden');
-    jQuery(`#${id}-delete-custom-img`).addClass('hidden');
-  });
+function removeButton(id) {
+  jQuery(`section[data-id="${id}"] .img-container`)
+    .attr('style', '')
+    .addClass('hidden');
+  jQuery(`section[data-id="${id}"] input[type="hidden"]`).val('');
+  jQuery(`section[data-id="${id}"] .btn-upload`).removeClass('hidden');
+  jQuery(`section[data-id="${id}"] .btn-remove`).addClass('hidden');
 }
 
-jQuery(document).ready(() => {
-  uploadButton();
-  removeButton();
+jQuery(document).ready(($) => {
+  const frame = wp.media({
+    title: 'Select or Upload Media Of Your Chosen Persuasion',
+    button: { text: 'Use this media' },
+    multiple: false,
+  });
+
+  $('.wp-express.field.attachment .btn-upload').click((e) => {
+    const id = $(e.currentTarget)
+      .parent('.wp-express.field.attachment')
+      .attr('data-id');
+
+    e.preventDefault();
+
+    uploadButton(id, frame);
+  });
+
+  $('.wp-express.field.attachment .btn-remove').on('click', (e) => {
+    const id = $(e.currentTarget)
+      .parent('.wp-express.field.attachment')
+      .attr('data-id');
+    e.preventDefault();
+
+    removeButton(id);
+  });
+
+  $('.wp-express.field.attachment .img-container').on('click', (e) => {
+    const id = $(e.currentTarget)
+      .parent('.wp-express.field.attachment')
+      .attr('data-id');
+    e.preventDefault();
+
+    removeButton(id);
+  });
 });

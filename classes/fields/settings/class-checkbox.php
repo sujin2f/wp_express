@@ -20,4 +20,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Checkbox extends Abs_Setting_Element {
 	use Trait_Checkbox;
+
+	protected function _render_wrapper_open() {
+		?>
+		<section
+			id="<?php echo esc_attr( self::PREFIX ); ?>--option-wrap--checkbox--<?php echo esc_attr( $this->get_id() ); ?>"
+			class="<?php echo esc_attr( self::PREFIX ); ?> option-wrap checkbox"
+		>
+			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__checkbox__<?php echo esc_attr( $this->get_id() ); ?>">
+		<?php
+	}
+
+	protected function _render_wrapper_close() {
+		echo esc_html( $this->get_name() ) . '</label></section>';
+	}
 }

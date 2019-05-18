@@ -21,12 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Checkbox extends Abs_Post_Meta_Element {
 	use Trait_Checkbox;
 
-	protected function render_wrapper_open() {
-		echo '<div id="input-wrap--' . esc_attr( $this->get_id() ) . '" class="wp_express--field--checkbox">';
-		echo '<label for="input--' . esc_attr( $this->get_id() ) . '">';
+	protected function _render_wrapper_open() {
+		?>
+		<section
+			id="<?php echo esc_attr( self::PREFIX ); ?>--post-meta-wrap--checkbox--<?php echo esc_attr( $this->get_id() ); ?>"
+			class="<?php echo esc_attr( self::PREFIX ); ?> post-meta-wrap checkbox"
+		>
+			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__checkbox__<?php echo esc_attr( $this->get_id() ); ?>">
+		<?php
 	}
 
-	protected function render_wrapper_close() {
-		echo esc_html( $this->get_name() ) . '</label></div>';
+	protected function _render_wrapper_close() {
+		echo esc_html( $this->get_name() ) . '</label></section>';
 	}
 }
