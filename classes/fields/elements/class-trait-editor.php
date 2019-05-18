@@ -24,7 +24,7 @@ trait Trait_Editor {
 
 	protected function _render_form() {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field editor">';
-		wp_editor( stripcslashes( $this->_attributes['value'] ), self::PREFIX, '__field__checkbox__' . $this->get_id() );
+		wp_editor( stripcslashes( $this->_attributes['value'] ), self::PREFIX . '__field__checkbox__' . $this->get_id() );
 		echo '</section>';
 	}
 }
