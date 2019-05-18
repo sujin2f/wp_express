@@ -10,6 +10,8 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields;
 
+use Sujin\Wordpress\WP_Express\Taxonomy;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
 	header( 'HTTP/1.1 404 Not Found' );
@@ -17,8 +19,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
-	public function _update( int $term_id, $value ) {
-		update_term_meta( $term_id, $this->get_id(), $value );
+	public function attach_to( $term ): Abs_Term_Meta_Element {
+		$parent = $term;
+
+		if ( $term instanceof Taxonomy ) {
+			$parent = $term->get_id();
+		}
+		add_action( $parent . '_edit_form_fields', array( $this, '_render' ), 25 );
+		add_action( 'edited_' . $parent, array( $this, '_update' ), 25 );
+
+		return $this;
+	}
+
+	public function _update( int $term_id ) {
+		update_term_meta( $term_id, $this->get_id(), $_POST[ $this->get_id() ] );
 	}
 
 	protected function _refresh_attributes( ?int $term_id = null ) {

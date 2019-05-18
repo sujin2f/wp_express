@@ -132,7 +132,7 @@ class BrowserTest {
 
 		// Taxonomy
 		$taxonomy = Taxonomy::get_instance( 'New Taxonomy' );
-		$tag = Taxonomy::get_instance( 'Tag' );
+		$tag      = Taxonomy::get_instance( 'Tag' );
 
 		$term_meta_input      = Term_Meta_Input::get_instance( 'Input Test' );
 		$term_meta_textarea   = Term_Meta_Textarea::get_instance( 'Textarea Test' );
@@ -151,6 +151,11 @@ class BrowserTest {
 			->add( $term_meta_checkbox )
 			->add( $term_meta_radio )
 			->add( $term_meta_select );
+
+		// Term Meta to Existing Taxonomy
+		$term_meta_input
+			->attach_to( 'category' )
+			->attach_to( 'post_tag' );
 
 	}
 }

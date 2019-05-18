@@ -21,7 +21,7 @@ class InputTest extends TestCase {
 		$post_id = $post->ID;
 
 		$field = Input::get_instance( 'Field 1' );
-		$field->update( $post_id, 'Value 1' );
+		$field->_update( $post_id, 'Value 1' );
 
 		$this->assertEquals( 'Value 1', $field->get() );
 	}

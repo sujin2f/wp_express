@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Taxonomy extends Abs_Base {
 	const DEFAULT_POST_TYPE = 'post';
 
-	private $_fields     = array();
 	private $_post_types = array();
 	private $_arguments  = array(
 		'label'                 => null,
@@ -65,8 +64,6 @@ class Taxonomy extends Abs_Base {
 		$this->_arguments = array_merge( $this->_arguments, $arguments );
 
 		add_action( 'init', array( $this, '_register_taxonomy' ), 25 );
-		add_action( $this->get_id() . '_edit_form_fields', array( $this, '_render_fields' ), 25 );
-		add_action( 'edited_' . $this->get_id(), array( $this, '_save_fields' ), 25 );
 	}
 
 	public function __call( string $name, array $arguments ) {
@@ -86,7 +83,7 @@ class Taxonomy extends Abs_Base {
 		global $wp_taxonomies;
 
 		if ( ! array_key_exists( $this->get_id(), $wp_taxonomies ) ) {
-			register_taxonomy( $this->get_id(), $this->_get_post_types_strings(),  array_filter( $this->_arguments ) );
+			register_taxonomy( $this->get_id(), $this->_get_post_types_strings(), array_filter( $this->_arguments ) );
 			return;
 		}
 
@@ -104,20 +101,8 @@ class Taxonomy extends Abs_Base {
 	}
 
 	public function add( Abs_Term_Meta_Element $field ): Taxonomy {
-		$this->_fields[] = $field;
+		$field->attach_to( $this );
 		return $this;
-	}
-
-	public function _render_fields() {
-		foreach( $this->_fields as $field ) {
-			$field->_render();
-		}
-	}
-
-	public function _save_fields( int $term_id ) {
-		foreach( $this->_fields as $field ) {
-			$field->_update( $term_id, $_POST[ $field->get_id() ] );
-		}
 	}
 
 	// TODO
