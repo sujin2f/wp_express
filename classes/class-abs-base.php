@@ -33,7 +33,7 @@ abstract class Abs_Base {
 	/*
 	 * All types have its own unique ID
 	 */
-	private $_id = null;
+	protected $_id = null;
 	public function get_id(): string {
 		if ( is_null( $this->_id ) ) {
 			throw new Initialized_Exception();
@@ -44,7 +44,7 @@ abstract class Abs_Base {
 	/*
 	 * All types have its name
 	 */
-	private $_name = null;
+	protected $_name = null;
 	public function get_name(): string {
 		if ( is_null( $this->_name ) ) {
 			throw new Initialized_Exception();

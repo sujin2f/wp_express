@@ -24,7 +24,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		return $this->_attributes['value'];
 	}
 
-	public function update( int $post_id, $value ) {
+	public function _update( int $post_id, $value ) {
 		update_post_meta( $post_id, $this->get_id(), $value );
 	}
 

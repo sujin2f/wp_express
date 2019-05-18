@@ -24,7 +24,7 @@ function removeButton(id) {
 }
 
 jQuery(document).ready(($) => {
-  const frame = wp.media({
+  const frame = wp.media && wp.media({
     title: 'Select or Upload Media Of Your Chosen Persuasion',
     button: { text: 'Use this media' },
     multiple: false,

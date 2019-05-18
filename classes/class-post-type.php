@@ -92,22 +92,22 @@ class Post_Type extends Abs_Base {
 	}
 
 	public function _register_post_type() {
-		$post_type = (array) get_post_type_object( $this->get_id() );
+		$arguments = (array) get_post_type_object( $this->get_id() );
 
-		if ( empty( $post_type ) ) {
+		if ( empty( $arguments ) ) {
 			register_post_type( $this->get_id(), array_filter( $this->_arguments ) );
 			return;
 		}
 
 		## Capability
-		$post_type['capabilities'] = array_keys( (array) $post_type['cap'] );
-		unset( $post_type['cap'] );
+		$arguments['capabilities'] = array_keys( (array) $arguments['cap'] );
+		unset( $arguments['cap'] );
 
 		## Supports
 		$supports              = get_all_post_type_supports( $this->get_id() );
-		$post_type['supports'] = array_keys( $supports );
+		$arguments['supports'] = array_keys( $supports );
 
-		$argument = array_merge( $post_type, $this->_user_args );
-		register_post_type( $this->get_id(), $argument );
+		$arguments = array_merge( $arguments, $this->_user_args );
+		register_post_type( $this->get_id(), $arguments );
 	}
 }

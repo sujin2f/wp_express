@@ -80,7 +80,6 @@ abstract class Abs_Base_Element extends Abs_Base {
 	protected abstract function _render_wrapper_open();
 	protected abstract function _render_form();
 	protected abstract function _render_wrapper_close();
-	protected abstract function get( ?int $post_id = null );
 
 	protected function _render_attributes() {
 		foreach ( $this->_attributes as $key => $value ) {
@@ -114,5 +113,12 @@ abstract class Abs_Base_Element extends Abs_Base {
 		}
 
 		return '';
+	}
+
+	public function get( ?int $post_id = null ) {
+		if ( empty( $this->_attributes['value'] ) ) {
+			$this->_refresh_attributes( $post_id );
+		}
+		return $this->_attributes['value'];
 	}
 }
