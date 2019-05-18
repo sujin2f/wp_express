@@ -99,6 +99,10 @@ class BrowserTest {
 
 		$admin->add( $settings );
 
+		$settings2     = Setting::get_instance( 'Test Setting Block 2' );
+		$option_input2 = Option_Input::get_instance( 'Input Test' );
+		$settings2->add( $option_input2 );
+
 		// Post Type
 		$post = Post_Type::get_instance( 'post' )
 			->menu_position( 30 );

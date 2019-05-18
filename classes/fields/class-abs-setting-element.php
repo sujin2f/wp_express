@@ -10,6 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
@@ -30,15 +31,20 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 			return;
 		}
 
+		$parent_id =
+			( $this->_setting->admin_page() instanceof Admin )
+			? $this->_setting->admin_page()->get_id()
+			: $this->_setting->admin_page();
+
 		add_settings_field(
 			$this->get_id(),
 			$this->get_name(),
 			array( $this, '_render' ),
-			$this->_setting->admin_page()->get_id(),
+			$parent_id,
 			$this->_setting->get_id()
 		);
 
-		register_setting( $this->_setting->admin_page()->get_id(), $this->get_id() );
+		register_setting( $parent_id, $this->get_id() );
 	}
 
 	public function _attach_to( Setting $setting ) {
