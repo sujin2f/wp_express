@@ -4,7 +4,8 @@
   "description": "Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies.",
   "scripts": {
     "start": "cross-env BABEL_ENV=default webpack --watch",
-    "build": "cross-env BABEL_ENV=production webpack"
+    "build": "cross-env BABEL_ENV=production webpack",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -22,11 +23,11 @@
   "homepage": "https://github.com/sujin2f/wp_express",
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.26.3",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
     "babel-eslint": "^10.0.1",
-    "babel-loader": "^7.1.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1",
+    "babel-loader": "^8.0.6",
     "compression-webpack-plugin": "^2.0.0",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
@@ -38,6 +39,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
+    "jest": "^24.8.0",
     "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",

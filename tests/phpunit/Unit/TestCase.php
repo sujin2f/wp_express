@@ -10,7 +10,7 @@ abstract class TestCase extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		include_once( dirname( dirname( __DIR__ ) ) . '/autoload.php' );
+		include_once( dirname( dirname( dirname( __DIR__ ) ) ) . '/autoload.php' );
 	}
 
 	protected function call_private_method( $obj, string $name, array $args = array() ) {

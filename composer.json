@@ -20,7 +20,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Sujin\\Wordpress\\WP_Express\\Tests\\Unit\\": "tests/Unit"
+      "Sujin\\Wordpress\\WP_Express\\Tests\\Unit\\": "tests/phpunit/Unit"
     }
   }
 }
