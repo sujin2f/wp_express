@@ -90,51 +90,67 @@
 /*!****************************************!*\
   !*** ./assets/scripts/media-upload.js ***!
   \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-function uploadButton(id, frame) {
-  frame.on('select', function () {
-    var attachment = frame.state().get('selection').first().toJSON();
-    jQuery("section[data-id=\"".concat(id, "\"] .img-container")).attr('style', "background-image: url('".concat(attachment.url, "');")).removeClass('hidden');
-    jQuery("section[data-id=\"".concat(id, "\"] input[type=\"hidden\"]")).val(attachment.id);
-    jQuery("section[data-id=\"".concat(id, "\"] .btn-upload")).addClass('hidden');
-    jQuery("section[data-id=\"".concat(id, "\"] .btn-remove")).removeClass('hidden');
-  });
-  frame.open();
-}
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./media-upload/attachment */ "./assets/scripts/media-upload/attachment.js");
 
-function removeButton(id) {
-  jQuery("section[data-id=\"".concat(id, "\"] .img-container")).attr('style', '').addClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] input[type=\"hidden\"]")).val('');
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-upload")).removeClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-remove")).addClass('hidden');
-}
-
-jQuery(document).ready(function ($) {
-  var frame = wp.media && wp.media({
+jQuery(document).ready(() => {
+  const frame = wp.media && wp.media({
     title: 'Select or Upload Media Of Your Chosen Persuasion',
     button: {
       text: 'Use this media'
     },
     multiple: false
   });
-  $('.wp-express.field.attachment .btn-upload').click(function (e) {
-    var id = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
+  jQuery('.wp-express.field.attachment .btn-upload').click(e => {
+    const id = jQuery(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
     e.preventDefault();
-    uploadButton(id, frame);
+    frame.on('select', () => {
+      const attachment = frame.state().get('selection').first().toJSON();
+      Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["setAttachment"])(id, attachment);
+    });
+    frame.open();
   });
-  $('.wp-express.field.attachment .btn-remove').on('click', function (e) {
-    var id = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
+  jQuery('.wp-express.field.attachment .btn-remove').on('click', e => {
+    const id = jQuery(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
     e.preventDefault();
-    removeButton(id);
+    Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["removeAttachment"])(id);
   });
-  $('.wp-express.field.attachment .img-container').on('click', function (e) {
-    var id = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
+  jQuery('.wp-express.field.attachment .img-container').on('click', e => {
+    const id = jQuery(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
     e.preventDefault();
-    removeButton(id);
+    Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["removeAttachment"])(id);
   });
 });
+
+/***/ }),
+
+/***/ "./assets/scripts/media-upload/attachment.js":
+/*!***************************************************!*\
+  !*** ./assets/scripts/media-upload/attachment.js ***!
+  \***************************************************/
+/*! exports provided: setAttachment, removeAttachment */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAttachment", function() { return setAttachment; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeAttachment", function() { return removeAttachment; });
+function setAttachment(id, attachment) {
+  jQuery(`section[data-id="${id}"] .img-container`).attr('style', `background-image: url('${attachment.url}');`).removeClass('hidden');
+  jQuery(`section[data-id="${id}"] input[type="hidden"]`).val(attachment.id);
+  jQuery(`section[data-id="${id}"] .btn-upload`).addClass('hidden');
+  jQuery(`section[data-id="${id}"] .btn-remove`).removeClass('hidden');
+}
+function removeAttachment(id) {
+  jQuery(`section[data-id="${id}"] .img-container`).attr('style', '').addClass('hidden');
+  jQuery(`section[data-id="${id}"] input[type="hidden"]`).val('');
+  jQuery(`section[data-id="${id}"] .btn-upload`).removeClass('hidden');
+  jQuery(`section[data-id="${id}"] .btn-remove`).addClass('hidden');
+}
 
 /***/ })
 

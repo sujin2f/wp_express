@@ -1,44 +1,36 @@
 import $ from 'jquery';
 global.$ = global.jQuery = $;
+import { setAttachment, removeAttachment } from '../../assets/scripts/media-upload/attachment';
 
-const test123 = require('../../assets/scripts/media-upload').test123;
+document.body.innerHTML = `
+  <section class="wp-express field attachment" data-id="1">
+    <div class="img-container" />
+    <input type="hidden" name="attachment_id" />
+    <button class="btn-upload" />
+    <button class="btn-remove" />
+  </section>
+`;
 
-// https://www.grzegorowski.com/jest-tests-with-rewire-plugin/
-// https://jestjs.io/docs/en/tutorial-jquery
+test( "Set Attachment Test", () => {
+  const attachment = {
+    id: 3,
+    url: '/image.jpg',
+  };
 
-// require('../../wordpress/wp-includes/js/media-models');
+  setAttachment(1, attachment);
 
-/*
-window.$ = require('../../wordpress/wp-includes/js/jquery/jquery');
-require('../../wordpress/wp-includes/js/jquery/jquery-migrate.min');
-*/
-
-function sum(a, b) {
-  return a + b;
-}
-
-// const test123 = require('../../assets/scripts/media-upload').__get__('test');
-
-test( "hello test", () => {
-  document.body.innerHTML = `
-    <div class="wp-express field attachment" data-id="1">
-      <span id="span" />
-      <button class="btn-upload" />
-    </div>
-  `;
-
-  // require('../../assets/scripts/media-upload');
-
-  $('.btn-upload').click();
-
-
-
-  // expect($('#span').text()).toEqual('a');
-
-
-  expect(sum(1, 2)).toBe(3);
+  expect($('.wp-express .img-container').css('background-image')).toEqual('url(/image.jpg)');
+  expect(parseInt($('.wp-express input[name="attachment_id"]').val())).toEqual(3);
+  expect($('.wp-express .btn-upload').hasClass('hidden')).toEqual(true);
+  expect($('.wp-express .btn-remove').hasClass('hidden')).toEqual(false);
 });
 
-test('test123', () => {
-  expect(test123()).toEqual(true);
+test( "Remove Attachment Test", () => {
+  removeAttachment(1);
+
+  expect($('.wp-express .img-container').attr('style')).toEqual('');
+  expect($('.wp-express .img-container').hasClass('hidden')).toEqual(true);
+  expect($('.wp-express input[name="attachment_id"]').val()).toEqual('');
+  expect($('.wp-express .btn-upload').hasClass('hidden')).toEqual(false);
+  expect($('.wp-express .btn-remove').hasClass('hidden')).toEqual(true);
 });
