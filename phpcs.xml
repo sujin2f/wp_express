@@ -9,6 +9,8 @@
     <file>classes</file>
     <file>tests</file>
 
+    <exclude-pattern>*.js</exclude-pattern>
+
     <rule ref="WordPress-Core" />
 
     <rule ref="WordPress.Files.FileName.InvalidClassFileName">

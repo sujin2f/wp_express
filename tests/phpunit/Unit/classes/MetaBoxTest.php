@@ -45,14 +45,14 @@ class MetaBoxTest extends TestCase {
 
 	public function test_get_parents() {
 		$metabox  = Meta_Box::get_instance( 'Metabox 1' );
-		$actual   = $metabox->get_parents();
+		$actual   = $metabox->_get_parents();
 		$expected = array( 'post' );
 
 		$this->assertEquals( $actual, $expected );
 
 		$post_type = Post_Type::get_instance( 'Post type 1' );
 		$metabox->attach_to( $post_type );
-		$actual   = $metabox->get_parents();
+		$actual   = $metabox->_get_parents();
 		$expected = array( $post_type->get_id() );
 		$this->assertEquals( $actual, $expected );
 	}

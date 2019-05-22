@@ -8,8 +8,7 @@ document.body.innerHTML = `
     <input type="hidden" name="attachment_id" />
     <button class="btn-upload" />
     <button class="btn-remove" />
-  </section>
-`;
+  </section>`;
 
 test( "Set Attachment Test", () => {
   const attachment = {
