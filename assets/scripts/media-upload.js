@@ -1,17 +1,10 @@
-function uploadButton(id, frame) {
-  frame.on('select', () => {
-    const attachment = frame.state().get('selection').first().toJSON();
-
-
-    jQuery(`section[data-id="${id}"] .img-container`)
-      .attr('style', `background-image: url('${attachment.url}');`)
-      .removeClass('hidden');
-    jQuery(`section[data-id="${id}"] input[type="hidden"]`).val(attachment.id);
-    jQuery(`section[data-id="${id}"] .btn-upload`).addClass('hidden');
-    jQuery(`section[data-id="${id}"] .btn-remove`).removeClass('hidden');
-  });
-
-  frame.open();
+function uploadButton(id, attachment) {
+  jQuery(`section[data-id="${id}"] .img-container`)
+    .attr('style', `background-image: url('${attachment.url}');`)
+    .removeClass('hidden');
+  jQuery(`section[data-id="${id}"] input[type="hidden"]`).val(attachment.id);
+  jQuery(`section[data-id="${id}"] .btn-upload`).addClass('hidden');
+  jQuery(`section[data-id="${id}"] .btn-remove`).removeClass('hidden');
 }
 
 function removeButton(id) {
@@ -37,7 +30,12 @@ jQuery(document).ready(($) => {
 
     e.preventDefault();
 
-    uploadButton(id, frame);
+    frame.on('select', () => {
+      const attachment = frame.state().get('selection').first().toJSON();
+      uploadButton(id, attachment);
+    });
+
+    frame.open();
   });
 
   $('.wp-express.field.attachment .btn-remove').on('click', (e) => {
