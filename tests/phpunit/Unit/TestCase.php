@@ -5,12 +5,14 @@ use WP_UnitTestCase;
 use ReflectionClass;
 
 abstract class TestCase extends WP_UnitTestCase {
+	protected static $home_dir = '';
 	/**
 	 * Register the base theme and classes from the library
 	 */
 	public function setUp() {
 		parent::setUp();
-		include_once( dirname( dirname( dirname( __DIR__ ) ) ) . '/autoload.php' );
+		self::$home_dir = dirname( dirname( dirname( __DIR__ ) ) );
+		include_once( self::$home_dir . '/autoload.php' );
 	}
 
 	protected function call_private_method( $obj, string $name, array $args = array() ) {

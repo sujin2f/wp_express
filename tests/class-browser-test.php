@@ -75,6 +75,9 @@ class BrowserTest {
 		Admin::get_instance( 'By Admin' )
 			->position( $first_depth );
 
+		Admin::get_instance( 'Test depth' )
+			->position( 20 );
+
 		// Settings
 		$admin    = Admin::get_instance( 'Test Admin Page' );
 		$settings = Setting::get_instance( 'Test Setting Block' );
@@ -156,6 +159,5 @@ class BrowserTest {
 		$term_meta_input
 			->attach_to( 'category' )
 			->attach_to( 'post_tag' );
-
 	}
 }
