@@ -5,6 +5,7 @@
  * @project WP-Express
  * @since   1.0.0
  * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @todo    Attach to the existing page
  */
 
 namespace Sujin\Wordpress\WP_Express;
@@ -44,7 +45,7 @@ class Setting extends Abs_Base {
 	}
 
 	public function add( Abs_Setting_Element $field ): Setting {
-		$field->_attach_to( $this );
+		$field->attach_to( $this );
 		return $this;
 	}
 

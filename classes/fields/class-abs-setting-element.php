@@ -10,6 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
@@ -25,23 +26,32 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 		add_action( 'admin_init', array( $this, '_add_settings_field' ) );
 	}
 
+	public function get( ?int $_ = null ) {
+		return get_option( $this->get_id() );
+	}
+
 	public function _add_settings_field() {
 		if ( empty( $this->_setting ) || empty( $this->_setting->admin_page() ) ) {
 			return;
 		}
 
+		$parent_id =
+			( $this->_setting->admin_page() instanceof Admin )
+			? $this->_setting->admin_page()->get_id()
+			: $this->_setting->admin_page();
+
 		add_settings_field(
 			$this->get_id(),
 			$this->get_name(),
 			array( $this, '_render' ),
-			$this->_setting->admin_page()->get_id(),
+			$parent_id,
 			$this->_setting->get_id()
 		);
 
-		register_setting( $this->_setting->admin_page()->get_id(), $this->get_id() );
+		register_setting( $parent_id, $this->get_id() );
 	}
 
-	public function _attach_to( Setting $setting ) {
+	public function attach_to( Setting $setting ) {
 		$this->_setting           = $setting;
 		$this->_options['legend'] = $setting->get_name();
 	}
