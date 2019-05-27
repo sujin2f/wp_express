@@ -8,7 +8,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     ports:
-      - 3307:3306
+      - 3306:3306
     restart: always
     networks:
       - local_default
@@ -56,6 +56,8 @@ services:
       - 80
     networks:
       - local_default
+volumes:
+  mysql:
 networks:
   local_default:
     external: true
