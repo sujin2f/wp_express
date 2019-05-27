@@ -64,7 +64,7 @@ define( 'WP_PHP_BINARY', 'php' );
 define( 'WPLANG', '' );
 
 // Create Test database
-$conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD );
+$conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD ); // phpcs:ignore WordPress.DB.RestrictedClasses.mysql__mysqli
 if ( $conn->connect_error ) {
 	var_dump( 'Could not connect: ' . $conn->connect_error );
 	die( 'Could not connect: ' . $conn->connect_error );

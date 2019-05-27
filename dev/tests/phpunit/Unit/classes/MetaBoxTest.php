@@ -64,7 +64,7 @@ class MetaBoxTest extends TestCase {
 	}
 
 	public function test_show_meta_box() {
-		$metabox  = Meta_Box::get_instance( 'Metabox 1' )
+		$metabox = Meta_Box::get_instance( 'Metabox 1' )
 			->add( Input::get_instance( 'Input' ) )
 			->add( Textarea::get_instance( 'Textarea' ) )
 			->add( Attachment::get_instance( 'Attachment' ) )

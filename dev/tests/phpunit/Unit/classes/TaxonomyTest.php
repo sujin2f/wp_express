@@ -38,7 +38,7 @@ class TaxonomyTest extends TestCase {
 	}
 
 	public function test_get_post_types_strings() {
-		$taxonomy = Taxonomy::get_instance( 'Taxonomy Test Get Post Types' );
+		$taxonomy   = Taxonomy::get_instance( 'Taxonomy Test Get Post Types' );
 		$post_types = $this->call_private_method( $taxonomy, '_get_post_types_strings' );
 
 		$this->assertEquals( count( $post_types ), 1 );
