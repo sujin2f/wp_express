@@ -2,6 +2,15 @@
 namespace Sujin\Wordpress\WP_Express\Tests\Unit;
 
 use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Input;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Textarea;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Editor;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Attachment;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Checkbox;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Radio;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Select;
+
 use Exception;
 
 class AdminTest extends TestCase {
@@ -85,5 +94,54 @@ class AdminTest extends TestCase {
 		$this->assertEquals( get_class( $args[4][0] ), 'Sujin\Wordpress\WP_Express\Admin' );
 		$this->assertEquals( $args[4][1], '_render' );
 		$this->assertEquals( $args[5], Admin::get_instance( $menu_name )->icon() );
+	}
+
+	public function test_render() {
+		$admin      = Admin::get_instance( 'Admin Page Test Case' );
+		$setting    = Setting::get_instance( 'Test Setting' );
+		$input      = Input::get_instance( 'Input' );
+		$textarea   = Textarea::get_instance( 'Textarea' );
+		$editor     = Editor::get_instance( 'Editor' );
+		$attachment = Attachment::get_instance( 'Attachment' );
+		$checkbox   = Checkbox::get_instance( 'Checkbox' );
+		$radio      = Radio::get_instance( 'Radio' )
+			->options( array( 'Radio 1', 'Radio 2' ) );
+		$select     = Select::get_instance( 'Select' )
+			->options( array( 'Select 1', 'Select 2' ) );
+
+		$admin->add( $setting );
+		$setting
+			->add( $input )
+			->add( $textarea )
+			->add( $editor )
+			->add( $attachment )
+			->add( $checkbox )
+			->add( $radio )
+			->add( $select );
+
+		$setting->_register_setting();
+		$input->_add_settings_field();
+		$textarea->_add_settings_field();
+		$editor->_add_settings_field();
+		$attachment->_add_settings_field();
+		$checkbox->_add_settings_field();
+		$radio->_add_settings_field();
+		$select->_add_settings_field();
+
+		ob_start();
+		$admin->_render();
+		$actual = ob_get_clean();
+
+		$this->assertContains( 'id="wp-express-admin-admin-page-test-case"', $actual );
+		$this->assertContains( '<h2>Test Setting</h2>', $actual );
+		$this->assertContains( 'id="wp-express__field__input__input"', $actual );
+		$this->assertContains( 'id="wp-express__field__textarea__textarea"', $actual );
+		$this->assertContains( 'id="wp-editor-editor-container"', $actual );
+		$this->assertContains( '<th scope="row">Attachment</th>', $actual );
+		$this->assertContains( 'id="wp-express__field__checkbox__checkbox"', $actual );
+		$this->assertContains( '<label for="wp-express__field__radio__radio__radio-1">', $actual );
+		$this->assertContains( '<label for="wp-express__field__radio__radio__radio-2">', $actual );
+		$this->assertContains( 'id="wp-express__field__select__select"', $actual );
+		$this->assertContains( '<option value="Select 1">Select 1</option>', $actual );
 	}
 }

@@ -66,15 +66,15 @@ define( 'WPLANG', '' );
 // Create Test database
 $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD );
 if ( $conn->connect_error ) {
-	var_dump('Could not connect: ' . $conn->connect_error);
-    die( 'Could not connect: ' . $conn->connect_error );
+	var_dump( 'Could not connect: ' . $conn->connect_error );
+	die( 'Could not connect: ' . $conn->connect_error );
 }
 
 $db_selected = $conn->select_db( DB_NAME );
 
 if ( ! $db_selected ) {
-  $sql = 'CREATE DATABASE ' . DB_NAME;
-  $conn->query($sql);
+	$sql = 'CREATE DATABASE ' . DB_NAME;
+	$conn->query( $sql );
 }
 
 $conn->close();

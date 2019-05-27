@@ -137,6 +137,6 @@ class Taxonomy extends Abs_Base {
 			$post_types = array( self::DEFAULT_POST_TYPE );
 		}
 
-		return $post_types;
+		return array_unique( $post_types );
 	}
 }

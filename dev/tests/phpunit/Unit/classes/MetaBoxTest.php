@@ -6,6 +6,12 @@ use Sujin\Wordpress\WP_Express\Tests\Unit\TestCase;
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Post_Type;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Textarea;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Editor;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Attachment;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Checkbox;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Radio;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select;
 
 class MetaBoxTest extends TestCase {
 	public function test_register_meta_box() {
@@ -57,4 +63,29 @@ class MetaBoxTest extends TestCase {
 		$this->assertEquals( $actual, $expected );
 	}
 
+	public function test_show_meta_box() {
+		$metabox  = Meta_Box::get_instance( 'Metabox 1' )
+			->add( Input::get_instance( 'Input' ) )
+			->add( Textarea::get_instance( 'Textarea' ) )
+			->add( Attachment::get_instance( 'Attachment' ) )
+			->add( Checkbox::get_instance( 'Checkbox' ) )
+			->add( Radio::get_instance( 'Radio' )->options( array( 'Radio 1', 'Radio 2' ) ) )
+			->add( Select::get_instance( 'Select' )->options( array( 'Select 1', 'Select 2' ) ) );
+
+		ob_start();
+		$metabox->_show_meta_box();
+		$actual = ob_get_clean();
+
+		$this->assertContains( '<section class="wp-express metabox">', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--input--input"', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--textarea--textarea"', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--attachment--attachment"', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--checkbox--checkbox"', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--radio--radio"', $actual );
+		$this->assertContains( 'for="wp-express__field__radio__radio__radio-1"', $actual );
+		$this->assertContains( 'for="wp-express__field__radio__radio__radio-2"', $actual );
+		$this->assertContains( 'id="wp-express--post-meta-wrap--select--select"', $actual );
+		$this->assertContains( '<option value="Select 1">Select 1</option>', $actual );
+		$this->assertContains( '<option value="Select 2">Select 2</option>', $actual );
+	}
 }

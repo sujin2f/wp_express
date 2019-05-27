@@ -5,6 +5,7 @@
  *
  * @project WP Express
  * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @todo    None Dashicon
  */
 
 namespace Sujin\Wordpress\WP_Express;
@@ -233,7 +234,7 @@ class Admin extends Abs_Base {
 			id="<?php echo esc_attr( self::PREFIX ); ?>-admin-<?php echo esc_attr( $this->get_id() ); ?>"
 		>
 			<h2 class="page-title <?php echo esc_attr( self::PREFIX ); ?>">
-				<span class="dashicons <?php echo esc_attr( $this->_get_dashicon() ); ?>"></span>
+				<span class="dashicons <?php echo esc_attr( $this->_icon ); ?>"></span>
 				<?php echo esc_html( $this->get_name() ); ?>
 			</h2>
 
