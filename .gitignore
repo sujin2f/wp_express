@@ -71,6 +71,5 @@ typings/
 .env
 
 # Composer
-/dev/vendor
-/dev/wordpress
-
+./dev/vendor
+./dev/wordpress
