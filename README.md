@@ -15,35 +15,30 @@ Include autoload.php, and you are ready.
 ```php
 include_once( $your_path_to . '/wp_express/autoload.php' );
 ```
-## Basic Usage
-Modules you can create with WP Express are post type, taxonomy, post meta, admin page, meta box, settings api, rest endpoint, and theme customizer.
 
-You can create modules by typing this syntax.
+## Usage
 ```php
-Sujin\Wordpress\WP_Express\Admin::get_instance('Test Admin Page');
+use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Fields\Settings\Input;
+
+$root = Admin::get_instance('Test Admin Root'); // Create a new admin page
+
+Admin::get_instance( 'Test Admin' ) // Create another admin page
+	->position( $root ) // Set a position to the previous menu
+	->position( 'settings' ) // Set a position into default menu
+	->position( 'Plugin Name' ) // Set a position into any menu
+	->position( 200 ) // Set a position by number
+	->plugin( 'Akismet' ) // Create a link to the admin page into the plugin page
+	->icon( 'dashicons-buddicons-activity' ) // Set menu icon
+	
+	/*
+	 * Setting classes can be placed into the Admin
+	 */
+	->add(
+		Setting::get_instance( 'Settings Block' ) // Add a new settting block
+			->add( Input::get_instance( 'Headline' ) ) // Add a new input into the setting block
+	);
 ```
 
-This returns an instance of Admin, so you can set variables.
-```php
-Sujin\Wordpress\WP_Express\Admin::get_instance('Test Admin Page')
-  ->set_script( $url_of_script )
-  ->set_style( $url_of_stle )
-  ->set_position( 'Appearance' );
-```
-
-Calling get_instance again will return a same instance or you can store the module into variable and call it again.
-```php
-$test_admin = Sujin\Wordpress\WP_Express\Admin::get_instance('Test Admin Page')
-  ->set_plugin( 'Akismet' );
-$test_admin->set_position(1);
-```
-
-Some module has get_value method.
-```php
-$test_meta_box = Sujin\Wordpress\WP_Express\Meta_Box::get_instance('Test Meta Box')
-  ->set_post_type( 'page' );
-$test_meta = Sujin\Wordpress\WP_Express\Meta\Post_Meta::get_instance('Test Meta')
-  ->set_metabox( $test_meta_box );
-// Do other codes
-$value = $test_meta->get_value($page_id);
-```
+This is the example of creating a new admin page and set the setting block and its text input. You can create a new post type, taxonomy, and its fields like this. Other examples are in (tests/class-browser-test.php)
