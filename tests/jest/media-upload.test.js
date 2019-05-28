@@ -1,6 +1,6 @@
 import $ from 'jquery';
 global.$ = global.jQuery = $;
-import { setAttachment, removeAttachment } from '../../../assets/scripts/media-upload/attachment';
+import { setAttachment, removeAttachment } from '../../assets/scripts/media-upload/attachment';
 
 document.body.innerHTML = `
   <section class="wp-express field attachment" data-id="1">

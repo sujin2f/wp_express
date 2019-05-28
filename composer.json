@@ -16,7 +16,8 @@
     "johnpbloch/wordpress": "5.1.0",
     "wp-phpunit/wp-phpunit": "5.1",
     "phpcompatibility/phpcompatibility-wp": "*",
-    "phpcompatibility/php-compatibility": "^9.1"
+    "phpcompatibility/php-compatibility": "^9.1",
+    "php-coveralls/php-coveralls": "^2.1"
   },
   "autoload-dev": {
     "psr-4": {
