@@ -1,14 +1,16 @@
 # WordPress Express
-<p align="center">
+
+[![Build Status](https://travis-ci.org/sujin2f/wp_express.svg)](https://travis-ci.org/sujin2f/wp_express)
+[![Coverage Status](https://coveralls.io/repos/github/sujin2f/wp_express/badge.svg?branch=master)](https://coveralls.io/github/sujin2f/wp_express?branch=master)
+
+<p align="center" style="background-color:black;">
   <img src="logo.png">
 </p>
 
-NOTE This repo is in dev.
-
-Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies. This module is on development, so some of its features are not perfect. However, I think it's still quite useful. Please send me the request if you want to improve WP Express together.
+Quick Wordpress Development Module which helps you to make new admin pages, custom post types, and taxonomies.
 
 ## Initialize
-Include autoload.php, and you are ready to use wp-express!
+Include autoload.php, and you are ready.
 
 ```php
 include_once( $your_path_to . '/wp_express/autoload.php' );
