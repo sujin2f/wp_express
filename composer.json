@@ -1,5 +1,18 @@
 {
   "name": "sujin/wp-express",
+  "description": "Quick Wordpress Development Module.",
+  "keywords": ["wordpress", "development"],
+  "homepage": "https://github.com/sujin2f/wp_express",
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Sujin 수진 Choi",
+      "email": "sujin.2f@gmail.com",
+      "homepage": "http://sujinc.com",
+      "role": "Developer"
+    }
+  ],
   "config": {
     "platform": {
       "php": "7.1"
