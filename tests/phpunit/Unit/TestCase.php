@@ -37,6 +37,18 @@ abstract class TestCase extends WP_UnitTestCase {
 		return $property->getValue( $obj );
 	}
 
+	protected function set_private_property( $obj, string $name, $value ) {
+		$class    = new ReflectionClass( $obj );
+		$property = $this->get_private_property_reculsion( $class, $name );
+
+		if ( ! $property ) {
+			return null;
+		}
+
+		$property->setAccessible( true );
+		return $property->setValue( $obj, $value );
+	}
+
 	private function get_private_property_reculsion( ReflectionClass $class, string $name ) {
 		if ( $class->hasProperty( $name ) ) {
 			return $class->getProperty( $name );
@@ -49,13 +61,6 @@ abstract class TestCase extends WP_UnitTestCase {
 		}
 
 		return false;
-	}
-
-	protected function set_private_property( $obj, string $name, $value ) {
-		$class    = new ReflectionClass( $obj );
-		$property = $class->getProperty( $name );
-		$property->setAccessible( true );
-		return $property->setValue( $obj, $value );
 	}
 
 	protected function get_stylesheet_directory_uri() {

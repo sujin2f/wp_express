@@ -2,6 +2,7 @@
 namespace Sujin\Wordpress\WP_Express\Tests\Unit;
 
 use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
 class AbsBaseTest extends TestCase {
 	private $obj;
@@ -23,6 +24,18 @@ class AbsBaseTest extends TestCase {
 		$scripts = $this->get_private_property( $obj, '_scripts' );
 
 		$this->assertTrue( $scripts['wp-express-another-script-js']['is_admin'] );
+
+		// Enqueue Script
+		$wp_scripts = wp_scripts();
+
+		@$this->obj->_register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+		$this->obj->_wp_enqueue_scripts();
+
+		$this->assertEquals( $wp_scripts->queue[0], 'wp-express-script-js' );
+
+		$this->obj->_admin_enqueue_scripts();
+
+		$this->assertEquals( $wp_scripts->queue[1], 'wp-express-another-script-js' );
 	}
 
 	public function test_set_localize() {
@@ -36,7 +49,6 @@ class AbsBaseTest extends TestCase {
 	}
 
 	public function test_add_style() {
-		// TODO Admin
 		$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' );
 		$styles = $this->get_private_property( $obj, '_styles' );
 
@@ -47,6 +59,18 @@ class AbsBaseTest extends TestCase {
 		$styles = $this->get_private_property( $obj, '_styles' );
 
 		$this->assertTrue( $styles['wp-express-another-style-css']['is_admin'] );
+
+		// Enqueue Style
+		$wp_styles = wp_styles();
+
+		@$this->obj->_register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+		$this->obj->_wp_enqueue_scripts();
+
+		$this->assertEquals( $wp_styles->queue[0], 'wp-express-style-css' );
+
+		$this->obj->_admin_enqueue_scripts();
+
+		$this->assertEquals( $wp_styles->queue[1], 'wp-express-another-style-css' );
 	}
 
 	public function test_get_assets_handle() {
@@ -103,5 +127,37 @@ class AbsBaseTest extends TestCase {
 		$output = ob_get_clean();
 
 		$this->assertContains( 'Test Message', $output );
+	}
+
+	public function test_get_id() {
+		$actual = $this->obj->get_id();
+		$this->assertEquals( 'test', $actual );
+
+		// Exception
+		$this->set_private_property( $this->obj, '_id', null );
+		$actual = null;
+		try {
+			$actual = $this->obj->get_id();
+		} catch ( Initialized_Exception $e ) {
+			$actual = $e;
+		}
+
+		$this->assertTrue( $actual instanceof Initialized_Exception );
+	}
+
+	public function test_get_name() {
+		$actual = $this->obj->get_name();
+		$this->assertEquals( 'Test', $actual );
+
+		// Exception
+		$this->set_private_property( $this->obj, '_name', null );
+		$actual = null;
+		try {
+			$actual = $this->obj->get_name();
+		} catch ( Initialized_Exception $e ) {
+			$actual = $e;
+		}
+
+		$this->assertTrue( $actual instanceof Initialized_Exception );
 	}
 }
