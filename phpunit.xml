@@ -15,7 +15,17 @@
 			<directory>./tests/phpunit/Unit</directory>
 		</testsuite>
 	</testsuites>
-    <php>
-      <env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/phpunit/wp-config.php"/>
-    </php>
+	<php>
+		<env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/phpunit/wp-config.php"/>
+		<ini name="error_reporting" value="E_ALL" />
+	</php>
+	<logging>
+		<log type="coverage-clover" target="logs/clover.xml"/>
+	</logging>
+
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">tests/phpunit</directory>
+		</whitelist>
+	</filter>
 </phpunit>

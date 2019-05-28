@@ -32,7 +32,7 @@ class AdminTest extends TestCase {
 		wp_set_current_user( 1 );
 		global $menu;
 		try {
-			include_once( self::$test_dir . '/wordpress/wp-admin/menu.php' );
+			include_once( self::$home_dir . '/wordpress/wp-admin/menu.php' );
 		} catch ( Exception $_ ) {
 		}
 
