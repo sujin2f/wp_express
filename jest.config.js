@@ -1,5 +1,6 @@
 module.exports = {
   verbose: true,
   collectCoverage: true,
-  coverageDirectory: "<rootDir>/logs/coverage",
+  coverageDirectory: "<rootDir>/logs",
+  coverageReporters: ["clover"],
 };

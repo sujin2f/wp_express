@@ -20,12 +20,12 @@
 		<ini name="error_reporting" value="E_ALL" />
 	</php>
 	<logging>
-		<log type="coverage-clover" target="logs/clover.xml"/>
+		<log type="coverage-clover" target="logs/clover-phpunit.xml"/>
 	</logging>
 
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">tests/phpunit</directory>
+			<directory suffix=".php">classes</directory>
 		</whitelist>
 	</filter>
 </phpunit>
