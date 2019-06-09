@@ -111,6 +111,12 @@ class BrowserTest {
 			->menu_position( 30 );
 
 		$test = Post_Type::get_instance( 'Test' );
+		// Custom Post Type's Meta
+		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )
+			->attach_to( $test );
+
+		$meta_input = Meta_Input::get_instance( 'Input Test 0' );
+		$meta->add( $meta_input );
 
 		// Post Meta
 		$meta = Meta_Box::get_instance( 'Test Metabox' );
