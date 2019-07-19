@@ -20,11 +20,6 @@ trait Trait_Attachment {
 		'class' => 'regular-text',
 	);
 
-	public function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
-		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
-	}
-
 	public function get_image( ?int $maybe_id = null, string $size = 'full' ): string {
 		if ( empty( $this->_attributes['value'] ) ) {
 			$this->_refresh_attributes( $maybe_id );

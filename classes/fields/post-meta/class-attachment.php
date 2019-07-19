@@ -24,6 +24,7 @@ class Attachment extends Abs_Post_Meta_Element {
 	public function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
 		add_action( 'init', array( $this, '_rest_value' ) );
+		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
 	}
 
 	public function _register_meta() {

@@ -20,4 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Attachment extends Abs_Setting_Element {
 	use Trait_Attachment;
+
+	public function __construct( string $name, array $attrs = array() ) {
+		parent::__construct( $name, $attrs );
+		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
+	}
 }

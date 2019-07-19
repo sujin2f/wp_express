@@ -25,4 +25,3 @@ if ( 'wpexpress.test' === $_SERVER['SERVER_NAME'] ) {
 	include_once( __DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'class-browser-test.php' );
 	new BrowserTest();
 }
-
