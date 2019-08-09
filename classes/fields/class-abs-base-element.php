@@ -118,9 +118,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	}
 
 	public function get( ?int $maybe_id = null ) {
-		if ( empty( $this->_attributes['value'] ) ) {
-			$this->_refresh_attributes( $maybe_id );
-		}
+		$this->_refresh_attributes( $maybe_id );
 		return $this->_attributes['value'];
 	}
 }

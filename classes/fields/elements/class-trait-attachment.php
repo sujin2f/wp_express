@@ -21,9 +21,7 @@ trait Trait_Attachment {
 	);
 
 	public function get_image( ?int $maybe_id = null, string $size = 'full' ): string {
-		if ( empty( $this->_attributes['value'] ) ) {
-			$this->_refresh_attributes( $maybe_id );
-		}
+		$this->_refresh_attributes( $maybe_id );
 
 		if ( $this->_attributes['value'] ) {
 			$media_arr = wp_get_attachment_image_src( $this->_attributes['value'], $size );
