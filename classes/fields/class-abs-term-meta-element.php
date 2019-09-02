@@ -56,7 +56,7 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 
 	protected function _refresh_attributes( ?int $term_id = null ) {
 		if ( empty( $term_id ) ) {
-			if ( ! $_GET['tag_ID'] ) {
+			if ( empty( $_GET['tag_ID'] ?? null ) ) {
 				return;
 			}
 			$term_id = $_GET['tag_ID'];
