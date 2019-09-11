@@ -10,6 +10,9 @@ namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Abs_Base;
 use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Enum\Metabox_Context;
+use Sujin\Wordpress\WP_Express\Enum\Metabox_Priority;
+
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +25,8 @@ class Meta_Box extends Abs_Base {
 	private const DEFAULT_POST_TYPE = 'post';
 
 	private $_post_types = array();
+	private $_context;
+	private $_priority;
 
 	public function __construct( $name ) {
 		parent::__construct( $name );
@@ -38,13 +43,34 @@ class Meta_Box extends Abs_Base {
 		return $this;
 	}
 
+	public function context( $value ) {
+		if ( in_array( $value, Metabox_Context::values() ) ) {
+			$this->_context = $value;
+		} else {
+			$this->_context = null;
+		}
+	}
+
+	public function priority( $value ) {
+		if ( in_array( $value, Metabox_Priority::values() ) ) {
+			$this->$_priority = $value;
+		} else {
+			$this->$_priority = null;
+		}
+	}
+
 	public function _register_meta_box() {
 		$post_types = $this->_get_parents();
 		add_meta_box(
 			$this->get_id(),
 			$this->get_name(),
 			array( $this, '_show_meta_box' ),
-			$post_types
+			$post_types,
+			$this->_context ?? Metabox_Context::default(),
+			$this->$_priority ?? Metabox_Priority::default(),
+			array(
+				'__back_compat_meta_box' => true,
+			)
 		);
 	}
 
