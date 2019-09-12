@@ -19,8 +19,11 @@ class Sidebar extends Abs_Base {
 	private $_name      = '';
 	private $_metaboxes = array();
 
-	public function __construct( $name ) {
+	protected function __construct( $name ) {
 		parent::__construct( $name );
+
+		// Activate Gutenberg
+		Gutenberg::get_instance();
 	}
 
 	public function add( Meta_Box $metabox ): Sidebar {

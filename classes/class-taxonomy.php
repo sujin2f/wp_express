@@ -48,7 +48,7 @@ class Taxonomy extends Abs_Base {
 	);
 	private $_user_args  = array();
 
-	public function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name, array $arguments = array() ) {
 		parent::__construct( $name );
 
 		if ( 'tag' === strtolower( $name ) ) {

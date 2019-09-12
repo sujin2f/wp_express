@@ -14,7 +14,7 @@ abstract class Enum {
 	protected static $cache = array();
 
 	// Prevent to create an instance
-	private function __construct() {}
+	public function __construct() {}
 
 	public static function to_array(): array {
 		$class = get_called_class();
@@ -37,5 +37,10 @@ abstract class Enum {
 	public static function values() {
 		$members = static::to_array();
 		return array_values( $members );
+	}
+
+	public static function has( $value ) {
+		$members = static::values();
+		return in_array( $value, $members, true );
 	}
 }

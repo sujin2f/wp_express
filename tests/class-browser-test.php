@@ -8,6 +8,8 @@
  */
 
 use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Enum\Options_Admin_Position;
+
 use Sujin\Wordpress\WP_Express\Post_Type;
 
 use Sujin\Wordpress\WP_Express\Setting;
@@ -19,6 +21,7 @@ use Sujin\Wordpress\WP_Express\Fields\Settings\Checkbox as Option_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Radio as Option_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Select as Option_Select;
 
+use Sujin\Wordpress\WP_Express\Sidebar;
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input as Meta_Input;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Textarea as Meta_Textarea;
@@ -45,72 +48,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class BrowserTest {
 	public function __construct() {
-		// Admin Pages
-		$first_depth = Admin::get_instance( '1st Depth' )
-			->position( 100 )
-			->icon( 'dashicons-awards' );
-		Admin::get_instance( 'POSITION_OPTION' )
-			->position( Admin::POSITION_OPTION );
-		Admin::get_instance( 'POSITION_TOOLS' )
-			->position( Admin::POSITION_TOOLS );
-		Admin::get_instance( 'POSITION_USERS' )
-			->position( Admin::POSITION_USERS );
-		Admin::get_instance( 'POSITION_PLUGINS' )
-			->position( Admin::POSITION_PLUGINS );
-		Admin::get_instance( 'POSITION_COMMENTS' )
-			->position( Admin::POSITION_COMMENTS );
-		Admin::get_instance( 'POSITION_PAGES' )
-			->position( Admin::POSITION_PAGES );
-		Admin::get_instance( 'POSITION_POSTS' )
-			->position( Admin::POSITION_POSTS );
-		Admin::get_instance( 'POSITION_MEDIA' )
-			->position( Admin::POSITION_MEDIA );
-		Admin::get_instance( 'POSITION_DASHBOARD' )
-			->position( Admin::POSITION_DASHBOARD );
-		Admin::get_instance( 'POSITION_APPEARANCE' )
-			->position( Admin::POSITION_APPEARANCE );
-		Admin::get_instance( 'By Name' )
-			->position( 'Test' )
-			->plugin( 'Akismet Anti-Spam' );
-		Admin::get_instance( 'By Admin' )
-			->position( $first_depth );
-
-		Admin::get_instance( 'Test depth' )
-			->position( 20 );
-
-		// Settings
-		$admin    = Admin::get_instance( 'Test Admin Page' );
-		$settings = Setting::get_instance( 'Test Setting Block' );
-
-		$option_input      = Option_Input::get_instance( 'Input Test' );
-		$option_textarea   = Option_Textarea::get_instance( 'Textarea Test' );
-		$option_editor     = Option_Editor::get_instance( 'Editor Test' );
-		$option_attachment = Option_Attachment::get_instance( 'Attachment Test' );
-		$option_checkbox   = Option_Checkbox::get_instance( 'Checkbox Test' );
-		$option_radio      = Option_Radio::get_instance( 'Radio Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-		$option_select     = Option_Select::get_instance( 'Select Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-
-		$settings->add( $option_input )
-			->add( $option_textarea )
-			->add( $option_editor )
-			->add( $option_attachment )
-			->add( $option_checkbox )
-			->add( $option_radio )
-			->add( $option_select );
-
-		$admin->add( $settings );
-
-		$settings2     = Setting::get_instance( 'Test Setting Block 2' );
-		$option_input2 = Option_Input::get_instance( 'Input Test' );
-		$settings2->add( $option_input2 );
+		$this->test_admin_pages();
+		$this->test_settings();
 
 		// Post Type
 		$post = Post_Type::get_instance( 'post' )
 			->menu_position( 30 );
 
 		$test = Post_Type::get_instance( 'Test' );
+		// Custom Sidebar
+		Sidebar::get_instance( 'Test Sidebar' );
+
 		// Custom Post Type's Meta
 		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )
 			->attach_to( $test );
@@ -165,5 +113,91 @@ class BrowserTest {
 		$term_meta_input
 			->attach_to( 'category' )
 			->attach_to( 'post_tag' );
+	}
+
+	private function test_admin_pages() {
+		// Admin Pages
+		$first_depth = Admin::get_instance( '1st Depth' )
+			->position( 100 )
+			->icon( 'dashicons-awards' );
+
+		Admin::get_instance( 'OPTION' )
+			->position( Options_Admin_Position::OPTION );
+
+		Admin::get_instance( 'TOOLS' )
+			->position( Options_Admin_Position::TOOLS );
+
+		Admin::get_instance( 'USERS' )
+			->position( Options_Admin_Position::USERS );
+
+		Admin::get_instance( 'PLUGINS' )
+			->position( Options_Admin_Position::PLUGINS );
+
+		Admin::get_instance( 'COMMENTS' )
+			->position( Options_Admin_Position::COMMENTS );
+
+		Admin::get_instance( 'PAGES' )
+			->position( Options_Admin_Position::PAGES );
+
+		Admin::get_instance( 'POSTS' )
+			->position( Options_Admin_Position::POSTS );
+
+		Admin::get_instance( 'MEDIA' )
+			->position( Options_Admin_Position::MEDIA );
+
+		Admin::get_instance( 'DASHBOARD' )
+			->position( Options_Admin_Position::DASHBOARD );
+
+		Admin::get_instance( 'APPEARANCE' )
+			->position( Options_Admin_Position::APPEARANCE );
+
+		Admin::get_instance( 'By Name' )
+			->position( 'Test' )
+			->plugin( 'Akismet Anti-Spam' );
+
+		Admin::get_instance( 'By Admin' )
+			->position( $first_depth );
+
+		Admin::get_instance( 'Test depth' )
+			->position( 20 );
+	}
+
+	private function test_settings() {
+		$admin   = Admin::get_instance( 'Test Admin Page' );
+		$setting = Setting::get_instance( 'Test Setting Block' );
+
+		$option_input      = Option_Input::get_instance( 'Input Test' );
+		$option_textarea   = Option_Textarea::get_instance( 'Textarea Test' );
+		$option_editor     = Option_Editor::get_instance( 'Editor Test' );
+		$option_attachment = Option_Attachment::get_instance( 'Attachment Test' );
+		$option_checkbox   = Option_Checkbox::get_instance( 'Checkbox Test' );
+		$option_radio      = Option_Radio::get_instance( 'Radio Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) )
+			;
+		$option_select     = Option_Select::get_instance( 'Select Test' )
+			->options( array( 'Selection 1', 'Selection 2' ) )
+			;
+
+		$setting
+			->add( $option_input )
+			->add( $option_textarea )
+			->add( $option_editor )
+			->add( $option_attachment )
+			->add( $option_checkbox )
+			->add( $option_radio )
+			->add( $option_select )
+			;
+
+		$admin->add( $setting );
+
+		// attach_to
+		$setting2      = Setting::get_instance( 'Test Setting Block 2' );
+		$option_input2 = Option_Input::get_instance( 'Input Test 2' );
+		$option_input2->attach_to( $setting2 );
+		$setting2->attach_to( $admin );
+
+		// Orphan
+		Setting::get_instance( 'Test Setting Block 3' );
+		Option_Input::get_instance( 'Input Test 3' );
 	}
 }

@@ -28,7 +28,7 @@ class Meta_Box extends Abs_Base {
 	private $_context;
 	private $_priority;
 
-	public function __construct( $name ) {
+	protected function __construct( $name ) {
 		parent::__construct( $name );
 		add_action( 'add_meta_boxes', array( $this, '_register_meta_box' ) );
 	}

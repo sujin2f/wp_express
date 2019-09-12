@@ -22,19 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abs_Base {
 	protected const PREFIX = 'wp-express';
 
-	/*
-	 * Multiton container
-	 */
-	private static $_multiton_container = array();
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
 
-	/*
-	 * Singleton container
-	 */
-	private static $_singleton_container = array();
-
-	/*
-	 * All types have its own unique ID
-	 */
+	// All types have its own unique ID
 	private $_id = null;
 	public function get_id(): string {
 		if ( is_null( $this->_id ) ) {
@@ -43,9 +35,7 @@ abstract class Abs_Base {
 		return $this->_id;
 	}
 
-	/*
-	 * All types have its name
-	 */
+	// All types have its name
 	private $_name = null;
 	public function get_name(): string {
 		if ( is_null( $this->_name ) ) {
@@ -54,14 +44,15 @@ abstract class Abs_Base {
 		return $this->_name;
 	}
 
-	/*
-	 * All types can load assets. $_p_scripts is the pointer of the $_scripts
-	 */
+	// All types can load assets. $_p_scripts is the pointer of the $_scripts
 	private $_scripts   = array();
 	private $_p_scripts = null;
 	private $_styles    = array();
 
-	public function __construct( ?string $name = null ) {
+	// Enum of the allowed option
+	protected $allowed_option;
+
+	protected function __construct( ?string $name = null ) {
 		$this->_name = $name;
 		$this->_id   = sanitize_title( $name );
 
@@ -71,33 +62,49 @@ abstract class Abs_Base {
 		add_action( 'admin_enqueue_scripts', array( $this, '_admin_enqueue_scripts' ) );
 	}
 
+	public function __call( string $name, array $arguments ) {
+		$name = strtolower( $name );
+
+		if ( ! $this->allowed_option::has( $name ) ) {
+			return $this;
+		}
+
+		$name = '_' . $name;
+		if ( empty( $arguments ) ) {
+			return $this->{$name};
+		}
+
+		$this->{$name} = $arguments[0];
+		return $this;
+	}
+
 	/*
 	 * Supports both singleton and multiton patterns
 	 * Without argument, this returns a singleton
+	 * The first arg is its unique ID
 	 */
 	public static function get_instance( ...$args ): Abs_Base {
 		$num_args = func_num_args();
-		$caller   = get_called_class();
+		$args     = func_get_args();
 
 		## Singleton
 		if ( 0 === $num_args ) {
-			if ( ! array_key_exists( $caller, self::$_singleton_container ) ) {
-				self::$_singleton_container[ $caller ] = new $caller( $caller );
+			if ( is_null( self::$_singleton_container ) ) {
+				static::$_singleton_container = new static( ...$args );
 			}
 
-			return self::$_singleton_container[ $caller ];
+			return static::$_singleton_container;
 		}
 
 		## Multiton
-		$args = func_get_args();
-		$id   = $args[0];
-		$key  = md5( $caller . $id );
+		$id  = $args[0];
+		$key = md5( $id );
 
 		if ( ! array_key_exists( $key, self::$_multiton_container ) ) {
-			self::$_multiton_container[ $key ] = new $caller( ...$args );
+			static::$_multiton_container[ $key ] = new static( ...$args );
 		}
 
-		return self::$_multiton_container[ $key ];
+		return static::$_multiton_container[ $key ];
 	}
 
 	public function add_script( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
