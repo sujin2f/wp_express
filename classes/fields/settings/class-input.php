@@ -20,4 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Input extends Abs_Setting_Element {
 	use Trait_Input;
+
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
 }

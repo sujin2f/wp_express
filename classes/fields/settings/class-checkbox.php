@@ -21,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Checkbox extends Abs_Setting_Element {
 	use Trait_Checkbox;
 
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	protected function _render_wrapper_open() {
 		?>
 		<section

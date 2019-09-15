@@ -21,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Input extends Abs_Post_Meta_Element {
 	use Trait_Input;
 
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	public function _register_meta() {
 		$args = array(
 			'type'         => 'number' === $this->_attributes['type'] ? 'integer' : 'string',

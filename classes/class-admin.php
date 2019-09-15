@@ -19,6 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends Abs_Base {
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	private $_admin_url;
 
 	private const POSITION   = 'position';
@@ -43,7 +47,7 @@ class Admin extends Abs_Base {
 	public const POSITION_DASHBOARD  = 'dashboard';
 	public const POSITION_APPEARANCE = 'appearance';
 
-	public function __construct( string $name ) {
+	protected function __construct( string $name ) {
 		## Abs_Base
 		parent::__construct( $name );
 

@@ -21,6 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Checkbox extends Abs_Post_Meta_Element {
 	use Trait_Checkbox;
 
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	public function _register_meta() {
 		$args = array(
 			'type'         => 'boolean',

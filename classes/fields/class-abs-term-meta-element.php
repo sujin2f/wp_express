@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 	private $_taxonomies = array();
 
-	public function __construct( string $name, array $attrs = array() ) {
+	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
 		add_action( 'init', array( $this, '_register_meta' ) );
 	}

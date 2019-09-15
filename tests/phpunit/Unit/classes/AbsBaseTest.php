@@ -100,17 +100,11 @@ class AbsBaseTest extends TestCase {
 		$this->assertEquals( $instance1, $this->obj );
 		$this->assertEquals( $instance2, AbsBase_Inherited::get_instance( 'test 2' ) );
 		$this->assertEquals( 2, count( $_instance ) );
-
-		// For different class
-		$instance3 = Admin::get_instance( 'Test' );
-
-		$this->assertFalse( $instance3 === $instance1 );
 	}
 
 	public function test_get_singleton_instance() {
 		$instance  = AbsBase_Inherited::get_instance();
 		$_instance = $this->get_private_property( $instance, '_singleton_container' );
-		$_instance = array_pop( $_instance );
 
 		$this->assertEquals( $_instance, AbsBase_Inherited::get_instance() );
 	}

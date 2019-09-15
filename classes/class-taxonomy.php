@@ -19,6 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Taxonomy extends Abs_Base {
 	const DEFAULT_POST_TYPE = 'post';
 
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	public $_is_tag = false;
 
 	private $_post_types = array();
@@ -48,7 +52,7 @@ class Taxonomy extends Abs_Base {
 	);
 	private $_user_args  = array();
 
-	public function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name, array $arguments = array() ) {
 		parent::__construct( $name );
 
 		if ( 'tag' === strtolower( $name ) ) {
