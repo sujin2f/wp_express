@@ -20,4 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Radio extends Abs_Term_Meta_Element {
 	use Trait_Radio;
+
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
 }

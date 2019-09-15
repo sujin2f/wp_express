@@ -18,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Post_Type extends Abs_Base {
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
 	private $_arguments = array(
 		'label'                 => null,
 		'labels'                => null,
@@ -53,7 +57,7 @@ class Post_Type extends Abs_Base {
 
 	private $_user_args = array();
 
-	public function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name, array $arguments = array() ) {
 		parent::__construct( $name );
 
 		$this->_user_args = $arguments;

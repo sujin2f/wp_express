@@ -20,4 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Textarea extends Abs_Setting_Element {
 	use Trait_Textarea;
+
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
 }

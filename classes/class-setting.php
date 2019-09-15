@@ -22,9 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Setting extends Abs_Base {
 	public const ADMIN_PAGE = 'admin_page';
-	private $_admin_page    = 'general';
 
-	public function __construct( string $name ) {
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
+
+	private $_admin_page = 'general';
+
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
 		add_action( 'admin_init', array( $this, '_register_setting' ) );
 	}

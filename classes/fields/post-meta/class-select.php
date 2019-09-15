@@ -20,4 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Select extends Abs_Post_Meta_Element {
 	use Trait_Select;
+
+	// Single/Multiton container
+	protected static $_multiton_container  = array();
+	protected static $_singleton_container = null;
 }

@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abs_Setting_Element extends Abs_Base_Element {
 	private $_setting;
 
-	public function __construct( string $name, array $attrs = array() ) {
+	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
 		add_action( 'admin_init', array( $this, '_add_settings_field' ) );
 	}

@@ -43,7 +43,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		'on_focus'  => null,
 	);
 
-	public function __construct( string $name, array $attrs = array() ) {
+	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name );
 		$this->_parse_attributes( $attrs );
 		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );

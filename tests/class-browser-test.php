@@ -45,7 +45,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class BrowserTest {
 	public function __construct() {
-		// Admin Pages
+		$this->test_admin();
+		$this->test_setting();
+		$this->test_post_type();
+		$this->test_post_meta();
+		$this->test_taxonomy();
+	}
+
+	private function test_admin() {
 		$first_depth = Admin::get_instance( '1st Depth' )
 			->position( 100 )
 			->icon( 'dashicons-awards' );
@@ -77,7 +84,9 @@ class BrowserTest {
 
 		Admin::get_instance( 'Test depth' )
 			->position( 20 );
+	}
 
+	private function test_setting() {
 		// Settings
 		$admin    = Admin::get_instance( 'Test Admin Page' );
 		$settings = Setting::get_instance( 'Test Setting Block' );
@@ -105,11 +114,16 @@ class BrowserTest {
 		$settings2     = Setting::get_instance( 'Test Setting Block 2' );
 		$option_input2 = Option_Input::get_instance( 'Input Test' );
 		$settings2->add( $option_input2 );
+	}
 
-		// Post Type
+	private function test_post_type() {
 		$post = Post_Type::get_instance( 'post' )
 			->menu_position( 30 );
 
+		$test = Post_Type::get_instance( 'Test' );
+	}
+
+	private function test_post_meta() {
 		$test = Post_Type::get_instance( 'Test' );
 		// Custom Post Type's Meta
 		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )
@@ -138,7 +152,9 @@ class BrowserTest {
 			->add( $meta_checkbox )
 			->add( $meta_radio )
 			->add( $meta_select );
+	}
 
+	private function test_taxonomy() {
 		// Taxonomy
 		$taxonomy = Taxonomy::get_instance( 'New Taxonomy' );
 		$tag      = Taxonomy::get_instance( 'Tag' );
