@@ -74,32 +74,4 @@ trait Trait_Attachment {
 
 		wp_enqueue_media();
 	}
-
-	public function _rest_metadata( $value, $object_id, $meta_key ) {
-		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
-			return $value;
-		}
-
-		if ( $meta_key !== $this->get_id() ) {
-			return $value;
-		}
-
-		$meta_cache = wp_cache_get( $object_id, 'post_meta' );
-
-		if ( ! $meta_cache ) {
-			$meta_cache = update_meta_cache( 'post', array( $object_id ) );
-			$meta_cache = $meta_cache[ $object_id ];
-		}
-
-		if ( ! isset( $meta_cache[ $this->get_id() ] ) ) {
-			return $value;
-		}
-
-		$value = array();
-
-		foreach ( get_intermediate_image_sizes() as $size ) {
-			$value[ $size ] = wp_get_attachment_image_src( (int) $meta_cache[ $this->get_id() ][0], $size )[0];
-		}
-		return array( json_encode( $value ) );
-	}
 }

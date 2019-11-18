@@ -27,7 +27,6 @@ class Attachment extends Abs_Term_Meta_Element {
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
-		add_action( 'init', array( $this, '_rest_value' ) );
 		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
 	}
 
@@ -38,11 +37,5 @@ class Attachment extends Abs_Term_Meta_Element {
 			'show_in_rest' => true,
 		);
 		register_meta( 'post', $this->get_id(), $args );
-	}
-
-	public function _rest_value() {
-		foreach ( $this->_get_parents() as $parent ) {
-			add_filter( 'get_' . $parent . '_metadata', array( $this, '_rest_metadata' ), 15, 3 );
-		}
 	}
 }
