@@ -26,7 +26,7 @@ trait Trait_Textarea {
 		return true;
 	}
 
-	protected function render_form() {
+	protected function render_form(): void {
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field textarea">
 			<textarea

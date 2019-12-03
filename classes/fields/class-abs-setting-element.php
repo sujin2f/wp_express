@@ -56,7 +56,7 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 		$this->options['legend'] = $setting->get_name();
 	}
 
-	protected function refresh_attributes( ?int $_ = null ) {
+	protected function refresh_value( ?int $_ = null ) {
 		if ( empty( $this->attributes['value'] ) ) {
 			$this->attributes['value'] = get_option( $this->get_id() );
 		}

@@ -31,10 +31,11 @@ abstract class Abs_Base_Element extends Abs_Base {
 
 	protected $options = array(
 		'help'         => null,
-		'show_in_rest' => null,
+		'show_in_rest' => true,
 		'options'      => null,
 		'default'      => null,
 		'legend'       => null,
+		'single'       => true,
 	);
 
 	protected $js_callback = array(
@@ -67,7 +68,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		if ( $maybe_id instanceof WP_Term ) {
 			$maybe_id = $maybe_id->term_id;
 		}
-		$this->refresh_attributes( $maybe_id ?: null );
+		$this->refresh_value( $maybe_id ?: null );
 		if ( false === $this->is_available() ) {
 			return;
 		}
@@ -77,10 +78,10 @@ abstract class Abs_Base_Element extends Abs_Base {
 		$this->render_wrapper_close();
 	}
 
-	protected abstract function refresh_attributes( ?int $maybe_id = null );
+	protected abstract function refresh_value( ?int $maybe_id = null );
 	protected abstract function is_available(): bool;
 	protected abstract function render_wrapper_open();
-	protected abstract function render_form();
+	protected abstract function render_form(): void;
 	protected abstract function render_wrapper_close();
 
 	protected function render_attributes() {
@@ -118,7 +119,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	}
 
 	public function get( ?int $maybe_id = null ) {
-		$this->refresh_attributes( $maybe_id );
+		$this->refresh_value( $maybe_id );
 		return $this->attributes['value'];
 	}
 }

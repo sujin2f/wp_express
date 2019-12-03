@@ -22,7 +22,7 @@ trait Trait_Editor {
 		return true;
 	}
 
-	protected function render_form() {
+	protected function render_form(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field editor">';
 		wp_editor( stripcslashes( $this->attributes['value'] ), $this->get_id() );
 		echo '</section>';

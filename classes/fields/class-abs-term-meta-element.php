@@ -47,20 +47,20 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
-			'single'       => true,
-			'show_in_rest' => true,
+			'single'       => $this->options['single'],
+			'show_in_rest' => $this->options['show_in_rest'],
 		);
 		register_meta( 'term', $this->get_id(), $args );
 	}
 
-	protected function refresh_attributes( ?int $term_id = null ) {
+	protected function refresh_value( ?int $term_id = null ) {
 		if ( empty( $term_id ) ) {
 			if ( empty( $_GET['tag_ID'] ?? null ) ) {
 				return;
 			}
 			$term_id = $_GET['tag_ID'];
 		}
-		$this->attributes['value'] = get_term_meta( $term_id, $this->get_id(), true );
+		$this->attributes['value'] = get_term_meta( $term_id, $this->get_id(), $this->options['single'] );
 	}
 
 	protected function render_wrapper_open() {

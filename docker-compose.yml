@@ -1,15 +1,5 @@
 version: '2'
 services:
-  db:
-    container_name: mariadb
-    image: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-    volumes:
-      - mysql:/var/lib/mysql
-    ports:
-      - 3306:3306
-    restart: always
   wordpress:
     container_name: wordpress-wpexpress
     image: wordpress:latest
@@ -25,8 +15,12 @@ services:
       WORDPRESS_DEBUG: 1
       TZ: America/Toronto
     volumes:
+      - ../../Docker/wordpress/wp-content/wpexpress.test:/var/www/html/wp-content
       - ./:/var/www/html/wp-content/mu-plugins
     ports:
       - 80
-volumes:
-  mysql:
+    networks:
+      - local_default
+networks:
+  local_default:
+    external: true

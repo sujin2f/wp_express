@@ -1,10 +1,10 @@
 <?php
 /**
- * Interface for Fields
+ * Common class for post meta
  *
  * @project WP-Express
  * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields;
@@ -33,8 +33,17 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		return $this;
 	}
 
-	public function update( int $post_id, $value ) {
-		update_post_meta( $post_id, $this->get_id(), $value );
+	public function update( int $post_id, $value ): void {
+		delete_post_meta( $post_id, $this->get_id() );
+
+		if ( $this->options['single'] ) {
+			update_post_meta( $post_id, $this->get_id(), $value );
+			return;
+		}
+
+		foreach ( $value as $single_value ) {
+			add_post_meta( $post_id, $this->get_id(), $single_value );
+		}
 	}
 
 	public function get_rendered_text( string $output, ?int $maybe_id = null ): string {
@@ -66,22 +75,24 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
-			'single'       => true,
-			'show_in_rest' => true,
+			'single'       => $this->options['single'],
+			'show_in_rest' => $this->options['show_in_rest'],
 		);
 		register_meta( 'post', $this->get_id(), $args );
 	}
 
-	protected function refresh_attributes( ?int $post_id = null ) {
-		global $post;
-		if ( empty( $post_id ) ) {
-			if ( ! $post ) {
-				return;
-			}
-			$post_id = $post->ID;
+	protected function refresh_value( ?int $post_id = null ): void {
+		if ( ! empty( $post_id ) ) {
+			$this->attributes['value'] = get_post_meta( $post_id, $this->get_id(), $this->options['single'] );
+			return;
 		}
 
-		$this->attributes['value'] = get_post_meta( $post_id, $this->get_id(), true );
+		global $post;
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$this->attributes['value'] = get_post_meta( $post->ID, $this->get_id(), $this->options['single'] );
 	}
 
 	protected function render_wrapper_open() {

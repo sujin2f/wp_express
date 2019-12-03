@@ -22,7 +22,7 @@ trait Trait_Checkbox {
 		return true;
 	}
 
-	protected function render_form() {
+	protected function render_form(): void {
 		$checked = $this->attributes['value'] ? 'checked="checked"' : '';
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field checkbox">

@@ -1,22 +1,30 @@
 import { setAttachment, removeAttachment } from './media-upload/attachment';
 
-jQuery(document).ready(() => {
-  const frame = wp.media && wp.media({
-    title: 'Select or Upload Media Of Your Chosen Persuasion',
-    button: { text: 'Use this media' },
-    multiple: false,
-  });
-
-  jQuery('.wp-express.field.attachment .btn-upload').click((e) => {
-    const id = jQuery(e.currentTarget)
+jQuery(document).ready(($) => {
+  // Upload Button
+  $('.wp-express.field.attachment .btn-upload').click((e) => {
+    const id = $(e.currentTarget)
       .parent('.wp-express.field.attachment')
       .attr('data-id');
+
+    const single = $(e.currentTarget)[0]
+      .hasAttribute('data-single');
+
+    console.log(single);
+
+    // Prepare media library
+    const frame = wp.media && wp.media({
+      title: 'Select or Upload Media Of Your Chosen Persuasion',
+      button: { text: 'Select' },
+      multiple: !single,
+    });
+
 
     e.preventDefault();
 
     frame.on('select', () => {
-      const attachment = frame.state().get('selection').first().toJSON();
-      setAttachment(id, attachment);
+      const attachments = frame.state().get('selection').models;
+      setAttachment(id, attachments, single);
     });
 
     frame.open();

@@ -24,7 +24,7 @@ trait Trait_Radio {
 		return ! empty( $this->options['options'] );
 	}
 
-	protected function render_form() {
+	protected function render_form(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field radio">';
 		echo '<fieldset>';
 
