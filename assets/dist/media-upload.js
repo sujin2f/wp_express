@@ -100,34 +100,26 @@ __webpack_require__.r(__webpack_exports__);
 jQuery(document).ready(function ($) {
   // Upload Button
   $('.wp-express.field.attachment .btn-upload').click(function (e) {
-    var id = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
-    var single = $(e.currentTarget)[0].hasAttribute('data-single');
-    console.log(single); // Prepare media library
+    var parentId = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-parent');
+    var isSingle = $(e.currentTarget)[0].hasAttribute('data-single');
+    e.preventDefault(); // Prepare media library
 
     var frame = wp.media && wp.media({
       title: 'Select or Upload Media Of Your Chosen Persuasion',
       button: {
         text: 'Select'
       },
-      multiple: !single
+      multiple: !isSingle
     });
-    e.preventDefault();
+    frame.on('ready', function () {// frame.state().get('selection').add();
+    });
     frame.on('select', function () {
       var attachments = frame.state().get('selection').models;
-      Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["setAttachment"])(id, attachments, single);
+      Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["setAttachment"])(parentId, attachments, isSingle);
     });
     frame.open();
   });
-  jQuery('.wp-express.field.attachment .btn-remove').on('click', function (e) {
-    var id = jQuery(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
-    e.preventDefault();
-    Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["removeAttachment"])(id);
-  });
-  jQuery('.wp-express.field.attachment .img-container').on('click', function (e) {
-    var id = jQuery(e.currentTarget).parent('.wp-express.field.attachment').attr('data-id');
-    e.preventDefault();
-    Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["removeAttachment"])(id);
-  });
+  Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["bindRemoveAction"])(jQuery('.wp-express.field.attachment .btn-remove'));
 });
 
 /***/ }),
@@ -136,24 +128,52 @@ jQuery(document).ready(function ($) {
 /*!***************************************************!*\
   !*** ./assets/scripts/media-upload/attachment.js ***!
   \***************************************************/
-/*! exports provided: setAttachment, removeAttachment */
+/*! exports provided: removeAttachment, bindRemoveAction, setAttachment */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAttachment", function() { return setAttachment; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeAttachment", function() { return removeAttachment; });
-function setAttachment(id, attachment) {
-  jQuery("section[data-id=\"".concat(id, "\"] .img-container")).attr('style', "background-image: url('".concat(attachment.url, "');")).removeClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] input[type=\"hidden\"]")).val(attachment.id);
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-upload")).addClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-remove")).removeClass('hidden');
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindRemoveAction", function() { return bindRemoveAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAttachment", function() { return setAttachment; });
+function removeAttachment(parent, index) {
+  jQuery("section[data-parent=\"".concat(parent, "\"] .attachment__items__item[data-index=\"").concat(index, "\"]")).remove();
 }
-function removeAttachment(id) {
-  jQuery("section[data-id=\"".concat(id, "\"] .img-container")).attr('style', '').addClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] input[type=\"hidden\"]")).val('');
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-upload")).removeClass('hidden');
-  jQuery("section[data-id=\"".concat(id, "\"] .btn-remove")).addClass('hidden');
+function bindRemoveAction(dom) {
+  dom.on('click', function (e) {
+    var parent = jQuery(e.currentTarget).attr('data-parent');
+    var index = jQuery(e.currentTarget).attr('data-index');
+    e.preventDefault();
+    removeAttachment(parent, index);
+  });
+}
+
+function setSingleAttachment(parent, attachmentId, url, index) {
+  var container = jQuery('<section />').addClass('attachment__items__item').attr('data-index', index);
+  var input = jQuery('<input />').attr({
+    name: "".concat(parent, "[").concat(index, "]"),
+    type: 'hidden'
+  }).val(attachmentId);
+  var div = jQuery('<div />').addClass('img-container').css('background-image', "url('".concat(url, "')"));
+  var button = jQuery('<button />').addClass('btn-remove').attr({
+    'data-parent': parent,
+    'data-index': index
+  });
+  var span = jQuery('<span />').addClass('dashicons dashicons-no');
+  button.append(span);
+  container.append(input).append(div).append(button);
+  bindRemoveAction(button);
+  jQuery("section[data-parent=\"".concat(parent, "\"] .attachment__items")).append(container);
+}
+
+function setAttachment(parent, attachments, isSingle) {
+  jQuery("section[data-parent=\"".concat(parent, "\"] .attachment__items")).html('');
+  attachments.filter(function (_, index) {
+    return isSingle ? index === 0 : true;
+  }) // eslint-disable-line no-confusing-arrow
+  .forEach(function (attachment, index) {
+    return setSingleAttachment(parent, attachment.id, attachment.attributes.url, index);
+  });
 }
 
 /***/ })

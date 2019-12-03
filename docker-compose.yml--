@@ -2,7 +2,7 @@ version: '2'
 services:
   wordpress:
     container_name: wordpress-wpexpress
-    image: sujin2f/wordpress:latest
+    image: wordpress:latest
     external_links:
       - mariadb:mysql
       - mailhog
@@ -14,17 +14,13 @@ services:
       WORDPRESS_DB_PASSWORD: password
       WORDPRESS_DEBUG: 1
       TZ: America/Toronto
-    networks:
-      - local_default
     volumes:
+      - ../../Docker/wordpress/wp-content/wpexpress.test:/var/www/html/wp-content
       - ./:/var/www/html/wp-content/mu-plugins
-      - ../../Docker/plugins:/var/www/html/wp-content/plugins
-      - ../../Docker/themes:/var/www/html/wp-content/themes
-      - ../../Docker/uploads:/var/www/html/wp-content/uploads
     ports:
       - 80
-volumes:
-  mysql:
+    networks:
+      - local_default
 networks:
   local_default:
     external: true

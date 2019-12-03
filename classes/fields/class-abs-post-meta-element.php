@@ -35,8 +35,8 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 
 	public function update( int $post_id, $value ): void {
 		delete_post_meta( $post_id, $this->get_id() );
-
 		if ( $this->options['single'] ) {
+			$value = is_array( $value ) ? $value[0] : $value;
 			update_post_meta( $post_id, $this->get_id(), $value );
 			return;
 		}
@@ -64,7 +64,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 
 		$post = get_post( $post_id );
 
-		foreach ( $this->metabox->_get_parents() as $parent_post_type ) {
+		foreach ( $this->metabox->get_parents() as $parent_post_type ) {
 			if ( $post->post_type === $parent_post_type ) {
 				$value = $_POST[ $this->get_id() ] ?? false;
 				$this->update( $post_id, $value );

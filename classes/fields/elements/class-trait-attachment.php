@@ -62,39 +62,41 @@ trait Trait_Attachment {
 		$upload_link = get_upload_iframe_src();
 		$is_single   = $this->options['single'];
 		$value       = $this->options['single'] ? array( $this->attributes['value'] ) : $this->attributes['value'];
-
-		$media_arr   = wp_get_attachment_image_src( $this->attributes['value'] );
-		$img          = $this->attributes['value'] ? esc_attr( $media_arr[0] ) : '';
-		$class_upload = $img ? 'hidden' : '';
-		$class_remove = empty( $img ) ? 'hidden' : '';
-
 		?>
 		<section
 			class="<?php echo esc_attr( self::PREFIX ); ?> field attachment"
-			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
+			data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
 		>
-			<section class="attachment__single">
+			<section class="attachment__items">
 				<?php
 				foreach ( $value as $key => $attachment_id ) :
 					$img_src = wp_get_attachment_image_src( $attachment_id )[0];
+
+					if ( empty( $img_src ) ) {
+						continue;
+					}
+
 					?>
-					<input
-						name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $key ); ?>]"
-						type="hidden"
-						value="<?php echo esc_attr( $attachment_id ); ?>"
-					/>
+					<section class="attachment__items__item" data-index="<?php echo esc_attr( $key ); ?>">
+						<input
+							name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $key ); ?>]"
+							type="hidden"
+							value="<?php echo esc_attr( $attachment_id ); ?>"
+						/>
 
-					<div
-						class="img-container"
-						style="background-image: url('<?php echo $img_src; ?>');"
-					></div>
+						<div
+							class="img-container"
+							style="background-image: url('<?php echo $img_src; ?>');"
+						></div>
 
-					<button
-						class="<?php echo esc_attr( $class_remove ); ?> btn-remove"
-						data-key="<?php echo esc_attr( $key ); ?>"
-					>
-						<span class="dashicons dashicons-no"></span>
-					</button>
+						<button
+							class="btn-remove"
+							data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
+							data-index="<?php echo esc_attr( $key ); ?>"
+						>
+							<span class="dashicons dashicons-no"></span>
+						</button>
+					</section>
 				<?php endforeach; ?>
 			</section>
 
