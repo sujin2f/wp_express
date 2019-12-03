@@ -23,41 +23,41 @@ abstract class Abs_Base {
 	protected const PREFIX = 'wp-express';
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
 	/*
 	 * All types have its own unique ID
 	 */
-	private $_id = null;
+	private $id = null;
 	public function get_id(): string {
-		if ( is_null( $this->_id ) ) {
+		if ( is_null( $this->id ) ) {
 			throw new Initialized_Exception();
 		}
-		return $this->_id;
+		return $this->id;
 	}
 
 	/*
 	 * All types have its name
 	 */
-	private $_name = null;
+	private $name = null;
 	public function get_name(): string {
-		if ( is_null( $this->_name ) ) {
+		if ( is_null( $this->name ) ) {
 			throw new Initialized_Exception();
 		}
-		return $this->_name;
+		return $this->name;
 	}
 
 	/*
 	 * All types can load assets. $_p_scripts is the pointer of the $_scripts
 	 */
-	private $_scripts   = array();
-	private $_p_scripts = null;
-	private $_styles    = array();
+	private $scripts   = array();
+	private $p_scripts = null;
+	private $styles    = array();
 
 	protected function __construct( ?string $name = null ) {
-		$this->_name = $name;
-		$this->_id   = sanitize_title( $name );
+		$this->name = $name;
+		$this->id   = sanitize_title( $name );
 
 		## Assets
 		add_action( 'init', array( $this, '_register_assets' ) );
@@ -76,31 +76,31 @@ abstract class Abs_Base {
 
 		// Singleton
 		if ( 0 === $num_args ) {
-			if ( is_null( self::$_singleton_container ) ) {
-				static::$_singleton_container = new static( $caller );
+			if ( is_null( self::$singleton_container ) ) {
+				static::$singleton_container = new static( $caller );
 			}
-			return static::$_singleton_container;
+			return static::$singleton_container;
 		}
 
 		// Multiton
 		$id  = $args[0];
 		$key = md5( $id );
-		if ( ! array_key_exists( $key, self::$_multiton_container ) ) {
-			static::$_multiton_container[ $key ] = new static( ...$args );
+		if ( ! array_key_exists( $key, self::$multiton_container ) ) {
+			static::$multiton_container[ $key ] = new static( ...$args );
 		}
-		return static::$_multiton_container[ $key ];
+		return static::$multiton_container[ $key ];
 	}
 
 	public function add_script( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
 		$handle                    = $this->_get_assets_handle( $url );
-		$attr                      = $this->_scripts[ $handle ] ?? array();
+		$attr                      = $this->scripts[ $handle ] ?? array();
 		$attr_new                  = array(
 			'url'       => $url,
 			'is_admin'  => $is_admin,
 			'is_footer' => $is_footer,
 		);
-		$this->_scripts[ $handle ] = array_merge( $attr, $attr_new );
-		$this->_p_scripts          = $handle;
+		$this->scripts[ $handle ] = array_merge( $attr, $attr_new );
+		$this->p_scripts          = $handle;
 
 		return $this;
 	}
@@ -111,14 +111,14 @@ abstract class Abs_Base {
 			'translation-key' => $name,
 		);
 
-		$this->_scripts[ $this->_p_scripts ] = array_merge( $this->_scripts[ $this->_p_scripts ], $translation );
+		$this->scripts[ $this->p_scripts ] = array_merge( $this->scripts[ $this->p_scripts ], $translation );
 
 		return $this;
 	}
 
 	public function add_style( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
 		$handle                   = $this->_get_assets_handle( $url );
-		$this->_styles[ $handle ] = array(
+		$this->styles[ $handle ] = array(
 			'url'       => $url,
 			'is_admin'  => $is_admin,
 			'is_footer' => $is_footer,
@@ -129,7 +129,7 @@ abstract class Abs_Base {
 
 	public function _register_assets() {
 		## Scripts
-		foreach ( $this->_scripts as $handle => $data ) {
+		foreach ( $this->scripts as $handle => $data ) {
 			wp_register_script( $handle, $data['url'], null, $this->_get_filetime( $data['url'] ), $data['is_footer'] );
 
 			if ( ! empty( $data['translation'] ) ) {
@@ -138,7 +138,7 @@ abstract class Abs_Base {
 		}
 
 		## Styles
-		foreach ( $this->_styles as $handle => $data ) {
+		foreach ( $this->styles as $handle => $data ) {
 			wp_register_style( $handle, $data['url'], null, $this->_get_filetime( $data['url'] ), $data['is_footer'] );
 		}
 	}
@@ -147,13 +147,13 @@ abstract class Abs_Base {
 	 * Actions: Front pages
 	 */
 	public function _wp_enqueue_scripts() {
-		foreach ( $this->_scripts as $handle => $data ) {
+		foreach ( $this->scripts as $handle => $data ) {
 			if ( ! $data['is_admin'] ) {
 				wp_enqueue_script( $handle );
 			}
 		}
 
-		foreach ( $this->_styles as $handle => $data ) {
+		foreach ( $this->styles as $handle => $data ) {
 			if ( ! $data['is_admin'] ) {
 				wp_enqueue_style( $handle );
 			}
@@ -164,13 +164,13 @@ abstract class Abs_Base {
 	 * Actions: Admin pages
 	 */
 	public function _admin_enqueue_scripts() {
-		foreach ( $this->_scripts as $handle => $data ) {
+		foreach ( $this->scripts as $handle => $data ) {
 			if ( $data['is_admin'] ) {
 				wp_enqueue_script( $handle );
 			}
 		}
 
-		foreach ( $this->_styles as $handle => $data ) {
+		foreach ( $this->styles as $handle => $data ) {
 			if ( $data['is_admin'] ) {
 				wp_enqueue_style( $handle );
 			}

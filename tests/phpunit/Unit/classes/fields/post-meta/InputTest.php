@@ -9,7 +9,7 @@ class InputTest extends TestCase {
 		$field = Input::get_instance( 'Field 1' );
 
 		ob_start();
-		$field->_render();
+		$field->render();
 		$output = ob_get_clean();
 		$this->assertContains( 'field-1', $output );
 	}

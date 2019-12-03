@@ -16,7 +16,7 @@ use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select;
 class MetaBoxTest extends TestCase {
 	public function test_register_meta_box() {
 		$metabox = Meta_Box::get_instance( 'Metabox 1' );
-		$metabox->_register_meta_box();
+		$metabox->register_meta_box();
 
 		global $wp_meta_boxes;
 
@@ -28,7 +28,7 @@ class MetaBoxTest extends TestCase {
 		$post_type = Post_Type::get_instance( 'Post type 1' );
 		$metabox->attach_to( $post_type );
 
-		$post_types = $this->get_private_property( $metabox, '_post_types' );
+		$post_types = $this->get_private_property( $metabox, 'post_types' );
 
 		$this->assertEquals( $post_type->get_id(), $post_types[0]->get_id() );
 	}
@@ -37,7 +37,7 @@ class MetaBoxTest extends TestCase {
 		ob_start();
 		$metabox = Meta_Box::get_instance( 'Metabox 3' )
 			->add( Input::get_instance( 'Text Input' ) )
-			->_show_meta_box();
+			->show_meta_box();
 		$html    = ob_get_clean();
 
 		$expected1 = '_nonce';
@@ -51,14 +51,14 @@ class MetaBoxTest extends TestCase {
 
 	public function test_get_parents() {
 		$metabox  = Meta_Box::get_instance( 'Metabox 1' );
-		$actual   = $metabox->_get_parents();
+		$actual   = $metabox->get_parents();
 		$expected = array( 'post' );
 
 		$this->assertEquals( $actual, $expected );
 
 		$post_type = Post_Type::get_instance( 'Post type 1' );
 		$metabox->attach_to( $post_type );
-		$actual   = $metabox->_get_parents();
+		$actual   = $metabox->get_parents();
 		$expected = array( $post_type->get_id() );
 		$this->assertEquals( $actual, $expected );
 	}
@@ -73,7 +73,7 @@ class MetaBoxTest extends TestCase {
 			->add( Select::get_instance( 'Select' )->options( array( 'Select 1', 'Select 2' ) ) );
 
 		ob_start();
-		$metabox->_show_meta_box();
+		$metabox->show_meta_box();
 		$actual = ob_get_clean();
 
 		$this->assertContains( '<section class="wp-express metabox">', $actual );

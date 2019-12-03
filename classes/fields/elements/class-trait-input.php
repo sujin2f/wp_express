@@ -16,22 +16,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Input {
-	protected $_defaults_attributes = array(
+	protected $defaults_attributes = array(
 		'class' => 'regular-text code',
 		'type'  => 'text',
 	);
 
-	protected function _is_available(): bool {
+	protected function is_available(): bool {
 		return true;
 	}
 
-	protected function _render_form() {
+	protected function render_form() {
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field input">
 			<input
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__input__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->_render_attributes(); ?>
+				<?php $this->render_attributes(); ?>
 			/>
 		</section>
 		<?php

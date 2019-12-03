@@ -17,7 +17,10 @@ if ( ! defined( 'WP_EXPRESS_ASSET_URL' ) ) {
 }
 
 include_once( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'classes/class-autoloader.php' );
-$class_loader = new Sujin\Wordpress\WP_Express\Autoloader();
+$class_loader = new Sujin\Wordpress\WP_Express\Autoloader(
+	'Sujin\\Wordpress\\WP_Express',
+	dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'classes',
+);
 $class_loader->register();
 
 // Browser Test

@@ -16,30 +16,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Attachment {
-	protected $_defaults_attributes = array(
+	protected $defaults_attributes = array(
 		'class' => 'regular-text',
 	);
 
 	public function get_image( ?int $maybe_id = null, string $size = 'full' ): string {
-		$this->_refresh_attributes( $maybe_id );
+		$this->refresh_attributes( $maybe_id );
 
-		if ( $this->_attributes['value'] ) {
-			$media_arr = wp_get_attachment_image_src( $this->_attributes['value'], $size );
+		if ( $this->attributes['value'] ) {
+			$media_arr = wp_get_attachment_image_src( $this->attributes['value'], $size );
 			return $media_arr[0];
 		}
 
 		return '';
 	}
 
-	protected function _is_available(): bool {
+	protected function is_available(): bool {
 		return true;
 	}
 
-	protected function _render_form() {
+	protected function render_form() {
 		$upload_link = get_upload_iframe_src();
-		$media_arr   = wp_get_attachment_image_src( $this->_attributes['value'] );
+		$media_arr   = wp_get_attachment_image_src( $this->attributes['value'] );
 
-		$img          = $this->_attributes['value'] ? esc_attr( $media_arr[0] ) : '';
+		$img          = $this->attributes['value'] ? esc_attr( $media_arr[0] ) : '';
 		$class_upload = $img ? 'hidden' : '';
 		$class_remove = empty( $img ) ? 'hidden' : '';
 
@@ -67,7 +67,7 @@ trait Trait_Attachment {
 			<input
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
 				type="hidden"
-				value="<?php echo esc_attr( $this->_attributes['value'] ); ?>"
+				value="<?php echo esc_attr( $this->attributes['value'] ); ?>"
 			/>
 		</section>
 		<?php

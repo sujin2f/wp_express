@@ -24,20 +24,19 @@ class Setting extends Abs_Base {
 	public const ADMIN_PAGE = 'admin_page';
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	private $_admin_page = 'general';
+	private $admin_page = 'general';
 
 	protected function __construct( string $name ) {
 		parent::__construct( $name );
-		add_action( 'admin_init', array( $this, '_register_setting' ) );
+		add_action( 'admin_init', array( $this, 'register_setting' ) );
 	}
 
 	public function __call( string $name, array $arguments ) {
 		switch ( strtolower( $name ) ) {
 			case self::ADMIN_PAGE:
-				$name = '_' . $name;
 				if ( empty( $arguments ) ) {
 					return $this->{$name};
 				}
@@ -54,8 +53,8 @@ class Setting extends Abs_Base {
 		return $this;
 	}
 
-	public function _register_setting() {
-		$admin_page = ( $this->_admin_page instanceof Admin ) ? $this->_admin_page->get_id() : $this->_admin_page;
+	public function register_setting() {
+		$admin_page = ( $this->admin_page instanceof Admin ) ? $this->admin_page->get_id() : $this->admin_page;
 		add_settings_section( $this->get_id(), $this->get_name(), null, $admin_page );
 	}
 }

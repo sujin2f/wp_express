@@ -19,10 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Post_Type extends Abs_Base {
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	private $_arguments = array(
+	private $arguments = array(
 		'label'                 => null,
 		'labels'                => null,
 		'description'           => null,
@@ -55,37 +55,37 @@ class Post_Type extends Abs_Base {
 		'_edit_link'            => null,
 	);
 
-	private $_user_args = array();
+	private $user_args = array();
 
 	protected function __construct( string $name, array $arguments = array() ) {
 		parent::__construct( $name );
 
-		$this->_user_args = $arguments;
+		$this->user_args = $arguments;
 
 		# Label
 		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->_arguments['label'] = $name;
+			$this->arguments['label'] = $name;
 		}
 
 		# Supports
 		if ( false === array_key_exists( 'supports', $arguments ) ) {
-			$this->_arguments['supports'] = array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments', 'revisions' );
+			$this->arguments['supports'] = array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments', 'revisions' );
 		}
 
-		$this->_arguments = array_merge( $this->_arguments, $arguments );
+		$this->arguments = array_merge( $this->arguments, $arguments );
 
-		add_action( 'init', array( $this, '_register_post_type' ) );
-		add_action( 'rest_api_init', array( $this, '_meta_in_rest' ) );
+		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'rest_api_init', array( $this, 'meta_in_rest' ) );
 	}
 
 	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->_arguments ) ) {
+		if ( array_key_exists( strtolower( $name ), $this->arguments ) ) {
 			if ( empty( $arguments ) ) {
-				return $this->_arguments[ $name ];
+				return $this->arguments[ $name ];
 			}
 
-			$this->_arguments[ $name ] = $arguments[0];
-			$this->_user_args[ $name ] = $arguments[0];
+			$this->arguments[ $name ] = $arguments[0];
+			$this->user_args[ $name ] = $arguments[0];
 		}
 
 		return $this;
@@ -96,11 +96,11 @@ class Post_Type extends Abs_Base {
 		return $this;
 	}
 
-	public function _register_post_type() {
+	public function register_post_type() {
 		$arguments = (array) get_post_type_object( $this->get_id() );
 
 		if ( empty( $arguments ) ) {
-			register_post_type( $this->get_id(), array_filter( $this->_arguments ) );
+			register_post_type( $this->get_id(), array_filter( $this->arguments ) );
 			return;
 		}
 
@@ -112,11 +112,11 @@ class Post_Type extends Abs_Base {
 		$supports              = get_all_post_type_supports( $this->get_id() );
 		$arguments['supports'] = array_keys( $supports );
 
-		$arguments = array_merge( $arguments, $this->_user_args );
+		$arguments = array_merge( $arguments, $this->user_args );
 		register_post_type( $this->get_id(), $arguments );
 	}
 
-	public function _meta_in_rest() {
+	public function meta_in_rest() {
 		register_rest_field(
 			$this->get_id(),
 			'meta',

@@ -1,67 +1,103 @@
 <?php
 /**
- * Class Autoloader
+ * Autoloader
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @param   string $namespace
+ * @param   string $base_dir
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 class Autoloader {
-	private $namespace = 'Sujin\\Wordpress\\WP_Express\\';
-	private $source_dir;
+	/**
+	 * Base namespace
+	 *
+	 * @var string
+	 */
+	private $namespace;
 
-	public function __construct() {
-		$this->source_dir = dirname( __FILE__ );
+	/**
+	 * Base directory
+	 *
+	 * @var string
+	 */
+	private $base_dir;
+
+	public function __construct( string $namespace, string $base_dir ) {
+		$this->namespace = $namespace;
+		$this->base_dir  = $base_dir;
 	}
 
-	public function load_class_file( string $class_name ) {
+	/**
+	 * Returns the target paths
+	 *
+	 * @return array sting extension and array path
+	 */
+	private function get_class_path( string $class_name ): ?array {
 		if ( stripos( $class_name, $this->namespace ) === false ) {
+			return null;
+		}
+
+		$path = array(
+			'extension' => '.php',
+			// Delete Namespace and divide
+			'path'      => explode( '\\', str_replace( $this->namespace . '\\', '', $class_name ) ),
+		);
+
+		// Unit test file
+		if ( strpos( $class_name, '\\Unit_Test' ) === strlen( $class_name ) - 10 ) {
+			$path['extension'] = '.spec.php';
+			array_pop( $path['path'] );
+		}
+
+		$path['path'] = array_map( array( $this, 'map_convert_path' ), $path['path'] );
+		array_unshift( $path['path'], $this->base_dir );
+
+		return $path;
+	}
+
+	/**
+	 * Entry point
+	 */
+	public function load_class_file( string $class_name ): void {
+		$path = $this->get_class_path( $class_name );
+
+		if ( ! $path ) {
 			return;
 		}
 
-		// Delete Namespace and divide
-		$path      = str_replace( $this->namespace, '', $class_name ) . '.php';
-		$path      = explode( '\\', $path );
-		$file_name = array_pop( $path );
+		$index = implode( DIRECTORY_SEPARATOR, $path['path'] ) . DIRECTORY_SEPARATOR . 'index' . $path['extension'];
+		$file  = array_pop( $path['path'] );
+		$file  = implode( DIRECTORY_SEPARATOR, $path['path'] ) . DIRECTORY_SEPARATOR . 'class-' . $file . $path['extension'];
 
-		// Change Path to path-name/path-name
-		$path = array_map( array( $this, 'map_convert_path' ), $path );
-		$path = implode( DIRECTORY_SEPARATOR, $path );
+		if ( is_readable( $file ) ) {
+			include_once( $file );
+			return;
+		}
 
-		// Change Filename to class-class-name.php
-		$file_name = strtolower( $file_name );
-		$file_name = str_replace( '_', '-', $file_name );
-		$file_name = 'class-' . $file_name;
-
-		$path = array( $this->source_dir, $path, $file_name );
-		$path = array_filter( $path );
-		$path = implode( DIRECTORY_SEPARATOR, $path );
-
-		if ( is_readable( $path ) ) {
-			include_once( $path );
+		if ( is_readable( $index ) ) {
+			include_once( $index );
+			return;
 		}
 	}
 
-	public function map_convert_path( string $string ): string {
+	/**
+	 * Callback method of path conversion
+	 */
+	private function map_convert_path( string $string ): string {
 		$segments = array();
 
-		preg_match_all( '/((?:^|[A-Z])[a-z]+)/', $string, $matches );
-		foreach ( $matches[0] as $match ) {
-			$segments[] = strtolower( $match );
-		}
+		preg_match_all( '/((?:^|[A-Z])[a-z0-9]+)/', $string, $matches );
 
-		return implode( '-', $segments );
+		return strtolower( implode( '-', $matches[0] ) );
 	}
 
-	public function register() {
+	/**
+	 * Entry point from outside
+	 */
+	public function register(): void {
 		spl_autoload_register( array( $this, 'load_class_file' ) );
 	}
 }

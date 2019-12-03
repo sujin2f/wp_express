@@ -22,6 +22,6 @@ class Select extends Abs_Setting_Element {
 	use Trait_Select;
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 }

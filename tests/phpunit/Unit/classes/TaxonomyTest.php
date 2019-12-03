@@ -19,7 +19,7 @@ class TaxonomyTest extends TestCase {
 
 		// Create
 		$taxonomy = Taxonomy::get_instance( 'Taxonomy Test' );
-		$taxonomy->_register_taxonomy();
+		$taxonomy->register_taxonomy();
 
 		$this->assertTrue( array_key_exists( $taxonomy->get_id(), $wp_taxonomies ) );
 
@@ -30,7 +30,7 @@ class TaxonomyTest extends TestCase {
 		// Custom Post Type
 		$post_type = Post_Type::get_instance( 'Post_Type Test' );
 		$taxonomy->attach_to( $post_type );
-		$taxonomy->_register_taxonomy();
+		$taxonomy->register_taxonomy();
 
 		$actual   = $wp_taxonomies[ $taxonomy->get_id() ]->object_type;
 		$expected = array( 'post', $post_type->get_id() );
@@ -39,20 +39,20 @@ class TaxonomyTest extends TestCase {
 
 	public function test_get_post_types_strings() {
 		$taxonomy   = Taxonomy::get_instance( 'Taxonomy Test Get Post Types' );
-		$post_types = $this->call_private_method( $taxonomy, '_get_post_types_strings' );
+		$post_types = $this->call_private_method( $taxonomy, 'get_post_types_strings' );
 
 		$this->assertEquals( count( $post_types ), 1 );
 		$this->assertEquals( $post_types[0], 'post' );
 
 		$post_type = Post_Type::get_instance( 'Post_Type Test' );
 		$taxonomy->attach_to( $post_type );
-		$post_types = $this->call_private_method( $taxonomy, '_get_post_types_strings' );
+		$post_types = $this->call_private_method( $taxonomy, 'get_post_types_strings' );
 
 		$this->assertEquals( count( $post_types ), 1 );
 		$this->assertEquals( $post_types[0], 'post_type-test' );
 
 		$taxonomy->attach_to( 'post' );
-		$post_types = $this->call_private_method( $taxonomy, '_get_post_types_strings' );
+		$post_types = $this->call_private_method( $taxonomy, 'get_post_types_strings' );
 
 		$this->assertEquals( count( $post_types ), 2 );
 		$this->assertEquals( $post_types[0], 'post_type-test' );

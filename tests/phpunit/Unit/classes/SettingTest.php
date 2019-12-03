@@ -12,7 +12,7 @@ class SettingTest extends TestCase {
 		$settings   = Setting::get_instance( 'Setting Test' );
 		$settings
 			->admin_page( $admin_page )
-			->_register_setting();
+			->register_setting();
 
 		global $wp_settings_sections;
 
@@ -29,7 +29,7 @@ class SettingTest extends TestCase {
 			->admin_page( $admin_page )
 			->add( $input );
 
-		$_setting = $this->get_private_property( $input, '_setting' );
+		$_setting = $this->get_private_property( $input, 'setting' );
 
 		$this->assertEquals( $admin_page, $setting->admin_page() );
 		$this->assertEquals( $setting, $_setting );

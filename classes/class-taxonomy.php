@@ -20,13 +20,13 @@ class Taxonomy extends Abs_Base {
 	const DEFAULT_POST_TYPE = 'post';
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	public $_is_tag = false;
+	public $is_tag = false;
 
-	private $_post_types = array();
-	private $_arguments  = array(
+	private $post_types = array();
+	private $arguments  = array(
 		'label'                 => null,
 		'labels'                => null,
 		'public'                => true,
@@ -50,35 +50,35 @@ class Taxonomy extends Abs_Base {
 		'sort'                  => null,
 		'_builtin'              => null,
 	);
-	private $_user_args  = array();
+	private $user_args  = array();
 
 	protected function __construct( string $name, array $arguments = array() ) {
 		parent::__construct( $name );
 
 		if ( 'tag' === strtolower( $name ) ) {
-			$this->_is_tag = 'post_tag';
+			$this->is_tag = 'post_tag';
 		}
 
-		$this->_user_args = $arguments;
+		$this->user_args = $arguments;
 
 		# Label
 		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->_arguments['label'] = $name;
+			$this->arguments['label'] = $name;
 		}
 
-		$this->_arguments = array_merge( $this->_arguments, $arguments );
+		$this->arguments = array_merge( $this->arguments, $arguments );
 
-		add_action( 'init', array( $this, '_register_taxonomy' ), 25 );
+		add_action( 'init', array( $this, 'register_taxonomy' ), 25 );
 	}
 
 	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->_arguments ) ) {
+		if ( array_key_exists( strtolower( $name ), $this->arguments ) ) {
 			if ( empty( $arguments ) ) {
-				return $this->_arguments[ $name ];
+				return $this->arguments[ $name ];
 			}
 
-			$this->_arguments[ $name ] = $arguments[0];
-			$this->_user_args[ $name ] = $arguments[0];
+			$this->arguments[ $name ] = $arguments[0];
+			$this->user_args[ $name ] = $arguments[0];
 		}
 
 		return $this;
@@ -88,20 +88,20 @@ class Taxonomy extends Abs_Base {
 		if ( is_null( parent::get_id() ) ) {
 			throw new Initialized_Exception();
 		}
-		return $this->_is_tag ?: parent::get_id();
+		return $this->is_tag ?: parent::get_id();
 	}
 
-	public function _register_taxonomy() {
+	public function register_taxonomy() {
 		global $wp_taxonomies;
 
 		if ( ! array_key_exists( $this->get_id(), $wp_taxonomies ) ) {
-			register_taxonomy( $this->get_id(), $this->_get_post_types_strings(), array_filter( $this->_arguments ) );
+			register_taxonomy( $this->get_id(), $this->get_post_types_strings(), array_filter( $this->arguments ) );
 			return;
 		}
 
 		$arguments = (array) $wp_taxonomies[ $this->get_id() ];
 
-		$object_type = array_unique( array_merge( $arguments['object_type'], $this->_get_post_types_strings() ) );
+		$object_type = array_unique( array_merge( $arguments['object_type'], $this->get_post_types_strings() ) );
 		## Capability
 		$arguments['capabilities'] = array_keys( (array) $arguments['cap'] );
 
@@ -109,7 +109,7 @@ class Taxonomy extends Abs_Base {
 		unset( $arguments['object_type'] );
 		unset( $arguments['cap'] );
 
-		register_taxonomy( $this->get_id(), $object_type, array_merge( $arguments, $this->_user_args ) );
+		register_taxonomy( $this->get_id(), $object_type, array_merge( $arguments, $this->user_args ) );
 	}
 
 	public function add( Abs_Term_Meta_Element $field ): Taxonomy {
@@ -118,22 +118,22 @@ class Taxonomy extends Abs_Base {
 	}
 
 	public function attach_to( $post_type ): Taxonomy {
-		$this->_post_types[] = $post_type;
+		$this->post_types[] = $post_type;
 		return $this;
 	}
 
 	// TODO
-	public function _manage_columns() {
+	public function manage_columns() {
 	}
 
 	// TODO
-	public function _manage_custiom_columns() {
+	public function manage_custiom_columns() {
 	}
 
-	private function _get_post_types_strings(): array {
+	private function get_post_types_strings(): array {
 		$post_types = array();
 
-		foreach ( $this->_post_types as $post_type ) {
+		foreach ( $this->post_types as $post_type ) {
 			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
 		}
 

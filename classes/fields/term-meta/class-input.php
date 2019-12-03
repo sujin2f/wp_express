@@ -22,12 +22,12 @@ class Input extends Abs_Term_Meta_Element {
 	use Trait_Input;
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	public function _register_meta() {
+	public function register_meta() {
 		$args = array(
-			'type'         => 'number' === $this->_attributes['type'] ? 'integer' : 'string',
+			'type'         => 'number' === $this->attributes['type'] ? 'integer' : 'string',
 			'single'       => true,
 			'show_in_rest' => true,
 		);

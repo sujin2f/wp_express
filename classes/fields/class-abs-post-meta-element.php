@@ -18,18 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
-	protected $_metabox;
+	protected $metabox;
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
-		add_action( 'init', array( $this, '_register_meta' ) );
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
 	public function attach_to( Meta_Box $metabox ): Abs_Post_Meta_Element {
-		add_filter( self::PREFIX . '_meta_box_' . $metabox->get_id(), array( $this, '_get_rendered_text' ) );
-		add_action( 'save_post', array( $this, '_save_post' ) );
+		add_filter( self::PREFIX . '_meta_box_' . $metabox->get_id(), array( $this, 'get_rendered_text' ) );
+		add_action( 'save_post', array( $this, 'save_post' ) );
 
-		$this->_metabox = $metabox;
+		$this->metabox = $metabox;
 		return $this;
 	}
 
@@ -37,25 +37,25 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		update_post_meta( $post_id, $this->get_id(), $value );
 	}
 
-	public function _get_rendered_text( string $output, ?int $maybe_id = null ): string {
+	public function get_rendered_text( string $output, ?int $maybe_id = null ): string {
 		ob_start();
-		$this->_render( $maybe_id );
+		$this->render( $maybe_id );
 		return $output . ob_get_clean();
 	}
 
-	public function _save_post( int $post_id ) {
+	public function save_post( int $post_id ) {
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
 			return;
 		}
 
-		$nonce = $_POST[ $this->_metabox->get_id() . '_nonce' ] ?? null;
-		if ( ! wp_verify_nonce( $nonce, $this->_metabox->get_id() ) ) {
+		$nonce = $_POST[ $this->metabox->get_id() . '_nonce' ] ?? null;
+		if ( ! wp_verify_nonce( $nonce, $this->metabox->get_id() ) ) {
 			return;
 		}
 
 		$post = get_post( $post_id );
 
-		foreach ( $this->_metabox->_get_parents() as $parent_post_type ) {
+		foreach ( $this->metabox->_get_parents() as $parent_post_type ) {
 			if ( $post->post_type === $parent_post_type ) {
 				$value = $_POST[ $this->get_id() ] ?? false;
 				$this->update( $post_id, $value );
@@ -63,7 +63,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		}
 	}
 
-	public function _register_meta() {
+	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
 			'single'       => true,
@@ -72,7 +72,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		register_meta( 'post', $this->get_id(), $args );
 	}
 
-	protected function _refresh_attributes( ?int $post_id = null ) {
+	protected function refresh_attributes( ?int $post_id = null ) {
 		global $post;
 		if ( empty( $post_id ) ) {
 			if ( ! $post ) {
@@ -81,10 +81,10 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 			$post_id = $post->ID;
 		}
 
-		$this->_attributes['value'] = get_post_meta( $post_id, $this->get_id(), true );
+		$this->attributes['value'] = get_post_meta( $post_id, $this->get_id(), true );
 	}
 
-	protected function _render_wrapper_open() {
+	protected function render_wrapper_open() {
 		$class = explode( '\\', get_called_class() );
 		$class = strtolower( array_pop( $class ) );
 
@@ -99,7 +99,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		<?php
 	}
 
-	protected function _render_wrapper_close() {
+	protected function render_wrapper_close() {
 		echo '</section>';
 	}
 }

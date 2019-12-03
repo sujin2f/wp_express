@@ -15,13 +15,13 @@ class AbsBaseTest extends TestCase {
 
 	public function test_add_script() {
 		$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
-		$scripts = $this->get_private_property( $obj, '_scripts' );
+		$scripts = $this->get_private_property( $obj, 'scripts' );
 
 		$this->assertContains( '/assets/dist/script.js', $scripts['wp-express-script-js']['url'] );
 		$this->assertFalse( $scripts['wp-express-script-js']['is_admin'] );
 
 		$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/another-script.js', true );
-		$scripts = $this->get_private_property( $obj, '_scripts' );
+		$scripts = $this->get_private_property( $obj, 'scripts' );
 
 		$this->assertTrue( $scripts['wp-express-another-script-js']['is_admin'] );
 
@@ -42,7 +42,7 @@ class AbsBaseTest extends TestCase {
 		$obj = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
 		$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
 
-		$scripts = $this->get_private_property( $obj, '_scripts' );
+		$scripts = $this->get_private_property( $obj, 'scripts' );
 
 		$this->assertEquals( 'customVars', $scripts['wp-express-script-js']['translation-key'] );
 		$this->assertEquals( 'value1', $scripts['wp-express-script-js']['translation']['var1'] );
@@ -50,13 +50,13 @@ class AbsBaseTest extends TestCase {
 
 	public function test_add_style() {
 		$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' );
-		$styles = $this->get_private_property( $obj, '_styles' );
+		$styles = $this->get_private_property( $obj, 'styles' );
 
 		$this->assertContains( '/assets/dist/style.css', $styles['wp-express-style-css']['url'] );
 		$this->assertFalse( $styles['wp-express-style-css']['is_admin'] );
 
 		$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/another-style.css', true );
-		$styles = $this->get_private_property( $obj, '_styles' );
+		$styles = $this->get_private_property( $obj, 'styles' );
 
 		$this->assertTrue( $styles['wp-express-another-style-css']['is_admin'] );
 
@@ -95,7 +95,7 @@ class AbsBaseTest extends TestCase {
 	public function test_get_multiton_instance() {
 		$instance1 = AbsBase_Inherited::get_instance( 'Test' );
 		$instance2 = AbsBase_Inherited::get_instance( 'test 2' );
-		$_instance = $this->get_private_property( $instance1, '_multiton_container' );
+		$_instance = $this->get_private_property( $instance1, 'multiton_container' );
 
 		$this->assertEquals( $instance1, $this->obj );
 		$this->assertEquals( $instance2, AbsBase_Inherited::get_instance( 'test 2' ) );
@@ -104,7 +104,7 @@ class AbsBaseTest extends TestCase {
 
 	public function test_get_singleton_instance() {
 		$instance  = AbsBase_Inherited::get_instance();
-		$_instance = $this->get_private_property( $instance, '_singleton_container' );
+		$_instance = $this->get_private_property( $instance, 'singleton_container' );
 
 		$this->assertEquals( $_instance, AbsBase_Inherited::get_instance() );
 	}
@@ -128,7 +128,7 @@ class AbsBaseTest extends TestCase {
 		$this->assertEquals( 'test', $actual );
 
 		// Exception
-		$this->set_private_property( $this->obj, '_id', null );
+		$this->set_private_property( $this->obj, 'id', null );
 		$actual = null;
 		try {
 			$actual = $this->obj->get_id();
@@ -144,7 +144,7 @@ class AbsBaseTest extends TestCase {
 		$this->assertEquals( 'Test', $actual );
 
 		// Exception
-		$this->set_private_property( $this->obj, '_name', null );
+		$this->set_private_property( $this->obj, 'name', null );
 		$actual = null;
 		try {
 			$actual = $this->obj->get_name();

@@ -20,20 +20,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends Abs_Base {
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	private $_admin_url;
+	private $admin_url;
 
 	private const POSITION   = 'position';
 	private const ICON       = 'icon';
 	private const CAPABILITY = 'capability';
 	private const PLUGIN     = 'plugin';
 
-	private $_position   = 'settings';
-	private $_icon       = 'dashicons-admin-generic';
-	private $_capability = 'manage_options';
-	private $_plugin     = null;
+	private $position   = 'settings';
+	private $icon       = 'dashicons-admin-generic';
+	private $capability = 'manage_options';
+	private $plugin     = null;
 
 	public const POSITION_OPTION     = 'option';
 	public const POSITION_SETTINGS   = 'settings';
@@ -51,9 +51,9 @@ class Admin extends Abs_Base {
 		## Abs_Base
 		parent::__construct( $name );
 
-		add_action( 'network_admin_menu', array( $this, '_register_admin_menu' ) );
-		add_action( 'admin_menu', array( $this, '_register_admin_menu' ) );
-		add_action( 'plugin_action_links', array( $this, '_plugin_action_links' ), 15, 3 );
+		add_action( 'network_admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'plugin_action_links', array( $this, 'plugin_action_links' ), 15, 3 );
 	}
 
 	public function __call( string $name, array $arguments ) {
@@ -62,7 +62,6 @@ class Admin extends Abs_Base {
 			case self::ICON:
 			case self::CAPABILITY:
 			case self::PLUGIN:
-				$name = '_' . $name;
 				if ( empty( $arguments ) ) {
 					return $this->{$name};
 				}
@@ -80,41 +79,41 @@ class Admin extends Abs_Base {
 	}
 
 	# ACTION admin_menu, network_admin_menu
-	public function _register_admin_menu() {
+	public function register_admin_menu() {
 		$parent_slug = '';
 
-		if ( is_string( $this->_position ) && $this->_register_admin_menu_by_position() ) {
+		if ( is_string( $this->position ) && $this->register_admin_menu_by_position() ) {
 			return;
 		}
 
 		## When the position is WP Express class
-		if ( is_object( $this->_position ) && ( $this->_position instanceof Admin || $this->_position instanceof Post_Type ) ) {
-			$this->_register_admin_menu_in_express_class();
+		if ( is_object( $this->position ) && ( $this->position instanceof Admin || $this->position instanceof Post_Type ) ) {
+			$this->register_admin_menu_in_express_class();
 			return;
 		}
 
 		## When the position is numeric
-		if ( is_numeric( $this->_position ) ) {
-			$this->_register_admin_menu_in_numeric_position();
+		if ( is_numeric( $this->position ) ) {
+			$this->register_admin_menu_in_numeric_position();
 			return;
 		}
 
 		## When the position is a menu Name
-		if ( $this->_register_admin_menu_in_string_position() ) {
+		if ( $this->register_admin_menu_in_string_position() ) {
 			return;
 		}
 
 		## To root position
-		$this->_admin_url = admin_url( 'admin.php?page=' . $this->get_id() );
-		$page_slug        = add_menu_page( ...$this->_get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, '_render_screen_options' ) );
+		$this->admin_url = admin_url( 'admin.php?page=' . $this->get_id() );
+		$page_slug        = add_menu_page( ...$this->get_menu_args() );
+		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 	}
 
-	# Excecuted by: _register_admin_menu()
-	private function _register_admin_menu_by_position(): bool {
+	# Excecuted by: register_admin_menu()
+	private function register_admin_menu_by_position(): bool {
 		$parent_slug = null;
 
-		switch ( strtolower( $this->_position ) ) {
+		switch ( strtolower( $this->position ) ) {
 			case self::POSITION_OPTION:
 			case self::POSITION_SETTINGS:
 				$parent_slug = 'options-general.php';
@@ -161,41 +160,41 @@ class Admin extends Abs_Base {
 			return false;
 		}
 
-		$this->_admin_url = add_query_arg( 'page', $this->get_id(), admin_url( $parent_slug ) );
-		$page_slug        = add_submenu_page( $parent_slug, ...$this->_get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, '_render_screen_options' ) );
+		$this->admin_url = add_query_arg( 'page', $this->get_id(), admin_url( $parent_slug ) );
+		$page_slug        = add_submenu_page( $parent_slug, ...$this->get_menu_args( false ) );
+		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 		return true;
 	}
 
-	# Excecuted by: _register_admin_menu()
-	private function _register_admin_menu_in_express_class() {
-		if ( $this->_position instanceof Post_Type ) {
-			$this->_admin_url = admin_url( 'edit.php?post_type=' . $this->_position->get_id() . '&page=' . $this->get_id() );
+	# Excecuted by: register_admin_menu()
+	private function register_admin_menu_in_express_class() {
+		if ( $this->position instanceof Post_Type ) {
+			$this->admin_url = admin_url( 'edit.php?post_type=' . $this->position->get_id() . '&page=' . $this->get_id() );
 		}
-		$page_slug = add_submenu_page( $this->_position->get_id(), ...$this->_get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, '_render_screen_options' ) );
+		$page_slug = add_submenu_page( $this->position->get_id(), ...$this->get_menu_args( false ) );
+		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 	}
 
-	# Excecuted by: _register_admin_menu()
-	private function _register_admin_menu_in_numeric_position() {
+	# Excecuted by: register_admin_menu()
+	private function register_admin_menu_in_numeric_position() {
 		global $menu;
-		$args = $this->_get_menu_args();
-
-		if ( isset( $menu[ $this->_position ] ) ) { ## To existing position
-			$parent_url       = $menu[ $this->_position ][2];
-			$this->_admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
+		if ( isset( $menu[ $this->position ] ) ) { ## To existing position
+			$parent_url       = $menu[ $this->position ][2];
+			$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
+			$args             = $this->get_menu_args( false );
 			$page_slug        = add_submenu_page( $parent_url, ...$args );
 
 		} else { ## To new position
-			$args[]    = $this->_position;
+			$args      = $this->get_menu_args();
+			$args[]    = $this->position;
 			$page_slug = add_menu_page( ...$args );
 		}
 
-		add_action( 'load-' . $page_slug, array( $this, '_render_screen_options' ) );
+		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 	}
 
-	# Excecuted by: _register_admin_menu()
-	private function _register_admin_menu_in_string_position(): bool {
+	# Excecuted by: register_admin_menu()
+	private function register_admin_menu_in_string_position(): bool {
 		global $menu;
 
 		if ( empty( $menu ) ) {
@@ -203,11 +202,11 @@ class Admin extends Abs_Base {
 		}
 
 		foreach ( $menu as $menu_item ) {
-			if ( $this->_position === $menu_item[0] ) {
+			if ( $this->position === $menu_item[0] ) {
 				$parent_url       = $menu_item[2];
-				$this->_admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
-				$page_slug        = add_submenu_page( $parent_url, ...$this->_get_menu_args() );
-				add_action( 'load-' . $page_slug, array( $this, '_render_screen_options' ) );
+				$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
+				$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args( false ) );
+				add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 				return true;
 			}
 		}
@@ -216,29 +215,29 @@ class Admin extends Abs_Base {
 	}
 
 	# ACTION plugin_action_links
-	public function _plugin_action_links( array $actions, string $_, array $plugin_data ): array {
-		if ( empty( $this->_plugin ) ) {
+	public function plugin_action_links( array $actions, string $_, array $plugin_data ): array {
+		if ( empty( $this->plugin ) ) {
 			return $actions;
 		}
 
-		if ( sanitize_title( $this->_plugin ) == sanitize_title( $plugin_data['Name'] ) ) {
+		if ( sanitize_title( $this->plugin ) == sanitize_title( $plugin_data['Name'] ) ) {
 			$actions['setting'] = sprintf(
 				'<a href="%s"><span class="dashicons-before dashicons-admin-generic"></span> Setting</a>',
-				$this->_admin_url
+				$this->admin_url
 			);
 		}
 
 		return $actions;
 	}
 
-	public function _render() {
+	public function render() {
 		?>
 		<div
 			class="<?php echo esc_attr( self::PREFIX ); ?> admin wrap"
 			id="<?php echo esc_attr( self::PREFIX ); ?>-admin-<?php echo esc_attr( $this->get_id() ); ?>"
 		>
 			<h2 class="page-title <?php echo esc_attr( self::PREFIX ); ?>">
-				<span class="dashicons <?php echo esc_attr( $this->_icon ); ?>"></span>
+				<span class="dashicons <?php echo esc_attr( $this->icon ); ?>"></span>
 				<?php echo esc_html( $this->get_name() ); ?>
 			</h2>
 
@@ -254,17 +253,21 @@ class Admin extends Abs_Base {
 	}
 
 	// TODO
-	public function _render_screen_options() {}
+	public function render_screen_options() {}
 
 	# HELPER
-	private function _get_menu_args(): array {
-		return array(
+	private function get_menu_args( ?bool $has_icon = true ): array {
+		$args = array(
 			$this->get_name(),
 			$this->get_name(),
-			$this->_capability,
+			$this->capability,
 			$this->get_id(),
-			array( $this, '_render' ),
-			$this->_icon,
+			array( $this, 'render' ),
 		);
+
+		if ( $has_icon ) {
+			$args[] = $this->icon;
+		}
+		return $args;
 	}
 }

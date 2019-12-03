@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Base_Element extends Abs_Base {
-	protected $_attributes = array(
+	protected $attributes = array(
 		'class'       => null,
 		'hidden'      => null,
 		'value'       => null,
@@ -29,7 +29,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		'cols'        => null,
 	);
 
-	protected $_options = array(
+	protected $options = array(
 		'help'         => null,
 		'show_in_rest' => null,
 		'options'      => null,
@@ -37,7 +37,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		'legend'       => null,
 	);
 
-	protected $_js_callback = array(
+	protected $js_callback = array(
 		'on_change' => null,
 		'on_blur'   => null,
 		'on_focus'  => null,
@@ -45,13 +45,13 @@ abstract class Abs_Base_Element extends Abs_Base {
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name );
-		$this->_parse_attributes( $attrs );
+		$this->parse_attributes( $attrs );
 		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );
 	}
 
 	public function __call( string $name, array $arguments ) {
 		$is_return = empty( $arguments );
-		$property  = $this->_get_property_by_child( $name );
+		$property  = $this->get_property_by_child( $name );
 		if ( ! empty( $property ) ) {
 			if ( $is_return ) {
 				return $this->{$property}[ $name ];
@@ -63,28 +63,28 @@ abstract class Abs_Base_Element extends Abs_Base {
 		return $this;
 	}
 
-	public function _render( $maybe_id = null ) {
+	public function render( $maybe_id = null ) {
 		if ( $maybe_id instanceof WP_Term ) {
 			$maybe_id = $maybe_id->term_id;
 		}
-		$this->_refresh_attributes( $maybe_id ?: null );
-		if ( false === $this->_is_available() ) {
+		$this->refresh_attributes( $maybe_id ?: null );
+		if ( false === $this->is_available() ) {
 			return;
 		}
-		$this->_parse_attributes( $this->_defaults_attributes );
-		$this->_render_wrapper_open();
-		$this->_render_form();
-		$this->_render_wrapper_close();
+		$this->parse_attributes( $this->defaults_attributes );
+		$this->render_wrapper_open();
+		$this->render_form();
+		$this->render_wrapper_close();
 	}
 
-	protected abstract function _refresh_attributes( ?int $maybe_id = null );
-	protected abstract function _is_available(): bool;
-	protected abstract function _render_wrapper_open();
-	protected abstract function _render_form();
-	protected abstract function _render_wrapper_close();
+	protected abstract function refresh_attributes( ?int $maybe_id = null );
+	protected abstract function is_available(): bool;
+	protected abstract function render_wrapper_open();
+	protected abstract function render_form();
+	protected abstract function render_wrapper_close();
 
-	protected function _render_attributes() {
-		foreach ( $this->_attributes as $key => $value ) {
+	protected function render_attributes() {
+		foreach ( $this->attributes as $key => $value ) {
 			// var_dump($key, $value);
 			if ( ! empty( $value ) ) {
 				echo ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
@@ -92,33 +92,33 @@ abstract class Abs_Base_Element extends Abs_Base {
 		}
 	}
 
-	private function _parse_attributes( array $defaults ) {
+	private function parse_attributes( array $defaults ) {
 		foreach ( $defaults as $key => $value ) {
-			$property = $this->_get_property_by_child( $key );
+			$property = $this->get_property_by_child( $key );
 			if ( empty( $this->{$property}[ $key ] ) ) {
 				$this->{$property}[ $key ] = $value;
 			}
 		}
 	}
 
-	private function _get_property_by_child( string $key ): string {
-		if ( array_key_exists( $key, $this->_attributes ) ) {
-			return '_attributes';
+	private function get_property_by_child( string $key ): string {
+		if ( array_key_exists( $key, $this->attributes ) ) {
+			return 'attributes';
 		}
 
-		if ( array_key_exists( $key, $this->_options ) ) {
-			return '_options';
+		if ( array_key_exists( $key, $this->options ) ) {
+			return 'options';
 		}
 
-		if ( array_key_exists( $key, $this->_js_callback ) ) {
-			return '_js_callback';
+		if ( array_key_exists( $key, $this->js_callback ) ) {
+			return 'js_callback';
 		}
 
 		return '';
 	}
 
 	public function get( ?int $maybe_id = null ) {
-		$this->_refresh_attributes( $maybe_id );
-		return $this->_attributes['value'];
+		$this->refresh_attributes( $maybe_id );
+		return $this->attributes['value'];
 	}
 }

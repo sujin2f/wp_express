@@ -18,34 +18,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
-	private $_taxonomies = array();
+	private $taxonomies = array();
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
-		add_action( 'init', array( $this, '_register_meta' ) );
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
 	public function attach_to( $taxonomy ): Abs_Term_Meta_Element {
-		$this->_taxonomies[] = $taxonomy;
+		$this->taxonomies[] = $taxonomy;
 
 		if ( $taxonomy instanceof Taxonomy ) {
 			$taxonomy = $taxonomy->get_id();
 		}
-		add_action( $taxonomy . '_edit_form_fields', array( $this, '_render' ), 25 );
-		add_action( 'edited_' . $taxonomy, array( $this, '_update' ), 25 );
+		add_action( $taxonomy . '_edit_form_fields', array( $this, 'render' ), 25 );
+		add_action( 'edited_' . $taxonomy, array( $this, 'update' ), 25 );
 
 		return $this;
 	}
 
-	public function update( int $term_id, $value ) {
+	public function update( int $term_id, $value = null ) {
+		if ( ! $value ) {
+			$value = $_POST[ $this->get_id() ];
+		}
 		update_term_meta( $term_id, $this->get_id(), $value );
 	}
 
-	public function _update( int $term_id ) {
-		$this->update( $term_id, $_POST[ $this->get_id() ] );
-	}
-
-	public function _register_meta() {
+	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
 			'single'       => true,
@@ -54,17 +53,17 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 		register_meta( 'term', $this->get_id(), $args );
 	}
 
-	protected function _refresh_attributes( ?int $term_id = null ) {
+	protected function refresh_attributes( ?int $term_id = null ) {
 		if ( empty( $term_id ) ) {
 			if ( empty( $_GET['tag_ID'] ?? null ) ) {
 				return;
 			}
 			$term_id = $_GET['tag_ID'];
 		}
-		$this->_attributes['value'] = get_term_meta( $term_id, $this->get_id(), true );
+		$this->attributes['value'] = get_term_meta( $term_id, $this->get_id(), true );
 	}
 
-	protected function _render_wrapper_open() {
+	protected function render_wrapper_open() {
 		$class = explode( '\\', get_called_class() );
 		$class = strtolower( array_pop( $class ) );
 
@@ -79,14 +78,14 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 		<?php
 	}
 
-	protected function _render_wrapper_close() {
+	protected function render_wrapper_close() {
 		echo '</td></tr>';
 	}
 
-	public function _get_parents(): array {
+	public function get_parents(): array {
 		$taxonomies = array();
 
-		foreach ( $this->_taxonomies as $taxonomy ) {
+		foreach ( $this->taxonomies as $taxonomy ) {
 			$taxonomies[] = ( $taxonomy instanceof Taxonomy ) ? $taxonomy->get_id() : $taxonomy;
 		}
 

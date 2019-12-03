@@ -22,14 +22,14 @@ class Meta_Box extends Abs_Base {
 	private const DEFAULT_POST_TYPE = 'post';
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	private $_post_types = array();
+	private $post_types = array();
 
 	protected function __construct( $name ) {
 		parent::__construct( $name );
-		add_action( 'add_meta_boxes', array( $this, '_register_meta_box' ) );
+		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 	}
 
 	public function add( Abs_Post_Meta_Element $field ): Meta_Box {
@@ -38,21 +38,21 @@ class Meta_Box extends Abs_Base {
 	}
 
 	public function attach_to( $post_type ): Meta_Box {
-		$this->_post_types[] = $post_type;
+		$this->post_types[] = $post_type;
 		return $this;
 	}
 
-	public function _register_meta_box() {
-		$post_types = $this->_get_parents();
+	public function register_meta_box() {
+		$post_types = $this->get_parents();
 		add_meta_box(
 			$this->get_id(),
 			$this->get_name(),
-			array( $this, '_show_meta_box' ),
+			array( $this, 'show_meta_box' ),
 			$post_types
 		);
 	}
 
-	public function _show_meta_box() {
+	public function show_meta_box() {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' metabox">';
 
 		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
@@ -62,10 +62,10 @@ class Meta_Box extends Abs_Base {
 		echo '</section>';
 	}
 
-	public function _get_parents(): array {
+	public function get_parents(): array {
 		$post_types = array();
 
-		foreach ( $this->_post_types as $post_type ) {
+		foreach ( $this->post_types as $post_type ) {
 			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
 		}
 

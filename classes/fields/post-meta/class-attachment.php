@@ -22,15 +22,15 @@ class Attachment extends Abs_Post_Meta_Element {
 	use Trait_Attachment;
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
 		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
 	}
 
-	public function _register_meta() {
+	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
 			'single'       => true,

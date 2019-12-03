@@ -19,50 +19,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Setting_Element extends Abs_Base_Element {
-	private $_setting;
+	private $setting;
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
-		add_action( 'admin_init', array( $this, '_add_settings_field' ) );
+		add_action( 'admin_init', array( $this, 'add_settings_field' ) );
 	}
 
 	public function get( ?int $_ = null ) {
 		return get_option( $this->get_id() );
 	}
 
-	public function _add_settings_field() {
-		if ( empty( $this->_setting ) || empty( $this->_setting->admin_page() ) ) {
+	public function add_settings_field() {
+		if ( empty( $this->setting ) || empty( $this->setting->admin_page() ) ) {
 			return;
 		}
 
 		$parent_id =
-			( $this->_setting->admin_page() instanceof Admin )
-			? $this->_setting->admin_page()->get_id()
-			: $this->_setting->admin_page();
+			( $this->setting->admin_page() instanceof Admin )
+			? $this->setting->admin_page()->get_id()
+			: $this->setting->admin_page();
 
 		add_settings_field(
 			$this->get_id(),
 			$this->get_name(),
-			array( $this, '_render' ),
+			array( $this, 'render' ),
 			$parent_id,
-			$this->_setting->get_id()
+			$this->setting->get_id()
 		);
 
 		register_setting( $parent_id, $this->get_id() );
 	}
 
 	public function attach_to( Setting $setting ) {
-		$this->_setting           = $setting;
-		$this->_options['legend'] = $setting->get_name();
+		$this->setting           = $setting;
+		$this->options['legend'] = $setting->get_name();
 	}
 
-	protected function _refresh_attributes( ?int $_ = null ) {
-		if ( empty( $this->_attributes['value'] ) ) {
-			$this->_attributes['value'] = get_option( $this->get_id() );
+	protected function refresh_attributes( ?int $_ = null ) {
+		if ( empty( $this->attributes['value'] ) ) {
+			$this->attributes['value'] = get_option( $this->get_id() );
 		}
 	}
 
-	protected function _render_wrapper_open() {}
+	protected function render_wrapper_open() {}
 
-	protected function _render_wrapper_close() {}
+	protected function render_wrapper_close() {}
 }

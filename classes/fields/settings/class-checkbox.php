@@ -22,10 +22,10 @@ class Checkbox extends Abs_Setting_Element {
 	use Trait_Checkbox;
 
 	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	protected static $multiton_container  = array();
+	protected static $singleton_container = null;
 
-	protected function _render_wrapper_open() {
+	protected function render_wrapper_open() {
 		?>
 		<section
 			id="<?php echo esc_attr( self::PREFIX ); ?>--option-wrap--checkbox--<?php echo esc_attr( $this->get_id() ); ?>"
@@ -35,7 +35,7 @@ class Checkbox extends Abs_Setting_Element {
 		<?php
 	}
 
-	protected function _render_wrapper_close() {
+	protected function render_wrapper_close() {
 		echo esc_html( $this->get_name() ) . '</label></section>';
 	}
 }

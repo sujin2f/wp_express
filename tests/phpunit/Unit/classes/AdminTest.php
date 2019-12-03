@@ -37,7 +37,7 @@ class AdminTest extends TestCase {
 		}
 
 		$admin_page = Admin::get_instance( $page_name )->position( $position );
-		$admin_page->_register_admin_menu();
+		$admin_page->register_admin_menu();
 
 		$expected = $menu[ $expected_position ][0];
 		$this->assertEquals( $page_name, $expected );
@@ -71,7 +71,7 @@ class AdminTest extends TestCase {
 		if ( true === $is_express_class ) {
 			$admin_page->position( Admin::get_instance( $position ) );
 		}
-		$admin_page->_register_admin_menu();
+		$admin_page->register_admin_menu();
 
 		$expected = $submenu[ $expected_position ];
 		$expected = array_pop( $expected )[0];
@@ -83,7 +83,7 @@ class AdminTest extends TestCase {
 		$menu_name = 'Admin Page Test Case';
 		$args      = $this->call_private_method(
 			Admin::get_instance( $menu_name ),
-			'_get_menu_args'
+			'get_menu_args'
 		);
 
 		$this->assertEquals( count( $args ), 6 );
@@ -92,7 +92,7 @@ class AdminTest extends TestCase {
 		$this->assertEquals( $args[2], 'manage_options' );
 		$this->assertEquals( $args[3], Admin::get_instance( $menu_name )->get_id() );
 		$this->assertEquals( get_class( $args[4][0] ), 'Sujin\Wordpress\WP_Express\Admin' );
-		$this->assertEquals( $args[4][1], '_render' );
+		$this->assertEquals( $args[4][1], 'render' );
 		$this->assertEquals( $args[5], Admin::get_instance( $menu_name )->icon() );
 	}
 
@@ -119,17 +119,17 @@ class AdminTest extends TestCase {
 			->add( $radio )
 			->add( $select );
 
-		$setting->_register_setting();
-		$input->_add_settings_field();
-		$textarea->_add_settings_field();
-		$editor->_add_settings_field();
-		$attachment->_add_settings_field();
-		$checkbox->_add_settings_field();
-		$radio->_add_settings_field();
-		$select->_add_settings_field();
+		$setting->register_setting();
+		$input->add_settings_field();
+		$textarea->add_settings_field();
+		$editor->add_settings_field();
+		$attachment->add_settings_field();
+		$checkbox->add_settings_field();
+		$radio->add_settings_field();
+		$select->add_settings_field();
 
 		ob_start();
-		$admin->_render();
+		$admin->render();
 		$actual = ob_get_clean();
 
 		$this->assertContains( 'id="wp-express-admin-admin-page-test-case"', $actual );
