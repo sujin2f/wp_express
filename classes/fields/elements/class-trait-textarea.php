@@ -16,14 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Textarea {
-	protected $defaults_attributes = array(
-		'class' => 'large-text code',
-		'rows'  => 10,
-		'cols'  => 50,
-	);
-
-	protected function is_available(): bool {
-		return true;
+	protected function init(): void {
+		$this->option->class = 'large-text code';
+		$this->option->rows  = $this->option->rows ?? 10;
+		$this->option->cols  = $this->option->cols ?? 50;
+		parent::init();
 	}
 
 	protected function render_form(): void {
@@ -32,8 +29,8 @@ trait Trait_Textarea {
 			<textarea
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__textarea__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->render_attributes(); ?>
-			><?php echo $this->attributes['value']; ?></textarea>
+				<?php $this->option->render_attributes(); ?>
+			><?php echo $this->value; ?></textarea>
 		</section>
 		<?php
 	}

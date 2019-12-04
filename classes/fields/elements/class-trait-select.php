@@ -16,12 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Select {
-	protected $defaults_attributes = array(
-		'class' => 'postform',
-	);
+	protected function init(): void {
+		$this->option->class = 'postform';
+		parent::init();
+	}
 
 	protected function is_available(): bool {
-		return ! empty( $this->options['options'] );
+		return ! empty( $this->option->options );
 	}
 
 	protected function render_form(): void {
@@ -30,14 +31,14 @@ trait Trait_Select {
 			<select
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__select__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->render_attributes(); ?>
+				<?php $this->option->render_attributes(); ?>
 			>
 				<option>== Select Option ==</option>
 		<?php
-		foreach ( $this->options['options'] as $name => $option ) {
+		foreach ( $this->option->options as $name => $option ) {
 			$name     = is_numeric( $name ) ? $option : $name;
 			$key      = sanitize_title( $name );
-			$selected = ( $option == $this->attributes['value'] ) ? ' selected="selected"' : '';
+			$selected = ( $option == $this->value ) ? ' selected="selected"' : '';
 
 			echo '<option value="' . esc_attr( $name ) . '"' . $selected . '>' . esc_attr( $name ) . '</option>';
 		}

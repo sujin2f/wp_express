@@ -7,9 +7,10 @@
  * @author  Sujin 수진 Choi http://www.sujinc.com/
  */
 
-use Sujin\Wordpress\WP_Express\Admin;
+// use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Post_Type;
 
+/*
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Input as Option_Input;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Textarea as Option_Textarea;
@@ -18,6 +19,7 @@ use Sujin\Wordpress\WP_Express\Fields\Settings\Attachment as Option_Attachment;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Checkbox as Option_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Radio as Option_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Select as Option_Select;
+*/
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input as Meta_Input;
@@ -28,6 +30,7 @@ use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Checkbox as Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Radio as Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select as Meta_Select;
 
+/*
 use Sujin\Wordpress\WP_Express\Taxonomy;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Input as Term_Meta_Input;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Textarea as Term_Meta_Textarea;
@@ -36,6 +39,7 @@ use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Attachment as Term_Meta_Attachme
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Checkbox as Term_Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Radio as Term_Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Select as Term_Meta_Select;
+*/
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
@@ -43,13 +47,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class BrowserTest {
+final class BrowserTest {
 	public function __construct() {
-		$this->test_admin();
-		$this->test_setting();
-		$this->test_post_type();
+		// $this->test_admin();
+		// $this->test_setting();
+		// $this->test_post_type();
 		$this->test_post_meta();
-		$this->test_taxonomy();
+		// $this->test_taxonomy();
 	}
 
 	private function test_admin() {
@@ -123,7 +127,7 @@ class BrowserTest {
 		$test = Post_Type::get_instance( 'Test' );
 	}
 
-	private function test_post_meta() {
+	private function test_post_meta(): void {
 		$test = Post_Type::get_instance( 'Test' );
 		// Custom Post Type's Meta
 		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )

@@ -34,7 +34,7 @@ class Checkbox extends Abs_Post_Meta_Element {
 		register_meta( 'post', $this->get_id(), $args );
 	}
 
-	protected function render_wrapper_open() {
+	protected function render_wrapper_open(): void {
 		?>
 		<section
 			id="<?php echo esc_attr( self::PREFIX ); ?>--post-meta-wrap--checkbox--<?php echo esc_attr( $this->get_id() ); ?>"
@@ -44,7 +44,7 @@ class Checkbox extends Abs_Post_Meta_Element {
 		<?php
 	}
 
-	protected function render_wrapper_close() {
+	protected function render_wrapper_close(): void {
 		echo esc_html( $this->get_name() ) . '</label></section>';
 	}
 }

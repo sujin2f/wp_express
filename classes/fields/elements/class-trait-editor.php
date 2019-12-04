@@ -16,15 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Editor {
-	protected $defaults_attributes = array();
-
-	protected function is_available(): bool {
-		return true;
-	}
-
 	protected function render_form(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field editor">';
-		wp_editor( stripcslashes( $this->attributes['value'] ), $this->get_id() );
+		wp_editor( stripcslashes( $this->value ), $this->get_id() );
 		echo '</section>';
 	}
 }

@@ -16,41 +16,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Attachment {
-	protected $defaults_attributes = array(
-		'class' => 'regular-text',
-	);
-
 	/**
 	 * Get image URL(s)
 	 *
 	 * @return null|string|array
 	 */
-	public function get_image( ?int $maybe_id = null, string $size = 'full' ) {
+	public function get_image( ?int $id = null, string $size = 'full' ) {
 		// Refresh value
-		$this->refresh_value( $maybe_id );
+		$this->refresh_id( $id );
+		$this->refresh_value();
 
-		if ( ! $this->attributes['value'] ) {
+		if ( ! $this->value ) {
 			return;
 		}
 
 		// Single
-		if ( $this->options['single'] ) {
-			$media = wp_get_attachment_image_src( $this->attributes['value'], $size );
+		if ( $this->option->single ) {
+			$media = wp_get_attachment_image_src( $this->value, $size );
 			return $media[0];
 		}
 
 		$return = array();
 
-		foreach ( $this->attributes['value'] as $attachment_id ) {
+		foreach ( $this->value as $attachment_id ) {
 			$media    = wp_get_attachment_image_src( $attachment_id, $size );
 			$return[] = $media[0];
 		}
 
 		return $return;
-	}
-
-	protected function is_available(): bool {
-		return true;
 	}
 
 	/**
@@ -60,8 +53,8 @@ trait Trait_Attachment {
 		// Refresh value
 		$this->refresh_value();
 		$upload_link = get_upload_iframe_src();
-		$is_single   = $this->options['single'];
-		$value       = $this->options['single'] ? array( $this->attributes['value'] ) : $this->attributes['value'];
+		$is_single   = $this->option->single;
+		$value       = $is_single ? array( $this->value ) : $this->value;
 		?>
 		<section
 			class="<?php echo esc_attr( self::PREFIX ); ?> field attachment"

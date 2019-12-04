@@ -2,14 +2,15 @@
 /**
  * The base class inherited for all field types
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @todo Multiple, options/callback...
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Abs_Base;
+use Sujin\Wordpress\WP_Express\Fields\Helpers\Option;
 use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,107 +20,87 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Base_Element extends Abs_Base {
-	protected $attributes = array(
-		'class'       => null,
-		'hidden'      => null,
-		'value'       => null,
-		'type'        => null,
-		'placeholder' => null,
-		'rows'        => null,
-		'cols'        => null,
-	);
+	/**
+	 * Field option
+	 *
+	 * @var Option
+	 */
+	protected $option;
 
-	protected $options = array(
-		'help'         => null,
-		'show_in_rest' => true,
-		'options'      => null,
-		'default'      => null,
-		'legend'       => null,
-		'single'       => true,
-	);
+	/**
+	 * Field value
+	 *
+	 * @var any
+	 */
+	protected $value;
 
-	protected $js_callback = array(
-		'on_change' => null,
-		'on_blur'   => null,
-		'on_focus'  => null,
-	);
+	/**
+	 * Parent ID (post or term)
+	 *
+	 * @var integer
+	 */
+	protected $object_id;
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name );
-		$this->parse_attributes( $attrs );
-		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );
-	}
+		$this->option = new Option();
 
-	public function __call( string $name, array $arguments ) {
-		$is_return = empty( $arguments );
-		$property  = $this->get_property_by_child( $name );
-		if ( ! empty( $property ) ) {
-			if ( $is_return ) {
-				return $this->{$property}[ $name ];
-			}
-
-			$this->{$property}[ $name ] = $arguments[0];
+		foreach ( $attrs as $key => $value ) {
+			$this->option->{$key} = $value;
 		}
 
+		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );
+		$this->init();
+	}
+
+	protected function init(): void {}
+
+	/**
+	 * Magic method for get/set option value
+	 * i.g. $input->value()
+	 */
+	public function __call( string $key, array $arguments ): Abs_Base_Element {
+		if ( ! in_array( $key, array_keys( get_object_vars( $this->option ) ), true ) ) {
+			return $this;
+		}
+
+		// Return the value
+		if ( empty( $arguments ) ) {
+			return $this->option->{$key};
+		}
+
+		$this->option->{$key} = $arguments[0];
 		return $this;
 	}
 
-	public function render( $maybe_id = null ) {
-		if ( $maybe_id instanceof WP_Term ) {
-			$maybe_id = $maybe_id->term_id;
-		}
-		$this->refresh_value( $maybe_id ?: null );
+	/**
+	 * For types which has options, when they don't have any option, simply disable it.
+	 */
+	protected function is_available(): bool {
+		return true;
+	}
+
+	public function render( ?int $id = null ): void {
 		if ( false === $this->is_available() ) {
 			return;
 		}
-		$this->parse_attributes( $this->defaults_attributes );
+
+		$this->refresh_id( $id );
+		$this->refresh_value();
 		$this->render_wrapper_open();
 		$this->render_form();
 		$this->render_wrapper_close();
 	}
 
-	protected abstract function refresh_value( ?int $maybe_id = null );
-	protected abstract function is_available(): bool;
-	protected abstract function render_wrapper_open();
+	protected abstract function refresh_id( ?int $id = null ): void;
+	protected abstract function refresh_value(): void;
+	protected abstract function render_wrapper_open(): void;
 	protected abstract function render_form(): void;
-	protected abstract function render_wrapper_close();
+	protected abstract function render_wrapper_close(): void;
 
-	protected function render_attributes() {
-		foreach ( $this->attributes as $key => $value ) {
-			// var_dump($key, $value);
-			if ( ! empty( $value ) ) {
-				echo ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-			}
-		}
-	}
-
-	private function parse_attributes( array $defaults ) {
-		foreach ( $defaults as $key => $value ) {
-			$property = $this->get_property_by_child( $key );
-			if ( empty( $this->{$property}[ $key ] ) ) {
-				$this->{$property}[ $key ] = $value;
-			}
-		}
-	}
-
-	private function get_property_by_child( string $key ): string {
-		if ( array_key_exists( $key, $this->attributes ) ) {
-			return 'attributes';
-		}
-
-		if ( array_key_exists( $key, $this->options ) ) {
-			return 'options';
-		}
-
-		if ( array_key_exists( $key, $this->js_callback ) ) {
-			return 'js_callback';
-		}
-
-		return '';
-	}
-
-	public function get( ?int $maybe_id = null ) {
-		$this->refresh_value( $maybe_id );
-		return $this->attributes['value'];
+	public function get( ?int $id = null ) {
+		$this->refresh_id( $id );
+		$this->refresh_value();
+		return $this->value;
 	}
 }

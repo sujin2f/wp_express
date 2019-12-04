@@ -27,7 +27,7 @@ class Input extends Abs_Post_Meta_Element {
 
 	public function register_meta() {
 		$args = array(
-			'type'         => 'number' === $this->attributes['type'] ? 'integer' : 'string',
+			'type'         => 'number' === $this->option->type ? 'integer' : 'string',
 			'single'       => true,
 			'show_in_rest' => true,
 		);

@@ -2,7 +2,7 @@
 /**
  * Common class for post meta
  *
- * @project WP-Express
+ * @package WP-Express
  * @since   1.0.0
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
@@ -20,22 +20,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 	protected $metabox;
 
-	protected function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
+	protected function init(): void {
 		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
+	protected function refresh_id( ?int $id = null ): void {
+		if ( $this->object_id ) {
+			return;
+		}
+
+		global $post;
+
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$this->object_id = $post->ID;
+	}
+
 	public function attach_to( Meta_Box $metabox ): Abs_Post_Meta_Element {
-		add_filter( self::PREFIX . '_meta_box_' . $metabox->get_id(), array( $this, 'get_rendered_text' ) );
+		$metabox_filter = self::PREFIX . '_meta_box_' . $metabox->get_id();
+
+		add_filter( $metabox_filter, array( $this, 'get_form' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 
 		$this->metabox = $metabox;
 		return $this;
 	}
 
-	public function update( int $post_id, $value ): void {
+	private function update( int $post_id, $value ): void {
 		delete_post_meta( $post_id, $this->get_id() );
-		if ( $this->options['single'] ) {
+
+		if ( $this->option->single ) {
 			$value = is_array( $value ) ? $value[0] : $value;
 			update_post_meta( $post_id, $this->get_id(), $value );
 			return;
@@ -46,9 +62,9 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		}
 	}
 
-	public function get_rendered_text( string $output, ?int $maybe_id = null ): string {
+	public function get_form( string $output, ?int $id = null ): string {
 		ob_start();
-		$this->render( $maybe_id );
+		$this->render( $id );
 		return $output . ob_get_clean();
 	}
 
@@ -75,33 +91,22 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 	public function register_meta() {
 		$args = array(
 			'type'         => 'string',
-			'single'       => $this->options['single'],
-			'show_in_rest' => $this->options['show_in_rest'],
+			'single'       => $this->option->single,
+			'show_in_rest' => $this->option->show_in_rest,
 		);
 		register_meta( 'post', $this->get_id(), $args );
 	}
 
-	protected function refresh_value( ?int $post_id = null ): void {
-		if ( ! empty( $post_id ) ) {
-			$this->attributes['value'] = get_post_meta( $post_id, $this->get_id(), $this->options['single'] );
-			return;
-		}
-
-		global $post;
-		if ( empty( $post ) ) {
-			return;
-		}
-
-		$this->attributes['value'] = get_post_meta( $post->ID, $this->get_id(), $this->options['single'] );
+	protected function refresh_value(): void {
+		$this->value = get_post_meta( $this->object_id, $this->get_id(), $this->option->single );
 	}
 
-	protected function render_wrapper_open() {
+	protected function render_wrapper_open(): void {
 		$class = explode( '\\', get_called_class() );
 		$class = strtolower( array_pop( $class ) );
 
 		?>
 		<section
-			id="<?php echo esc_attr( self::PREFIX ); ?>--post-meta-wrap--<?php echo esc_attr( $class ); ?>--<?php echo esc_attr( $this->get_id() ); ?>"
 			class="<?php echo esc_attr( self::PREFIX ); ?> post-meta-wrap <?php echo esc_attr( $class ); ?>"
 		>
 			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__<?php echo esc_attr( $class ); ?>__<?php echo esc_attr( $this->get_id() ); ?>">
@@ -110,7 +115,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		<?php
 	}
 
-	protected function render_wrapper_close() {
+	protected function render_wrapper_close(): void {
 		echo '</section>';
 	}
 }

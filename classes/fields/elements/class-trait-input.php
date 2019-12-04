@@ -21,17 +21,26 @@ trait Trait_Input {
 		'type'  => 'text',
 	);
 
+	protected function init(): void {
+		$this->option->class = 'regular-text code';
+		$this->option->type  = $this->option->type ?? 'text';
+		parent::init();
+	}
+
 	protected function is_available(): bool {
 		return true;
 	}
 
 	protected function render_form(): void {
 		?>
-		<section class="<?php echo esc_attr( self::PREFIX ); ?> field input">
+		<section
+			class="<?php echo esc_attr( self::PREFIX ); ?> field input"
+			data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
+		>
 			<input
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__input__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->render_attributes(); ?>
+				<?php $this->option->render_attributes(); ?>
 			/>
 		</section>
 		<?php

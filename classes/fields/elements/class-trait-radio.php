@@ -16,26 +16,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Radio {
-	protected $defaults_attributes = array(
-		'class' => 'tog',
-	);
+	protected function init(): void {
+		$this->option->class = 'tog';
+		parent::init();
+	}
 
 	protected function is_available(): bool {
-		return ! empty( $this->options['options'] );
+		return ! empty( $this->option->options );
 	}
 
 	protected function render_form(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field radio">';
 		echo '<fieldset>';
 
-		if ( ! empty( $this->options['legend'] ) ) {
-			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->options['legend'] ) . '</span></legend>';
+		if ( ! empty( $this->option->legend ) ) {
+			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->option->legend ) . '</span></legend>';
 		}
 
-		foreach ( $this->options['options'] as $name => $option ) {
+		foreach ( $this->option->options as $name => $option ) {
 			$name    = is_numeric( $name ) ? $option : $name;
 			$key     = sanitize_title( $name );
-			$checked = ( $option == $this->attributes['value'] ) ? 'checked="checked"' : '';
+			$checked = ( $option == $this->value ) ? 'checked="checked"' : '';
 
 			?>
 			<p>
@@ -46,7 +47,7 @@ trait Trait_Radio {
 						name="<?php echo esc_attr( $this->get_id() ); ?>"
 						value="<?php echo esc_attr( $name ); ?>"
 						<?php echo $checked; ?>
-						<?php $this->render_attributes(); ?>
+						<?php $this->option->render_attributes(); ?>
 					/>
 					<?php echo esc_html( $name ); ?>
 				</label>
