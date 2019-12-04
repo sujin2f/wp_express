@@ -6,27 +6,32 @@
 
 .wp-express.field.attachment {
   padding: 0;
-  width: 150px;
+  width: 100%;
   float: none;
   text-align: initial; }
-  .wp-express.field.attachment .img-container {
-    width: 150px;
-    height: 150px;
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: cover; }
-  .wp-express.field.attachment .btn-remove {
-    cursor: pointer;
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    width: 30px;
-    height: 30px;
-    border: 0;
-    border-radius: 30px;
-    padding: 0;
-    background: red;
-    color: white; }
+  .wp-express.field.attachment .attachment__items {
+    display: flex; }
+    .wp-express.field.attachment .attachment__items .attachment__items__item {
+      position: relative;
+      margin: 0 20px 20px 0; }
+      .wp-express.field.attachment .attachment__items .attachment__items__item .img-container {
+        width: 150px;
+        height: 150px;
+        background-repeat: no-repeat;
+        background-position: 50%;
+        background-size: cover; }
+      .wp-express.field.attachment .attachment__items .attachment__items__item .btn-remove {
+        cursor: pointer;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 30px;
+        height: 30px;
+        border: 0;
+        border-radius: 30px;
+        padding: 0;
+        background: red;
+        color: white; }
 
 .wp-express.option-wrap.checkbox label {
   display: flex;

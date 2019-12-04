@@ -100,24 +100,27 @@ __webpack_require__.r(__webpack_exports__);
 jQuery(document).ready(function ($) {
   // Upload Button
   $('.wp-express.field.attachment .btn-upload').click(function (e) {
-    var parentId = $(e.currentTarget).parent('.wp-express.field.attachment').attr('data-parent');
-    var isSingle = $(e.currentTarget)[0].hasAttribute('data-single');
-    e.preventDefault(); // Prepare media library
+    var parent = $(e.currentTarget).parent('.wp-express.field.attachment');
+    var parentId = parent.attr('data-parent');
+    var isSingle = $(e.currentTarget)[0].hasAttribute('data-single'); // Prepare media library
 
     var frame = wp.media && wp.media({
-      title: 'Select or Upload Media Of Your Chosen Persuasion',
+      title: 'Select or Upload Media',
       button: {
         text: 'Select'
       },
       multiple: !isSingle
     });
-    frame.on('ready', function () {// frame.state().get('selection').add();
-    });
-    frame.on('select', function () {
+    frame.on('open', function () {
+      parent.find('.attachment__items__item').each(function (_, elm) {
+        var attachmentId = $(elm).find('input').val();
+        frame.state().get('selection').add(wp.media.attachment(attachmentId));
+      });
+    }).on('select', function () {
       var attachments = frame.state().get('selection').models;
       Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["setAttachment"])(parentId, attachments, isSingle);
-    });
-    frame.open();
+    }).open();
+    e.preventDefault();
   });
   Object(_media_upload_attachment__WEBPACK_IMPORTED_MODULE_0__["bindRemoveAction"])(jQuery('.wp-express.field.attachment .btn-remove'));
 });
