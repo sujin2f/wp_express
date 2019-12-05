@@ -10,13 +10,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "module": "esnext",
-    "outDir": "./dist/",
+    "outDir": "./assets/dist/",
     "paths": {
-      "app/*": ["app/*"]
+      "assets/scripts/*": ["assets/scripts/*"]
     },
     "sourceMap": true,
     "target": "es5"
   },
   "exclude": ["node_modues"],
-  "include": ["./app/app.d.ts"]
+  "include": ["./assets/scripts/app.d.ts"]
 }
