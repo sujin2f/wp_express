@@ -20,7 +20,6 @@ export class MediaLibrary {
 
   private bindClickEvent(): void {
     const buttons = document.querySelectorAll(MediaLibrary.DOM.upload);
-console.log(buttons);
     Array.prototype.slice.call(buttons).map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
@@ -41,9 +40,8 @@ console.log(buttons);
 
         frame.on('open', () => {
           const items = parent.querySelectorAll(`.${MediaLibrary.DOM.itemContainer}`);
-console.log(items);
-          Array.prototype.slice.call(items).map((value: Element) => {
-            const attachmentId = value.getElementsByTagName('input');
+          Array.prototype.slice.call(items).map((item: Element) => {
+            const attachmentId = item.getElementsByTagName('input')[0].value;
             frame.state().get('selection').add(wp.media.attachment(attachmentId));
           })
         });
@@ -59,7 +57,6 @@ console.log(items);
   }
 
   private bindRemoveEvent(buttons: Element[]): void {
-console.log(buttons);
     buttons.map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
@@ -74,14 +71,11 @@ console.log(buttons);
 
   private removeAttachment(parent: string, index: string): void {
     const selector = `section[data-parent="${parent}"] .${MediaLibrary.DOM.itemContainer}[data-index="${index}"]`;
-    const targets = document.querySelectorAll(selector);
-    Array.prototype.slice.call(targets).each((target: Element) => {
-      target.parentNode.removeChild(target);
-    });
+    const target = document.querySelector(selector);
+    target.parentNode.removeChild(target);
   }
 
   private renderAttachments(parent:string, attachments: Attachment[], isSingle:boolean): void {
-console.log(parent, attachments, isSingle);
     document.querySelector(`section[data-parent="${parent}"] .attachment__items`).innerHTML = '';
 
     attachments
@@ -106,11 +100,12 @@ console.log(parent, attachments, isSingle);
 
     const input = document.createElement('input');
     input.setAttribute('name', `${parent}[${index}]`);
+    input.setAttribute('type', 'hidden');
     input.value = attachmentId.toString();
 
     const div = document.createElement('div');
     div.classList.add('img-container');
-    input.setAttribute('style', `backgroundImage: url('${url}')`);
+    div.setAttribute('style', `background-image: url('${url}')`);
 
     const button = document.createElement('button');
     button.classList.add('btn-remove');
@@ -118,7 +113,8 @@ console.log(parent, attachments, isSingle);
     button.setAttribute('data-index', index.toString());
 
     const span = document.createElement('span');
-    span.classList.add('dashicons dashicons-no');
+    span.classList.add('dashicons');
+    span.classList.add('dashicons-no');
 
     button.appendChild(span);
 
