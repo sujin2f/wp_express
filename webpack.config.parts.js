@@ -2,25 +2,13 @@
 const path = require('path');
 const webpack = require('webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
-const WebpackCleanPlugin = require('webpack-clean');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const setBase = (entry, dist, wpThemePath) => {
-  const garbage = Object.keys(entry)
-    .filter(key => entry[key].endsWith('.scss'))
-    .reduce((value, key) => {
-      const filename = entry[key].split('/').pop();
-      return [
-        ...value,
-        path.resolve(dist, filename.replace('.scss', '.js')),
-        path.resolve(dist, filename.replace('.scss', '.js.map')),
-      ];
-    }, []);
-
+const setBase = (dist, wpThemePath) => {
   return {
     mode: isProduction() ? 'production' : 'development',
     devtool: isProduction() ? false : 'source-map',
@@ -41,17 +29,9 @@ const setBase = (entry, dist, wpThemePath) => {
        * Clean destination before build
        */
       new CleanWebpackPlugin(),
-      /*
-       * Clean .js from .sass fater build
-       */
-      new WebpackCleanPlugin(garbage),
       new ManifestPlugin(),
       new CompressionPlugin({
           test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
-          filename: '[path].gz[query]',
-          algorithm: 'gzip',
-          threshold: 10240,
-          minRatio: 0.8,
       }),
     ],
   };
@@ -69,6 +49,7 @@ const setJS = () => {
       ],
     },
     optimization: {
+      minimize: true,
       minimizer: [
         new TerserPlugin({
           parallel: true,
@@ -87,33 +68,46 @@ const setJS = () => {
 
 const setCSS = () => {
   return {
-    plugins: [
-      new MiniCssExtractPlugin({
-        filename: '[name].[hash].css',
-      }),
-    ],
+    optimization: {
+      minimize: true,
+      minimizer: [
+        new OptimizeCssAssetsPlugin({
+          cssProcessorOptions: {
+            discardComments: {
+              removeAll: true,
+            },
+            map: {
+              inline: false,
+            },
+          },
+        }),
+      ],
+    },
     module: {
       rules: [
         {
           test: /\.s?css$/,
           use: [
             {
-              loader: MiniCssExtractPlugin.loader,
+              loader: 'file-loader',
+              options: {
+                name: '[name].[hash].css',
+              },
+            },
+            {
+              loader: 'extract-loader'
             },
             {
               loader: 'css-loader',
-              options: { sourceMap: true },
             },
             {
               loader: 'postcss-loader',
               options: {
-                sourceMap: true,
                 plugins: [require('autoprefixer')],
               },
             },
             {
               loader: 'sass-loader',
-              options: { sourceMap: true },
             },
           ],
         },

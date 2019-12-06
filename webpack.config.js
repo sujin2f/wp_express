@@ -13,8 +13,10 @@ const {
 const dist = path.resolve(__dirname, 'assets', 'dist');
 
 const entry = {
-  'app': path.resolve(__dirname, 'assets', 'scripts', 'app.ts'),
-  'meta': path.resolve(__dirname, 'assets', 'styles', 'meta.scss'),
+  'app': [
+    path.resolve(__dirname, 'assets', 'scripts', 'app.ts'),
+    path.resolve(__dirname, 'assets', 'styles', 'style.scss'),
+  ],
 };
 
 const resolve = {
@@ -24,7 +26,7 @@ const resolve = {
 const config = [
   merge.smart(
     { entry },
-    setBase(entry, dist, null),
+    setBase(dist, null),
     setResolve(resolve),
     setJS(),
     setCSS(),
