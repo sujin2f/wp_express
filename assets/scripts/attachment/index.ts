@@ -14,7 +14,7 @@ export class Attachment {
   };
 
   public constructor() {
-    const buttons = document.querySelectorAll(MediaLibrary.DOM.remove);
+    const buttons = document.querySelectorAll(Attachment.DOM.remove);
     this.bindUploadEvent();
     this.bindRemoveEvent(Array.prototype.slice.call(buttons));
   }
@@ -24,7 +24,7 @@ export class Attachment {
    * Opens the WP media library
    */
   private bindUploadEvent(): void {
-    const buttons = document.querySelectorAll(MediaLibrary.DOM.upload);
+    const buttons = document.querySelectorAll(Attachment.DOM.upload);
     Array.prototype.slice.call(buttons).map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
@@ -45,7 +45,7 @@ export class Attachment {
 
         // Select existing items in the media library
         frame.on('open', () => {
-          const items = parent.querySelectorAll(`.${MediaLibrary.DOM.itemContainer}`);
+          const items = parent.querySelectorAll(`.${Attachment.DOM.itemContainer}`);
           Array.prototype.slice.call(items).map((item: Element) => {
             const attachmentId = item.getElementsByTagName('input')[0].value;
             frame.state().get('selection').add(wp.media.attachment(attachmentId));
@@ -80,7 +80,7 @@ export class Attachment {
   }
 
   private removeAttachment(parent: string, index: string): void {
-    const selector = `section[data-parent="${parent}"] .${MediaLibrary.DOM.itemContainer}[data-index="${index}"]`;
+    const selector = `section[data-parent="${parent}"] .${Attachment.DOM.itemContainer}[data-index="${index}"]`;
     const target = document.querySelector(selector);
     target.parentNode.removeChild(target);
   }
@@ -89,7 +89,7 @@ export class Attachment {
    * Remove container and create items in it
    */
   private renderAttachments(parent:string, attachments: IAttachment[], isSingle:boolean): void {
-    document.querySelector(`section[data-parent="${parent}"] .${MediaLibrary.DOM.itemsContainer}`).innerHTML = '';
+    document.querySelector(`section[data-parent="${parent}"] .${Attachment.DOM.itemsContainer}`).innerHTML = '';
 
     attachments
       .filter((_:IAttachment, index: number) => isSingle ? (index === 0) : true)
@@ -113,7 +113,7 @@ export class Attachment {
     index: number
   ): void {
     const container = document.createElement('section');
-    container.classList.add(MediaLibrary.DOM.itemContainer);
+    container.classList.add(Attachment.DOM.itemContainer);
     container.setAttribute('data-index', index.toString());
 
     const input = document.createElement('input');
@@ -142,7 +142,7 @@ export class Attachment {
 
     this.bindRemoveEvent([button]);
 
-    document.querySelector(`section[data-parent="${parent}"] .${MediaLibrary.DOM.itemsContainer}`)
+    document.querySelector(`section[data-parent="${parent}"] .${Attachment.DOM.itemsContainer}`)
       .appendChild(container);
   }
 };
