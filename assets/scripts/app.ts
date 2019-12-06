@@ -1,5 +1,5 @@
-import { MediaLibrary } from 'app/media-upload';
+import { Attachment } from 'app/attachment';
 
 document.addEventListener('DOMContentLoaded', () => {
-  new MediaLibrary();
+  new Attachment();
 });

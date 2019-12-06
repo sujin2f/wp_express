@@ -24,9 +24,6 @@
     "quotemark": {
       "options": ["single", "avoid-escape"]
     },
-    "semicolon": {
-      "options": "never"
-    },
     "trailing-comma": [true, {
       "singleline": "never"
     }],

@@ -1,24 +1,29 @@
-interface Attachment {
+interface IAttachment {
   id: number;
   attributes: {
     url: string;
   };
 };
 
-export class MediaLibrary {
+export class Attachment {
   private static DOM = {
     upload: '.wp-express.field.attachment .btn-upload',
     remove: '.wp-express.field.attachment .btn-remove',
+    itemsContainer: 'attachment__items',
     itemContainer: 'attachment__items__item',
   };
 
   public constructor() {
     const buttons = document.querySelectorAll(MediaLibrary.DOM.remove);
-    this.bindClickEvent();
+    this.bindUploadEvent();
     this.bindRemoveEvent(Array.prototype.slice.call(buttons));
   }
 
-  private bindClickEvent(): void {
+  /*
+   * Bind click events to the Select Image(s) button
+   * Opens the WP media library
+   */
+  private bindUploadEvent(): void {
     const buttons = document.querySelectorAll(MediaLibrary.DOM.upload);
     Array.prototype.slice.call(buttons).map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
@@ -29,7 +34,7 @@ export class MediaLibrary {
         const parentId = parent.getAttribute('data-parent');
         const isSingle = target.hasAttribute('data-single');
 
-        // Prepare media library
+        // Media library
         const frame = wp.media && wp.media({
           title: 'Select or Upload Media',
           button: {
@@ -38,6 +43,7 @@ export class MediaLibrary {
           multiple: !isSingle,
         });
 
+        // Select existing items in the media library
         frame.on('open', () => {
           const items = parent.querySelectorAll(`.${MediaLibrary.DOM.itemContainer}`);
           Array.prototype.slice.call(items).map((item: Element) => {
@@ -46,8 +52,9 @@ export class MediaLibrary {
           })
         });
 
+        // All done. Create attachments
         frame.on('select', () => {
-          const attachments = frame.state().get('selection').models as Attachment[];
+          const attachments = frame.state().get('selection').models as IAttachment[];
           this.renderAttachments(parentId, attachments, isSingle);
         });
 
@@ -56,6 +63,9 @@ export class MediaLibrary {
     });
   }
 
+  /*
+   * Bind click events to the Remove button
+   */
   private bindRemoveEvent(buttons: Element[]): void {
     buttons.map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
@@ -75,19 +85,27 @@ export class MediaLibrary {
     target.parentNode.removeChild(target);
   }
 
-  private renderAttachments(parent:string, attachments: Attachment[], isSingle:boolean): void {
-    document.querySelector(`section[data-parent="${parent}"] .attachment__items`).innerHTML = '';
+  /*
+   * Remove container and create items in it
+   */
+  private renderAttachments(parent:string, attachments: IAttachment[], isSingle:boolean): void {
+    document.querySelector(`section[data-parent="${parent}"] .${MediaLibrary.DOM.itemsContainer}`).innerHTML = '';
 
     attachments
-      .filter((_:Attachment, index: number) => isSingle ? (index === 0) : true)
-      .map((attachment:Attachment, index:number) => this.renderAttachment(
-        parent,
-        attachment.id,
-        attachment.attributes.url,
-        index,
-      ));
+      .filter((_:IAttachment, index: number) => isSingle ? (index === 0) : true)
+      .map((attachment:IAttachment, index:number) => {
+        this.renderAttachment(
+          parent,
+          attachment.id,
+          attachment.attributes.url,
+          index,
+        )
+      });
   }
 
+  /*
+   * Create a single attachement
+   */
   private renderAttachment(
     parent: string,
     attachmentId: number,
@@ -124,7 +142,7 @@ export class MediaLibrary {
 
     this.bindRemoveEvent([button]);
 
-    document.querySelector(`section[data-parent="${parent}"] .attachment__items`)
+    document.querySelector(`section[data-parent="${parent}"] .${MediaLibrary.DOM.itemsContainer}`)
       .appendChild(container);
   }
 };
