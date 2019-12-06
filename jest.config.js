@@ -11,4 +11,12 @@ module.exports = {
   modulePathIgnorePatterns: [
       "__mocks__"
   ],
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.json',
+    },
+  },
+  transform: {
+    "^.+\\.(htm|tsx?)$": "ts-jest",
+  },
 };

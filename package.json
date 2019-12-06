@@ -6,7 +6,7 @@
     "build": "APP_ENV=production webpack",
     "start": "APP_ENV=development webpack --watch",
     "lint": "tslint -c tslint.json --project tsconfig.json 'assets/scripts/**/*.ts'",
-    "test": "APP_ENV=test jest --config jest.config.js --coverage"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,4 @@
+// app/attachment
 interface IAttachment {
   id: number;
   attributes: {
