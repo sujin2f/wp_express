@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "esModuleInterop": true,
+    "allowJs": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "baseUrl": "./",
+    "downlevelIteration": true,
     "jsx": "react",
     "lib": [ "dom", "dom.iterable", "es2015.promise", "es5" ],
     "noFallthroughCasesInSwitch": true,
@@ -10,13 +13,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "outDir": "./assets/dist/",
     "paths": {
-      "assets/scripts/*": ["assets/scripts/*"]
+      "app/*": ["assets/scripts/*"]
     },
     "sourceMap": true,
     "target": "es5"
   },
   "exclude": ["node_modues"],
-  "include": ["./assets/scripts/app.d.ts"]
+  "include": ["./assets/scripts/global.d.ts"]
 }

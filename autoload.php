@@ -9,6 +9,8 @@
 
 if ( ! defined( 'WP_EXPRESS_ASSET_URL' ) ) {
 	$dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'assets/dist';
+	define( 'WP_EXPRESS_ASSET_DIR', $dir );
+
 	$dir = explode( '/wp-content/', $dir );
 	$dir = array_pop( $dir );
 	$dir = content_url() . '/' . $dir;

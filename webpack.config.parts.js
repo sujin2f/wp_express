@@ -1,10 +1,8 @@
 /* eslint-disable */
 const path = require('path');
 const webpack = require('webpack');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const WebpackCleanPlugin = require('webpack-clean');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -25,7 +23,7 @@ const setBase = (entry, dist, wpThemePath) => {
 
   return {
     mode: isProduction() ? 'production' : 'development',
-    devtool: isProduction() ? false : 'inline-source-map',
+    devtool: isProduction() ? false : 'source-map',
     cache: isProduction() ? true : false,
     /*
      * Prevent Conflict from Gutenberg
@@ -47,8 +45,6 @@ const setBase = (entry, dist, wpThemePath) => {
        * Clean .js from .sass fater build
        */
       new WebpackCleanPlugin(garbage),
-      new FriendlyErrorsWebpackPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
       new ManifestPlugin(),
       new CompressionPlugin({
           test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
@@ -58,9 +54,6 @@ const setBase = (entry, dist, wpThemePath) => {
           minRatio: 0.8,
       }),
     ],
-    optimization: {
-      splitChunks: { chunks: 'all' },
-    },
   };
 };
 
@@ -77,16 +70,16 @@ const setJS = () => {
     },
     optimization: {
       minimizer: [
-          new TerserPlugin({
-              parallel: true,
-              sourceMap: true,
-              // @see https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-              terserOptions: {
-                  compress: {
-                      drop_console: isProduction(),
-                  },
-              },
-          }),
+        new TerserPlugin({
+          parallel: true,
+          sourceMap: true,
+          // @see https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+          terserOptions: {
+            compress: {
+              drop_console: isProduction(),
+            },
+          },
+        }),
       ],
     },
   };
@@ -124,11 +117,6 @@ const setCSS = () => {
             },
           ],
         },
-      ],
-    },
-    optimization: {
-      minimizer: [
-        new OptimizeCSSAssetsPlugin(),
       ],
     },
   };

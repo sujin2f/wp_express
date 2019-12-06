@@ -21,12 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Attachment extends Abs_Setting_Element {
 	use Trait_Attachment;
 
-	// Single/Multiton container
-	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
-
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name, $attrs );
-		$this->add_script( WP_EXPRESS_ASSET_URL . '/media-upload.js', true, true );
+		$this->add_script( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['app.js'], true );
 	}
 }

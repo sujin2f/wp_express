@@ -3,10 +3,10 @@
   "version": "3.0.0",
   "description": "Quick Wordpress Development Module. It will help you to make new admin pages, custom post types, and taxonomies.",
   "scripts": {
-    "build": "cross-env APP_ENV=production webpack",
-    "start": "cross-env APP_ENV=development webpack --watch",
+    "build": "APP_ENV=production webpack",
+    "start": "APP_ENV=development webpack --watch",
     "lint": "tslint -c tslint.json --project tsconfig.json 'assets/scripts/**/*.ts'",
-    "test": "cross-env APP_ENV=test jest --config jest.config.js --coverage"
+    "test": "APP_ENV=test jest --config jest.config.js --coverage"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.14",
-    "@types/webpack": "^4.41.0",
+    "@types/webpack": "^4.4.29",
     "autoprefixer": "^9.7.3",
     "awesome-typescript-loader": "^5.2.1",
     "clean-webpack-plugin": "^2.0.2",
@@ -34,9 +34,8 @@
     "coveralls": "^3.0.3",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
-    "friendly-errors-webpack-plugin": "^1.7.0",
     "jest": "^24.9.0",
-    "jsdom": "^15.2.1",
+    "jsdom": "^15.0.0",
     "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
@@ -47,8 +46,8 @@
     "terser-webpack-plugin": "^2.2.1",
     "ts-jest": "^24.2.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.3",
-    "webpack": "^4.29.6",
+    "typescript": "^3.4.5",
+    "webpack": "^4.30.0",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-clean": "^1.2.3",
     "webpack-cli": "^3.3.2",

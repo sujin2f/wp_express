@@ -49,7 +49,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 			$this->option->{$key} = $value;
 		}
 
-		$this->add_style( WP_EXPRESS_ASSET_URL . '/meta.css', true );
+		$this->add_style( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['meta.css'], true );
 		$this->init();
 	}
 
