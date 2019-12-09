@@ -16,32 +16,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Input {
-	protected $defaults_attributes = array(
-		'class' => 'regular-text code',
-		'type'  => 'text',
-	);
+	protected $DATA_TYPE = 'string';
+
+	private $NUMBER_TYPES = array( 'range', 'number' );
+
+	protected function get_data_type(): string {
+		return in_array( $this->option->type, $this->NUMBER_TYPES, true ) ? 'number' : $this->DATA_TYPE;
+	}
 
 	protected function init(): void {
-		$this->option->class = 'regular-text code';
-		$this->option->type  = $this->option->type ?? 'text';
+		$this->option->class = 'regular-text code input__items__item';
+		$this->option->type  = 'text';
 		parent::init();
 	}
 
-	protected function is_available(): bool {
-		return true;
-	}
+	protected function render_form_field(): void {
+		$is_single   = $this->is_single();
 
-	protected function render_form(): void {
+		if ( $is_single ) {
+			$value = array( $this->value );
+		} else {
+			$value = $this->value;
+
+			if ( empty( $value ) ) {
+				$value = array( null );
+			}
+
+			$value[] = null;
+		}
 		?>
 		<section
-			class="<?php echo esc_attr( self::PREFIX ); ?> field input"
-			data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
+			class="<?php echo esc_attr( self::PREFIX ); ?> field input input__items"
+			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
+			data-next-index="<?php echo esc_attr( count( $value ) ); ?>"
+			<?php echo $is_single ? '' : esc_attr( 'data-multiple' ); ?>
 		>
-			<input
-				id="<?php echo esc_attr( self::PREFIX ); ?>__field__input__<?php echo esc_attr( $this->get_id() ); ?>"
-				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->option->render_attributes(); ?>
-			/>
+			<?php foreach ( $value as $index => $item_value ) : ?>
+				<input
+					name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $index ); ?>]"
+					value="<?php echo esc_attr( $item_value ); ?>"
+					<?php $this->option->render_attributes(); ?>
+				/>
+			<?php endforeach; ?>
 		</section>
 		<?php
 	}

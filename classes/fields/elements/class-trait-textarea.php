@@ -16,14 +16,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Textarea {
+	protected $DATA_TYPE = 'string';
+
 	protected function init(): void {
 		$this->option->class = 'large-text code';
-		$this->option->rows  = $this->option->rows ?? 10;
-		$this->option->cols  = $this->option->cols ?? 50;
+		$this->option->rows  = 10;
+		$this->option->cols  = 50;
 		parent::init();
 	}
 
-	protected function render_form(): void {
+	protected function is_single(): bool {
+		return true;
+	}
+
+	protected function render_form_field(): void {
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field textarea">
 			<textarea

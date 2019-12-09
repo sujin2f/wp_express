@@ -128,37 +128,129 @@ final class BrowserTest {
 	}
 
 	private function test_post_meta(): void {
-		$test = Post_Type::get_instance( 'Test' );
+/*
 		// Custom Post Type's Meta
 		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )
 			->attach_to( $test );
 
 		$meta_input = Meta_Input::get_instance( 'Input Test 0' );
 		$meta->add( $meta_input );
+*/
 
 		// Post Meta
-		$meta = Meta_Box::get_instance( 'Test Metabox' );
+		Meta_Box::get_instance( 'Test Metabox' )
+			->append_to( Post_Type::get_instance( 'Post' ) )
+			// Single Attachment
+			->append(
+				Meta_Attachment::get_instance( 'Attachment Test' )
+					->show_in_rest( true )
+			)
+			// Multi Attachment
+			->append(
+				Meta_Attachment::get_instance( 'Multi Attachment Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Single Input
+			->append(
+				Meta_Input::get_instance( 'Input Test' )
+					->show_in_rest( true )
+			)
+			// Single Input Color
+			->append(
+				Meta_Input::get_instance( 'Input Test Color' )
+					->show_in_rest( true )
+					->type( 'color' )
+			)
+			// Single Input Date
+			->append(
+				Meta_Input::get_instance( 'Input Test Date' )
+					->show_in_rest( true )
+					->type( 'date' )
+			)
+			// Single Input Email
+			->append(
+				Meta_Input::get_instance( 'Input Test Email' )
+					->show_in_rest( true )
+					->type( 'email' )
+			)
+			// Single Input Number
+			->append(
+				Meta_Input::get_instance( 'Input Test Number' )
+					->show_in_rest( true )
+					->type( 'number' )
+			)
+			// Single Input Range
+			->append(
+				Meta_Input::get_instance( 'Input Test Range' )
+					->show_in_rest( true )
+					->type( 'range' )
+			)
+			// Single Input Tel
+			->append(
+				Meta_Input::get_instance( 'Input Test Tel' )
+					->show_in_rest( true )
+					->type( 'tel' )
+			)
+			// Single Input Week
+			->append(
+				Meta_Input::get_instance( 'Input Test Week' )
+					->show_in_rest( true )
+					->type( 'week' )
+			)
+			// Multi Input
+			->append(
+				Meta_Input::get_instance( 'Multi Input Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Textarea
+			->append( Meta_Textarea::get_instance( 'Textarea Test' )->show_in_rest( true ) )
+			// Editor
+			->append( Meta_Editor::get_instance( 'Editor Test' )->show_in_rest( true ) )
+			// Radio
+			->append(
+				Meta_Radio::get_instance( 'Radio Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Select
+			->append(
+				Meta_Select::get_instance( 'Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Meta_Select::get_instance( 'Multi Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+					->single( false )
+			)
+		;
 
-		$meta_input       = Meta_Input::get_instance( 'Input Test' );
-		$meta_textarea    = Meta_Textarea::get_instance( 'Textarea Test' );
-		$meta_editor      = Meta_Editor::get_instance( 'Editor Test' );
-		$meta_attachment  = Meta_Attachment::get_instance( 'Attachment Test' );
-		$meta_attachments = Meta_Attachment::get_instance( 'Attachment Test 2' )
-			->single( false );
+/*
 		$meta_checkbox    = Meta_Checkbox::get_instance( 'Checkbox Test' );
-		$meta_radio       = Meta_Radio::get_instance( 'Radio Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
+
+		$meta_checkboxes  = Meta_Checkbox::get_instance( 'Checkbox Tests' )
+			->single( false )
+			->options( array( 'Selection 1', 'Selection 2', 'Selection 3' ) );
+
 		$meta_select      = Meta_Select::get_instance( 'Select Test' )
 			->options( array( 'Selection 1', 'Selection 2' ) );
 
-		$meta->add( $meta_input )
+		$meta
+			->add( $meta_attachments )
+			->add( $meta_input )
+			->add( $meta_inputs )
 			->add( $meta_textarea )
 			->add( $meta_editor )
-			->add( $meta_attachment )
-			->add( $meta_attachments )
 			->add( $meta_checkbox )
+			->add( $meta_checkboxes )
 			->add( $meta_radio )
-			->add( $meta_select );
+			->add( $meta_select )
+*/
+		;
 	}
 
 	private function test_taxonomy() {

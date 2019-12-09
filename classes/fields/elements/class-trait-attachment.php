@@ -16,44 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Attachment {
-	/**
-	 * Get image URL(s)
-	 *
-	 * @return null|string|array
-	 */
-	public function get_image( ?int $id = null, string $size = 'full' ) {
-		// Refresh value
-		$this->refresh_id( $id );
-		$this->refresh_value();
-
-		if ( ! $this->value ) {
-			return;
-		}
-
-		// Single
-		if ( $this->option->single ) {
-			$media = wp_get_attachment_image_src( $this->value, $size );
-			return $media[0];
-		}
-
-		$return = array();
-
-		foreach ( $this->value as $attachment_id ) {
-			$media    = wp_get_attachment_image_src( $attachment_id, $size );
-			$return[] = $media[0];
-		}
-
-		return $return;
-	}
+	protected $DATA_TYPE = 'integer';
 
 	/**
 	 * Admin form
 	 */
-	protected function render_form(): void {
-		// Refresh value
-		$this->refresh_value();
+	protected function render_form_field(): void {
 		$upload_link = get_upload_iframe_src();
-		$is_single   = $this->option->single;
+		$is_single   = $this->is_single();
 		$value       = $is_single ? array( $this->value ) : $this->value;
 		?>
 		<section
@@ -77,10 +47,7 @@ trait Trait_Attachment {
 							value="<?php echo esc_attr( $attachment_id ); ?>"
 						/>
 
-						<div
-							class="img-container"
-							style="background-image: url('<?php echo $img_src; ?>');"
-						></div>
+						<div class="img-container" style="background-image: url('<?php echo $img_src; ?>');"></div>
 
 						<button
 							class="btn-remove"

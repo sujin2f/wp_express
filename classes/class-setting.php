@@ -25,7 +25,6 @@ class Setting extends Abs_Base {
 
 	// Single/Multiton container
 	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
 
 	private $admin_page = 'general';
 

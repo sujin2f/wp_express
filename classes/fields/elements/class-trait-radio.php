@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Radio {
+	protected $DATA_TYPE = 'string';
+
 	protected function init(): void {
 		$this->option->class = 'tog';
 		parent::init();
@@ -25,7 +27,11 @@ trait Trait_Radio {
 		return ! empty( $this->option->options );
 	}
 
-	protected function render_form(): void {
+	protected function is_single(): bool {
+		return true;
+	}
+
+	protected function render_form_field(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field radio">';
 		echo '<fieldset>';
 

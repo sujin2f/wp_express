@@ -16,7 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Editor {
-	protected function render_form(): void {
+	protected $DATA_TYPE = 'string';
+
+	protected function is_single(): bool {
+		return true;
+	}
+
+	protected function render_form_field(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field editor">';
 		wp_editor( stripcslashes( $this->value ), $this->get_id() );
 		echo '</section>';

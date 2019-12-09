@@ -18,7 +18,71 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
-	protected $metabox;
+	/**
+	 * @var Abs_Post_Meta_Element[]
+	 */
+	protected static $multiton_container  = array();
+
+	/**
+	 * @var Meta_Box
+	 */
+	public $metabox;
+
+	public function attach_to( Meta_Box $metabox ): Abs_Post_Meta_Element {
+		$this->metabox = $metabox;
+		return $this;
+	}
+
+	public function update( ?int $post_id = null ): void {
+		$value = $_POST[ $this->get_id() ] ?? null;
+
+		delete_post_meta( $post_id, $this->get_id() );
+
+		if ( $this->is_single() ) {
+			$value = is_array( $value ) ? $value[0] : $value;
+			update_post_meta( $post_id, $this->get_id(), $value );
+			return;
+		}
+
+		foreach ( $value ?? array() as $single_value ) {
+			if ( ! $single_value ) {
+				continue;
+			}
+
+			add_post_meta( $post_id, $this->get_id(), $single_value );
+		}
+	}
+
+	protected function render_form_wrapper_open(): void {
+		$class         = $this->get_called_class();
+		$section_class = self::PREFIX . ' post-meta-wrap ' . $class;
+
+		?>
+		<section class="<?php echo esc_attr( $section_class ); ?>">
+			<label>
+				<?php echo esc_html( $this->get_name() ); ?>
+			</label>
+		<?php
+	}
+
+	protected function render_form_wrapper_close(): void {
+		?>
+		</section>
+		<?php
+	}
+
+	/**
+	 * Register post meta
+	 * https://developer.wordpress.org/reference/functions/register_meta/
+	 */
+	public function register_meta() {
+		$args = array(
+			'type'         => $this->get_data_type(),
+			'single'       => $this->is_single(),
+			'show_in_rest' => $this->option->show_in_rest,
+		);
+		register_meta( 'post', $this->get_id(), $args );
+	}
 
 	protected function init(): void {
 		add_action( 'init', array( $this, 'register_meta' ) );
@@ -38,84 +102,11 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		$this->object_id = $post->ID;
 	}
 
-	public function attach_to( Meta_Box $metabox ): Abs_Post_Meta_Element {
-		$metabox_filter = self::PREFIX . '_meta_box_' . $metabox->get_id();
-
-		add_filter( $metabox_filter, array( $this, 'get_form' ) );
-		add_action( 'save_post', array( $this, 'save_post' ) );
-
-		$this->metabox = $metabox;
-		return $this;
-	}
-
-	private function update( int $post_id, $value ): void {
-		delete_post_meta( $post_id, $this->get_id() );
-
-		if ( $this->option->single ) {
-			$value = is_array( $value ) ? $value[0] : $value;
-			update_post_meta( $post_id, $this->get_id(), $value );
-			return;
-		}
-
-		foreach ( $value as $single_value ) {
-			add_post_meta( $post_id, $this->get_id(), $single_value );
-		}
-	}
-
-	public function get_form( string $output, ?int $id = null ): string {
-		ob_start();
-		$this->render( $id );
-		return $output . ob_get_clean();
-	}
-
-	public function save_post( int $post_id ) {
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
-			return;
-		}
-
-		$nonce = $_POST[ $this->metabox->get_id() . '_nonce' ] ?? null;
-		if ( ! wp_verify_nonce( $nonce, $this->metabox->get_id() ) ) {
-			return;
-		}
-
-		$post = get_post( $post_id );
-
-		foreach ( $this->metabox->get_parents() as $parent_post_type ) {
-			if ( $post->post_type === $parent_post_type ) {
-				$value = $_POST[ $this->get_id() ] ?? false;
-				$this->update( $post_id, $value );
-			}
-		}
-	}
-
-	public function register_meta() {
-		$args = array(
-			'type'         => 'string',
-			'single'       => $this->option->single,
-			'show_in_rest' => $this->option->show_in_rest,
-		);
-		register_meta( 'post', $this->get_id(), $args );
+	protected function get_data_type(): string {
+		return $this->DATA_TYPE;
 	}
 
 	protected function refresh_value(): void {
-		$this->value = get_post_meta( $this->object_id, $this->get_id(), $this->option->single );
-	}
-
-	protected function render_wrapper_open(): void {
-		$class = explode( '\\', get_called_class() );
-		$class = strtolower( array_pop( $class ) );
-
-		?>
-		<section
-			class="<?php echo esc_attr( self::PREFIX ); ?> post-meta-wrap <?php echo esc_attr( $class ); ?>"
-		>
-			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__<?php echo esc_attr( $class ); ?>__<?php echo esc_attr( $this->get_id() ); ?>">
-				<?php echo esc_html( $this->get_name() ); ?>
-			</label>
-		<?php
-	}
-
-	protected function render_wrapper_close(): void {
-		echo '</section>';
+		$this->value = get_post_meta( $this->object_id, $this->get_id(), $this->is_single() );
 	}
 }

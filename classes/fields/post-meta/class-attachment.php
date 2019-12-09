@@ -20,18 +20,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Attachment extends Abs_Post_Meta_Element {
 	use Trait_Attachment;
-
-	protected function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
-		$this->add_script( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['app.js'], true );
-	}
-
-	public function register_meta() {
-		$args = array(
-			'type'         => 'string',
-			'single'       => true,
-			'show_in_rest' => true,
-		);
-		register_meta( 'post', $this->get_id(), $args );
-	}
 }

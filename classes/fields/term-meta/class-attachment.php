@@ -21,11 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Attachment extends Abs_Term_Meta_Element {
 	use Trait_Attachment;
 
-	protected function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
-		$this->add_script( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['app.js'], true );
-	}
-
 	public function register_meta() {
 		$args = array(
 			'type'         => 'string',

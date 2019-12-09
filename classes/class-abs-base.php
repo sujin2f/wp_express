@@ -111,6 +111,13 @@ abstract class Abs_Base {
 		return static::$multiton_container[ $key ];
 	}
 
+	/*
+	 * Gets multiton instance
+	 */
+	public static function get_instances(): array {
+		return static::$multiton_container;
+	}
+
 	public function add_script( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
 		$handle                    = $this->get_assets_handle( $url );
 		$attr                      = $this->scripts[ $handle ] ?? array();

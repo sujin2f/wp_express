@@ -6,9 +6,7 @@
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
-namespace Sujin\Wordpress\WP_Express\Fields\Helpers;
-
-use Sujin\Wordpress\WP_Express\Abs_Base;
+namespace Sujin\Wordpress\WP_Express\Options;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
@@ -16,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class Option extends Abs_Base {
+class Field_Option {
 	// HTML attributes
 	public $class;
 	public $hidden;
@@ -26,7 +24,7 @@ class Option extends Abs_Base {
 	public $cols;
 
 	public $help;
-	public $show_in_rest = true;
+	public $show_in_rest = false;
 	public $options;
 	public $default;
 	public $legend;

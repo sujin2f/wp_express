@@ -10,7 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Abs_Base;
-use Sujin\Wordpress\WP_Express\Fields\Helpers\Option;
+use Sujin\Wordpress\WP_Express\Options\Field_Option;
 use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +23,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	/**
 	 * Field option
 	 *
-	 * @var Option
+	 * @var Field_Option
 	 */
 	protected $option;
 
@@ -43,21 +43,20 @@ abstract class Abs_Base_Element extends Abs_Base {
 
 	protected function __construct( string $name, array $attrs = array() ) {
 		parent::__construct( $name );
-		$this->option = new Option();
+		$this->option = new Field_Option();
 
 		foreach ( $attrs as $key => $value ) {
 			$this->option->{$key} = $value;
 		}
 
-		$this->add_style( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['meta.css'], true );
+		$this->add_style( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['style.scss'], true );
+		$this->add_script( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['app.js'], true );
 		$this->init();
 	}
 
-	protected function init(): void {}
-
 	/**
 	 * Magic method for get/set option value
-	 * i.g. $input->value()
+	 * i.g. $input->class( 'wide' )
 	 */
 	public function __call( string $key, array $arguments ): Abs_Base_Element {
 		if ( ! in_array( $key, array_keys( get_object_vars( $this->option ) ), true ) ) {
@@ -74,33 +73,59 @@ abstract class Abs_Base_Element extends Abs_Base {
 	}
 
 	/**
-	 * For types which has options, when they don't have any option, simply disable it.
+	 * Get value
 	 */
-	protected function is_available(): bool {
-		return true;
+	public function get( ?int $id = null ) {
+		$this->refresh_id( $id );
+		$this->refresh_value();
+		return $this->value;
 	}
 
-	public function render( ?int $id = null ): void {
+	/**
+	 * Render the form
+	 */
+	public function render_form( ?int $id = null ): void {
 		if ( false === $this->is_available() ) {
 			return;
 		}
 
 		$this->refresh_id( $id );
 		$this->refresh_value();
-		$this->render_wrapper_open();
-		$this->render_form();
-		$this->render_wrapper_close();
+
+		$this->render_form_wrapper_open();
+		$this->render_form_field();
+		$this->render_form_wrapper_close();
 	}
 
+	/**
+	 * For types which has options, when they don't have any option, simply disable it.
+	 */
+	protected function is_available(): bool {
+		return true;
+	}
+
+	protected function get_called_class(): string {
+		$class = explode( '\\', get_called_class() );
+		return strtolower( array_pop( $class ) );
+	}
+
+	/**
+	 * Get data type
+	 * https://developer.wordpress.org/reference/functions/register_meta/
+	 *
+	 * @return string 'string', 'boolean', 'integer', 'number', 'array', or 'object'
+	 */
+	protected abstract function get_data_type(): string;
+
+	protected function is_single(): bool {
+		return $this->option->single;
+	}
+
+	public abstract function update( ?int $id = null ): void;
+	protected abstract function init(): void;
 	protected abstract function refresh_id( ?int $id = null ): void;
 	protected abstract function refresh_value(): void;
-	protected abstract function render_wrapper_open(): void;
-	protected abstract function render_form(): void;
-	protected abstract function render_wrapper_close(): void;
-
-	public function get( ?int $id = null ) {
-		$this->refresh_id( $id );
-		$this->refresh_value();
-		return $this->value;
-	}
+	protected abstract function render_form_wrapper_open(): void;
+	protected abstract function render_form_wrapper_close(): void;
+	protected abstract function render_form_field(): void;
 }

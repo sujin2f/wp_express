@@ -18,61 +18,67 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class Meta_Box extends Abs_Base {
-	private const DEFAULT_POST_TYPE = 'post';
+final class Meta_Box extends Abs_Base {
+	protected static $multiton_container = array();
 
-	// Single/Multiton container
-	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
+	/**
+	 * @var Post_Type[]
+	 */
+	public $post_types = array();
 
-	private $post_types = array();
+	/**
+	 * @var Abs_Post_Meta_Element[]
+	 */
+	public $post_metas = array();
 
 	protected function __construct( $name ) {
 		parent::__construct( $name );
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 	}
 
-	public function add( Abs_Post_Meta_Element $field ): Meta_Box {
-		$field->attach_to( $this );
+	public function append( Abs_Post_Meta_Element $post_meta ): Meta_Box {
+		$post_meta->attach_to( $this );
+		$this->post_metas[] = $post_meta;
 		return $this;
 	}
 
-	public function attach_to( $post_type ): Meta_Box {
+	public function append_to( Post_Type $post_type ): Meta_Box {
 		$this->post_types[] = $post_type;
 		return $this;
 	}
 
-	public function register_meta_box() {
-		$post_types = $this->get_parents();
+	public function register_meta_box(): void {
+		if ( empty( $this->post_types ) ) {
+			return;
+		}
+
 		add_meta_box(
 			$this->get_id(),
 			$this->get_name(),
 			array( $this, 'show_meta_box' ),
-			$post_types
+			array_map(
+				function( $post_type ) {
+					return $post_type->get_id();
+				},
+				$this->post_types,
+			),
+
 		);
 	}
 
-	public function show_meta_box() {
-		echo '<section class="' . esc_attr( self::PREFIX ) . ' metabox">';
+	public function show_meta_box(): void {
+		$post_id = $_GET['post'] ?? null;
 
-		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
+		?>
+		<section class="<?php echo esc_attr( self::PREFIX ) ?> metabox">
+			<?php
+			wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
 
-		echo apply_filters( self::PREFIX . '_meta_box_' . $this->get_id(), '', $_GET['post'] ?? null );
-
-		echo '</section>';
-	}
-
-	public function get_parents(): array {
-		$post_types = array();
-
-		foreach ( $this->post_types as $post_type ) {
-			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
-		}
-
-		if ( empty( $post_types ) ) {
-			$post_types = array( self::DEFAULT_POST_TYPE );
-		}
-
-		return $post_types;
+			foreach( $this->post_metas as $post_meta ) {
+				$post_meta->render_form( $post_id );
+			}
+			?>
+		</section>
+		<?php
 	}
 }

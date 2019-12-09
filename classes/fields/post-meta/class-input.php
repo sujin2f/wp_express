@@ -20,17 +20,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Input extends Abs_Post_Meta_Element {
 	use Trait_Input;
-
-	// Single/Multiton container
-	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
-
-	public function register_meta() {
-		$args = array(
-			'type'         => 'number' === $this->option->type ? 'integer' : 'string',
-			'single'       => true,
-			'show_in_rest' => true,
-		);
-		register_meta( 'post', $this->get_id(), $args );
-	}
 }

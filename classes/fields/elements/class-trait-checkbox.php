@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Trait_Checkbox {
+	protected $DATA_TYPE = 'string';
+
 	protected function render_form(): void {
 		$checked = $this->value ? 'checked="checked"' : '';
 		?>
