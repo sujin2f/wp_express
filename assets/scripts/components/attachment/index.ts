@@ -1,4 +1,7 @@
-// app/attachment
+// app/components/attachment
+
+import { DOMUtils } from 'app/utils/dom';
+
 interface IAttachment {
   id: number;
   attributes: {
@@ -10,14 +13,14 @@ export class Attachment {
   private static DOM = {
     upload: '.wp-express.field.attachment .btn-upload',
     remove: '.wp-express.field.attachment .btn-remove',
-    itemsContainer: 'attachment__items',
+    itemsContainer: '.attachment__items',
     itemContainer: 'attachment__items__item',
   };
 
   public constructor() {
-    const buttons = document.querySelectorAll(Attachment.DOM.remove);
+    const removeButtons = DOMUtils.querySelectorAll(Attachment.DOM.remove);
     this.bindUploadEvent();
-    this.bindRemoveEvent(Array.prototype.slice.call(buttons));
+    this.bindRemoveEvent(removeButtons);
   }
 
   /*
@@ -25,8 +28,8 @@ export class Attachment {
    * Opens the WP media library
    */
   private bindUploadEvent(): void {
-    const buttons = document.querySelectorAll(Attachment.DOM.upload);
-    Array.prototype.slice.call(buttons).map((button: Element) => {
+    const buttons = DOMUtils.querySelectorAll(Attachment.DOM.upload);
+    buttons.map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
 
@@ -90,7 +93,7 @@ export class Attachment {
    * Remove container and create items in it
    */
   private renderAttachments(parent:string, attachments: IAttachment[], isSingle:boolean): void {
-    document.querySelector(`section[data-parent="${parent}"] .${Attachment.DOM.itemsContainer}`).innerHTML = '';
+    document.querySelector(`section[data-parent="${parent}"] ${Attachment.DOM.itemsContainer}`).innerHTML = '';
 
     attachments
       .filter((_:IAttachment, index: number) => isSingle ? (index === 0) : true)
@@ -143,7 +146,7 @@ export class Attachment {
 
     this.bindRemoveEvent([button]);
 
-    document.querySelector(`section[data-parent="${parent}"] .${Attachment.DOM.itemsContainer}`)
+    document.querySelector(`section[data-parent="${parent}"] ${Attachment.DOM.itemsContainer}`)
       .appendChild(container);
   }
 };

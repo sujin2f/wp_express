@@ -1,3 +1,5 @@
+// app/components/input
+
 export class Input {
   private static DOM = {
     itemsContainer: 'input__items',

@@ -5,6 +5,7 @@
     "allowUnusedLabels": false,
     "baseUrl": "./",
     "downlevelIteration": true,
+    "esModuleInterop": true,
     "jsx": "react",
     "lib": [ "dom", "dom.iterable", "es2015.promise", "es5" ],
     "noFallthroughCasesInSwitch": true,
@@ -17,7 +18,7 @@
     "resolveJsonModule": true,
     "outDir": "./assets/dist/",
     "paths": {
-      "app/*": ["assets/scripts/*"]
+      "app/*": ["./assets/scripts/*"]
     },
     "sourceMap": true,
     "target": "es5"
