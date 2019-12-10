@@ -3,17 +3,9 @@ use Sujin\Wordpress\WP_Express\Abs_Base;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
-// @codeCoverageIgnoreStart
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-// @codeCoverageIgnoreEnd
-
 class AbsBase_Inherited extends Abs_Base {}
 
-class Unit_Test extends Test_Case {
+class Abs_Base_Test extends Test_Case {
 	private $obj;
 
 	public function setUp() {
@@ -36,12 +28,12 @@ class Unit_Test extends Test_Case {
 		// Enqueue Script
 		$wp_scripts = wp_scripts();
 
-		@$this->obj->_register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
-		$this->obj->_wp_enqueue_scripts();
+		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+		$this->obj->wp_enqueue_scripts();
 
 		$this->assertEquals( $wp_scripts->queue[0], 'wp-express-script-js' );
 
-		$this->obj->_admin_enqueue_scripts();
+		$this->obj->admin_enqueue_scripts();
 
 		$this->assertEquals( $wp_scripts->queue[1], 'wp-express-another-script-js' );
 	}
@@ -71,18 +63,18 @@ class Unit_Test extends Test_Case {
 		// Enqueue Style
 		$wp_styles = wp_styles();
 
-		@$this->obj->_register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
-		$this->obj->_wp_enqueue_scripts();
+		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+		$this->obj->wp_enqueue_scripts();
 
 		$this->assertEquals( $wp_styles->queue[0], 'wp-express-style-css' );
 
-		$this->obj->_admin_enqueue_scripts();
+		$this->obj->admin_enqueue_scripts();
 
 		$this->assertEquals( $wp_styles->queue[1], 'wp-express-another-style-css' );
 	}
 
 	public function test_get_assets_handle() {
-		$handle = $this->call_private_method( $this->obj, '_get_assets_handle', array( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' ) );
+		$handle = $this->call_private_method( $this->obj, 'get_assets_handle', array( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' ) );
 		$this->assertEquals( 'wp-express-style-css', $handle );
 	}
 
@@ -91,7 +83,7 @@ class Unit_Test extends Test_Case {
 		$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
 		$obj = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/style.css' );
 
-		@$this->obj->_register_assets(); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+		@$this->obj->register_assets(); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
 
 		$wp_scripts = wp_scripts();
 		$wp_styles  = wp_styles();

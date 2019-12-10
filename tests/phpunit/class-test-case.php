@@ -8,7 +8,7 @@ abstract class Test_Case extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		self::$home_dir = dirname( dirname( dirname( __DIR__ ) ) );
+		self::$home_dir = dirname( dirname( __DIR__ ) );
 		self::$test_dir = dirname( dirname( __DIR__ ) );
 		include_once( self::$home_dir . '/autoload.php' );
 	}

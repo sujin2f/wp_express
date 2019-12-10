@@ -12,12 +12,6 @@ use Sujin\Wordpress\WP_Express\Abs_Base;
 use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
 use WP_Post;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 final class Meta_Box extends Abs_Base {
 	protected static $multiton_container = array();
 
@@ -62,7 +56,6 @@ final class Meta_Box extends Abs_Base {
 				},
 				$this->post_types,
 			),
-
 		);
 	}
 

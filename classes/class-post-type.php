@@ -128,8 +128,13 @@ final class Post_Type extends Abs_Base {
 		## Supports
 		$supports              = get_all_post_type_supports( $this->get_id() );
 		$arguments['supports'] = array_keys( $supports );
-
-		$arguments = array_merge( $this->arguments->to_array(), $arguments );
+		$user_args = array_filter( 
+			$this->arguments->to_array(),
+			function ( $value ): bool {
+				return ! is_null( $value );
+			}
+		);
+		$arguments = array_merge( $arguments, $user_args );
 		register_post_type( $this->get_id(), $arguments );
 	}
 

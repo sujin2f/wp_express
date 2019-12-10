@@ -40,7 +40,7 @@ class Post_Type_Argument {
 	public $query_var;
 	public $can_export;
 	public $delete_with_user;
-	public $show_in_rest = false;
+	public $show_in_rest;
 	public $rest_base;
 	public $rest_controller_class;
 	public $_builtin;
