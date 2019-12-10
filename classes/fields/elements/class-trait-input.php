@@ -32,18 +32,12 @@ trait Trait_Input {
 
 	protected function render_form_field(): void {
 		$is_single   = $this->is_single();
-
-		if ( $is_single ) {
-			$value = array( $this->value );
-		} else {
-			$value = $this->value;
-
-			if ( empty( $value ) ) {
-				$value = array( null );
-			}
-
-			$value[] = null;
-		}
+		$value       = $is_single
+			? array( $this->value )
+			: array_merge(
+				$this->value,
+				array( null ),
+			);
 		?>
 		<section
 			class="<?php echo esc_attr( self::PREFIX ); ?> field input input__items"

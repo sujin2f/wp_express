@@ -12,11 +12,13 @@ namespace Sujin\Wordpress\WP_Express\Fields\Settings;
 use Sujin\Wordpress\WP_Express\Fields\Abs_Setting_Element;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Attachment;
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
 	header( 'HTTP/1.1 404 Not Found' );
 	exit();
 }
+// @codeCoverageIgnoreEnd
 
 class Attachment extends Abs_Setting_Element {
 	use Trait_Attachment;

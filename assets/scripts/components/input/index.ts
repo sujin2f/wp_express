@@ -1,4 +1,5 @@
 // app/components/input
+import { DOMUtils } from 'app/utils/dom';
 
 export class Input {
   private static DOM = {
@@ -7,8 +8,8 @@ export class Input {
   };
 
   public constructor() {
-    const inputs = document.querySelectorAll(`.${Input.DOM.itemsContainer}[data-multiple] input`);
-    Array.prototype.slice.call(inputs).map((input: HTMLInputElement) => {
+    const inputs = DOMUtils.querySelectorAll(`.${Input.DOM.itemsContainer}[data-multiple] input`);
+    inputs.map((input: HTMLInputElement) => {
       this.bindTextEvent(input);
     });
   }
@@ -16,9 +17,8 @@ export class Input {
   private bindTextEvent(input: HTMLInputElement): void {
     input.addEventListener('keyup', (_: KeyboardEvent) => {
       const container = input.closest(`.wp-express.${Input.DOM.itemsContainer}`);
-      const inputs = container.getElementsByTagName('input');
-      const hasValue = Array.prototype.slice.call(inputs)
-        .filter((target: HTMLInputElement) => target.value);
+      const inputs = DOMUtils.nodes(container.getElementsByTagName('input'));
+      const hasValue = inputs.filter((target: HTMLInputElement) => target.value);
       const emptyInputs = inputs.length - hasValue.length;
 
       // Remove input when the empty values are more than one

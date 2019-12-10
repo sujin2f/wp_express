@@ -12,7 +12,7 @@
 >
 	<testsuites>
 		<testsuite name="WP Express">
-			<directory>./tests/phpunit/Unit</directory>
+			<directory suffix=".spec.php">./classes</directory>
 		</testsuite>
 	</testsuites>
 	<php>

@@ -31,10 +31,5 @@
     "phpcompatibility/phpcompatibility-wp": "*",
     "phpcompatibility/php-compatibility": "^9.1",
     "php-coveralls/php-coveralls": "^2.1"
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Sujin\\Wordpress\\WP_Express\\Tests\\Unit\\": "tests/phpunit/Unit"
-    }
   }
 }

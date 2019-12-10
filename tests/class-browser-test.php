@@ -128,15 +128,6 @@ final class BrowserTest {
 	}
 
 	private function test_post_meta(): void {
-/*
-		// Custom Post Type's Meta
-		$meta = Meta_Box::get_instance( 'Test Metabox for custom' )
-			->attach_to( $test );
-
-		$meta_input = Meta_Input::get_instance( 'Input Test 0' );
-		$meta->add( $meta_input );
-*/
-
 		// Post Meta
 		Meta_Box::get_instance( 'Test Metabox' )
 			->append_to( Post_Type::get_instance( 'Post' ) )
@@ -227,29 +218,17 @@ final class BrowserTest {
 					->show_in_rest( true )
 					->single( false )
 			)
-		;
-
-/*
-		$meta_checkbox    = Meta_Checkbox::get_instance( 'Checkbox Test' );
-
-		$meta_checkboxes  = Meta_Checkbox::get_instance( 'Checkbox Tests' )
-			->single( false )
-			->options( array( 'Selection 1', 'Selection 2', 'Selection 3' ) );
-
-		$meta_select      = Meta_Select::get_instance( 'Select Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-
-		$meta
-			->add( $meta_attachments )
-			->add( $meta_input )
-			->add( $meta_inputs )
-			->add( $meta_textarea )
-			->add( $meta_editor )
-			->add( $meta_checkbox )
-			->add( $meta_checkboxes )
-			->add( $meta_radio )
-			->add( $meta_select )
-*/
+			// Select
+			->append(
+				Meta_Checkbox::get_instance( 'Checkbox Test' )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Meta_Checkbox::get_instance( 'Multi Checkbox Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
 		;
 	}
 

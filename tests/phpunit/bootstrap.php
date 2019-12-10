@@ -4,6 +4,14 @@
  * PHPUnit bootstrap file
  */
 
+if ( ! defined( 'WPEX_PHPUNIT__DIR' ) ) {
+	define( 'WPEX_PHPUNIT__DIR', dirname( __FILE__ ) );
+}
+
+if ( ! defined( 'WPEX_BASE__DIR' ) ) {
+	define( 'WPEX_BASE__DIR', dirname( dirname( __DIR__ ) ) );
+}
+
 // Composer autoloader must be loaded before WP_PHPUNIT__DIR will be available
 require_once dirname( dirname( __DIR__ ) ) . '/vendor/autoload.php';
 
@@ -19,3 +27,6 @@ tests_add_filter(
 
 // Start up the WP testing environment.
 require getenv( 'WP_PHPUNIT__DIR' ) . '/includes/bootstrap.php';
+
+include_once( WPEX_BASE__DIR . '/autoload.php' );
+include_once( WPEX_PHPUNIT__DIR . '/class-test-case.php' );

@@ -1,10 +1,5 @@
 <?php
-namespace Sujin\Wordpress\WP_Express\Tests\Unit;
-
-use WP_UnitTestCase;
-use ReflectionClass;
-
-abstract class TestCase extends WP_UnitTestCase {
+abstract class Test_Case extends WP_UnitTestCase {
 	protected static $home_dir = '';
 	protected static $test_dir = '';
 

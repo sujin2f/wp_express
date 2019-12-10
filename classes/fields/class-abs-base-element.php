@@ -13,11 +13,13 @@ use Sujin\Wordpress\WP_Express\Abs_Base;
 use Sujin\Wordpress\WP_Express\Options\Field_Option;
 use WP_Term;
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
 	header( 'HTTP/1.1 404 Not Found' );
 	exit();
 }
+// @codeCoverageIgnoreEnd
 
 abstract class Abs_Base_Element extends Abs_Base {
 	/**
@@ -121,7 +123,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 		return $this->option->single;
 	}
 
-	public abstract function update( ?int $id = null ): void;
+	public abstract function update( ?int $id = null, $value = null ): void;
 	protected abstract function init(): void;
 	protected abstract function refresh_id( ?int $id = null ): void;
 	protected abstract function refresh_value(): void;

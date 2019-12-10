@@ -18,27 +18,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
+	/**
+	 * @var Abs_Post_Meta_Element[]
+	 */
+	protected static $multiton_container  = array();
+
+	/**
+	 * @var Taxonomy[]
+	 */
 	private $taxonomies = array();
 
-	protected function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
-		add_action( 'init', array( $this, 'register_meta' ) );
-	}
-
-	public function attach_to( $taxonomy ): Abs_Term_Meta_Element {
+	public function attach_to( Taxonomy $taxonomy ): Abs_Term_Meta_Element {
 		$this->taxonomies[] = $taxonomy;
 
-		if ( $taxonomy instanceof Taxonomy ) {
-			$taxonomy = $taxonomy->get_id();
-		}
-		add_action( $taxonomy . '_edit_form_fields', array( $this, 'render' ), 25 );
-		add_action( 'edited_' . $taxonomy, array( $this, 'update' ), 25 );
+		add_action( $taxonomy->get_id() . '_edit_form_fields', array( $this, 'render' ), 25 );
+		add_action( 'edited_' . $taxonomy->get_id(), array( $this, 'update' ), 25 );
 
 		return $this;
 	}
 
-	public function update( int $term_id, $value = null ) {
-		if ( ! $value ) {
+	public function update( ?int $term_id = null, $value = null ): void {
+		if ( is_null( $value ) ) {
 			$value = $_POST[ $this->get_id() ];
 		}
 		update_term_meta( $term_id, $this->get_id(), $value );
@@ -46,24 +46,18 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 
 	public function register_meta() {
 		$args = array(
-			'type'         => 'string',
-			'single'       => $this->options['single'],
-			'show_in_rest' => $this->options['show_in_rest'],
+			'type'         => $this->get_data_type(),
+			'single'       => $this->is_single(),
+			'show_in_rest' => $this->option->show_in_rest,
 		);
 		register_meta( 'term', $this->get_id(), $args );
 	}
 
-	protected function refresh_value( ?int $term_id = null ) {
-		if ( empty( $term_id ) ) {
-			if ( empty( $_GET['tag_ID'] ?? null ) ) {
-				return;
-			}
-			$term_id = $_GET['tag_ID'];
-		}
-		$this->attributes['value'] = get_term_meta( $term_id, $this->get_id(), $this->options['single'] );
+	protected function init(): void {
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
-	protected function render_wrapper_open() {
+	protected function render_form_wrapper_open(): void {
 		$class = explode( '\\', get_called_class() );
 		$class = strtolower( array_pop( $class ) );
 
@@ -78,8 +72,32 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 		<?php
 	}
 
-	protected function render_wrapper_close() {
+	protected function render_form_wrapper_close(): void {
 		echo '</td></tr>';
+	}
+
+	protected function refresh_id( ?int $id = null ): void {
+		if ( $this->object_id ) {
+			return;
+		}
+
+		if ( ! is_null( $id ) ) {
+			$this->object_id = $id;
+			return;
+		}
+
+		if ( empty( $_GET['tag_ID'] ?? null ) ) {
+			return;
+		}
+		$this->object_id = $_GET['tag_ID'];
+	}
+
+	protected function refresh_value(): void {
+		$this->value = get_term_meta( $this->object_id, $this->get_id(), $this->is_single() );
+	}
+
+	protected function get_data_type(): string {
+		return $this->DATA_TYPE;
 	}
 
 	public function get_parents(): array {

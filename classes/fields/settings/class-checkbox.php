@@ -12,30 +12,14 @@ namespace Sujin\Wordpress\WP_Express\Fields\Settings;
 use Sujin\Wordpress\WP_Express\Fields\Abs_Setting_Element;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Checkbox;
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );
 	header( 'HTTP/1.1 404 Not Found' );
 	exit();
 }
+// @codeCoverageIgnoreEnd
 
 class Checkbox extends Abs_Setting_Element {
 	use Trait_Checkbox;
-
-	// Single/Multiton container
-	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
-
-	protected function render_wrapper_open() {
-		?>
-		<section
-			id="<?php echo esc_attr( self::PREFIX ); ?>--option-wrap--checkbox--<?php echo esc_attr( $this->get_id() ); ?>"
-			class="<?php echo esc_attr( self::PREFIX ); ?> option-wrap checkbox"
-		>
-			<label for="<?php echo esc_attr( self::PREFIX ); ?>__field__checkbox__<?php echo esc_attr( $this->get_id() ); ?>">
-		<?php
-	}
-
-	protected function render_wrapper_close() {
-		echo esc_html( $this->get_name() ) . '</label></section>';
-	}
 }

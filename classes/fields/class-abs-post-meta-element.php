@@ -11,12 +11,6 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 	/**
 	 * @var Abs_Post_Meta_Element[]
@@ -33,8 +27,10 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		return $this;
 	}
 
-	public function update( ?int $post_id = null ): void {
-		$value = $_POST[ $this->get_id() ] ?? null;
+	public function update( ?int $post_id = null, $value = null ): void {
+		if ( is_null( $value ) ) {
+			$value = $_POST[ $this->get_id() ] ?? null;
+		}
 
 		delete_post_meta( $post_id, $this->get_id() );
 
@@ -51,6 +47,23 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 
 			add_post_meta( $post_id, $this->get_id(), $single_value );
 		}
+	}
+
+	/**
+	 * Register post meta
+	 * https://developer.wordpress.org/reference/functions/register_meta/
+	 */
+	public function register_meta() {
+		$args = array(
+			'type'         => $this->get_data_type(),
+			'single'       => $this->is_single(),
+			'show_in_rest' => $this->option->show_in_rest,
+		);
+		register_meta( 'post', $this->get_id(), $args );
+	}
+
+	protected function init(): void {
+		add_action( 'init', array( $this, 'register_meta' ) );
 	}
 
 	protected function render_form_wrapper_open(): void {
@@ -71,25 +84,13 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		<?php
 	}
 
-	/**
-	 * Register post meta
-	 * https://developer.wordpress.org/reference/functions/register_meta/
-	 */
-	public function register_meta() {
-		$args = array(
-			'type'         => $this->get_data_type(),
-			'single'       => $this->is_single(),
-			'show_in_rest' => $this->option->show_in_rest,
-		);
-		register_meta( 'post', $this->get_id(), $args );
-	}
-
-	protected function init(): void {
-		add_action( 'init', array( $this, 'register_meta' ) );
-	}
-
 	protected function refresh_id( ?int $id = null ): void {
 		if ( $this->object_id ) {
+			return;
+		}
+
+		if ( ! is_null( $id ) ) {
+			$this->object_id = $id;
 			return;
 		}
 
@@ -102,11 +103,11 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 		$this->object_id = $post->ID;
 	}
 
-	protected function get_data_type(): string {
-		return $this->DATA_TYPE;
-	}
-
 	protected function refresh_value(): void {
 		$this->value = get_post_meta( $this->object_id, $this->get_id(), $this->is_single() );
+	}
+
+	protected function get_data_type(): string {
+		return $this->DATA_TYPE;
 	}
 }

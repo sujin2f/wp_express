@@ -46,12 +46,6 @@ class Autoloader {
 			'path'      => explode( '\\', str_replace( $this->namespace . '\\', '', $class_name ) ),
 		);
 
-		// Unit test file
-		if ( strpos( $class_name, '\\Unit_Test' ) === strlen( $class_name ) - 10 ) {
-			$path['extension'] = '.spec.php';
-			array_pop( $path['path'] );
-		}
-
 		$path['path'] = array_map( array( $this, 'map_convert_path' ), $path['path'] );
 		array_unshift( $path['path'], $this->base_dir );
 

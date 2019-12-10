@@ -12,16 +12,6 @@ namespace Sujin\Wordpress\WP_Express\Fields\Term_Meta;
 use Sujin\Wordpress\WP_Express\Fields\Abs_Term_Meta_Element;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Radio;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 class Radio extends Abs_Term_Meta_Element {
 	use Trait_Radio;
-
-	// Single/Multiton container
-	protected static $multiton_container  = array();
-	protected static $singleton_container = null;
 }

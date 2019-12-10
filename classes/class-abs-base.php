@@ -11,14 +11,6 @@ namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
-// @codeCoverageIgnoreStart
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-// @codeCoverageIgnoreEnd
-
 abstract class Abs_Base {
 	protected const PREFIX = 'wp-express';
 

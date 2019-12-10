@@ -1,15 +1,23 @@
 <?php
-namespace Sujin\Wordpress\WP_Express\Tests\Unit;
-
+use Sujin\Wordpress\WP_Express\Abs_Base;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
-class AbsBaseTest extends TestCase {
+// @codeCoverageIgnoreStart
+if ( ! defined( 'ABSPATH' ) ) {
+	header( 'Status: 404 Not Found' );
+	header( 'HTTP/1.1 404 Not Found' );
+	exit();
+}
+// @codeCoverageIgnoreEnd
+
+class AbsBase_Inherited extends Abs_Base {}
+
+class Unit_Test extends Test_Case {
 	private $obj;
 
 	public function setUp() {
 		parent::setUp();
-		include_once( 'AbsBase_Inherited.php' );
 		$this->obj = AbsBase_Inherited::get_instance( 'Test' );
 	}
 

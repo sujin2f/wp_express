@@ -1,5 +1,4 @@
 // app/components/attachment
-
 import { DOMUtils } from 'app/utils/dom';
 
 interface IAttachment {

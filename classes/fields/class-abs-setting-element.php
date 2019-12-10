@@ -2,9 +2,9 @@
 /**
  * Interface for Fields
  *
- * @project WP-Express
+ * @package WP-Express
  * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields;
@@ -12,17 +12,26 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Admin;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 abstract class Abs_Setting_Element extends Abs_Base_Element {
+	/**
+	 * @var Abs_Post_Meta_Element[]
+	 */
+	protected static $multiton_container  = array();
+
+	/**
+	 * @var Setting
+	 */
 	private $setting;
 
-	protected function __construct( string $name, array $attrs = array() ) {
-		parent::__construct( $name, $attrs );
+	public function attach_to( Setting $setting ) {
+		$this->setting        = $setting;
+		$this->option->legend = $setting->get_name();
+	}
+
+	public function update( ?int $post_id = null, $value = null ): void {
+	}
+
+	protected function init(): void {
 		add_action( 'admin_init', array( $this, 'add_settings_field' ) );
 	}
 
@@ -51,18 +60,21 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 		register_setting( $parent_id, $this->get_id() );
 	}
 
-	public function attach_to( Setting $setting ) {
-		$this->setting           = $setting;
-		$this->options['legend'] = $setting->get_name();
+	protected function refresh_id( ?int $id = null ): void {
+		return;
 	}
 
-	protected function refresh_value( ?int $_ = null ) {
-		if ( empty( $this->attributes['value'] ) ) {
-			$this->attributes['value'] = get_option( $this->get_id() );
+	protected function refresh_value(): void {
+		if ( empty( $this->value ) ) {
+			$this->value = get_option( $this->get_id() );
 		}
 	}
 
-	protected function render_wrapper_open() {}
+	protected function get_data_type(): string {
+		return $this->DATA_TYPE;
+	}
 
-	protected function render_wrapper_close() {}
+	protected function render_form_wrapper_open(): void {}
+
+	protected function render_form_wrapper_close(): void {}
 }
