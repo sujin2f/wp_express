@@ -11,16 +11,13 @@ namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Options\Post_Type_Argument;
-use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
 use WP_Post;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-final class Post_Type extends Abs_Base {
+final class Post_Type extends Component {
+	/**
+	 * @var Post_Type[]
+	 */
 	protected static $multiton_container = array();
 
 	/**
@@ -55,9 +52,9 @@ final class Post_Type extends Abs_Base {
 	}
 
 	/**
-	 * Set / Get argument
+	 * @return any|Post_Type
 	 */
-	public function __call( string $name, array $arguments ): Post_Type {
+	public function __call( string $name, array $arguments ) {
 		if ( array_key_exists( strtolower( $name ), $this->arguments->to_array() ) ) {
 			if ( empty( $arguments ) ) {
 				return $this->arguments->{$name};
@@ -90,7 +87,7 @@ final class Post_Type extends Abs_Base {
 			return;
 		}
 
-		foreach( Abs_Post_Meta_Element::get_instances() as $post_meta ) {
+		foreach( Post_Meta_Component::get_instances() as $post_meta ) {
 			$post_meta_post_types = array_map(
 				function( $post_type ) {
 					return $post_type->get_id();

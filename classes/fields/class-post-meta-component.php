@@ -11,9 +11,9 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
 
-abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
+abstract class Post_Meta_Component extends Filed_Component {
 	/**
-	 * @var Abs_Post_Meta_Element[]
+	 * @var Post_Meta_Component[]
 	 */
 	protected static $multiton_container  = array();
 
@@ -22,7 +22,7 @@ abstract class Abs_Post_Meta_Element extends Abs_Base_Element {
 	 */
 	public $metabox;
 
-	public function attach_to( Meta_Box $metabox ): Abs_Post_Meta_Element {
+	public function append_to( Meta_Box $metabox ): Post_Meta_Component {
 		$this->metabox = $metabox;
 		return $this;
 	}

@@ -7,10 +7,9 @@
  * @author  Sujin 수진 Choi http://www.sujinc.com/
  */
 
-// use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Post_Type;
 
-/*
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Input as Option_Input;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Textarea as Option_Textarea;
@@ -19,7 +18,6 @@ use Sujin\Wordpress\WP_Express\Fields\Settings\Attachment as Option_Attachment;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Checkbox as Option_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Radio as Option_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Select as Option_Select;
-*/
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input as Meta_Input;
@@ -30,7 +28,6 @@ use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Checkbox as Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Radio as Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Select as Meta_Select;
 
-/*
 use Sujin\Wordpress\WP_Express\Taxonomy;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Input as Term_Meta_Input;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Textarea as Term_Meta_Textarea;
@@ -39,21 +36,14 @@ use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Attachment as Term_Meta_Attachme
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Checkbox as Term_Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Radio as Term_Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Select as Term_Meta_Select;
-*/
-
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
 
 final class BrowserTest {
 	public function __construct() {
-		// $this->test_admin();
-		// $this->test_setting();
-		// $this->test_post_type();
+		$this->test_admin();
+		$this->test_setting();
+		$this->test_post_type();
 		$this->test_post_meta();
-		// $this->test_taxonomy();
+		$this->test_taxonomy();
 	}
 
 	private function test_admin() {
@@ -91,33 +81,107 @@ final class BrowserTest {
 	}
 
 	private function test_setting() {
-		// Settings
-		$admin    = Admin::get_instance( 'Test Admin Page' );
-		$settings = Setting::get_instance( 'Test Setting Block' );
-
-		$option_input      = Option_Input::get_instance( 'Input Test' );
-		$option_textarea   = Option_Textarea::get_instance( 'Textarea Test' );
-		$option_editor     = Option_Editor::get_instance( 'Editor Test' );
-		$option_attachment = Option_Attachment::get_instance( 'Attachment Test' );
-		$option_checkbox   = Option_Checkbox::get_instance( 'Checkbox Test' );
-		$option_radio      = Option_Radio::get_instance( 'Radio Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-		$option_select     = Option_Select::get_instance( 'Select Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-
-		$settings->add( $option_input )
-			->add( $option_textarea )
-			->add( $option_editor )
-			->add( $option_attachment )
-			->add( $option_checkbox )
-			->add( $option_radio )
-			->add( $option_select );
-
-		$admin->add( $settings );
-
-		$settings2     = Setting::get_instance( 'Test Setting Block 2' );
-		$option_input2 = Option_Input::get_instance( 'Input Test' );
-		$settings2->add( $option_input2 );
+		Setting::get_instance( 'Test Setting Block' )
+			// Single Attachment
+			->append(
+				Option_Attachment::get_instance( 'Attachment Test' )
+					->show_in_rest( true )
+			)
+			// Multi Attachment
+			->append(
+				Option_Attachment::get_instance( 'Multi Attachment Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Single Input
+			->append(
+				Option_Input::get_instance( 'Input Test' )
+					->show_in_rest( true )
+			)
+			// Single Input Color
+			->append(
+				Option_Input::get_instance( 'Input Test Color' )
+					->show_in_rest( true )
+					->type( 'color' )
+			)
+			// Single Input Date
+			->append(
+				Option_Input::get_instance( 'Input Test Date' )
+					->show_in_rest( true )
+					->type( 'date' )
+			)
+			// Single Input Email
+			->append(
+				Option_Input::get_instance( 'Input Test Email' )
+					->show_in_rest( true )
+					->type( 'email' )
+			)
+			// Single Input Number
+			->append(
+				Option_Input::get_instance( 'Input Test Number' )
+					->show_in_rest( true )
+					->type( 'number' )
+			)
+			// Single Input Range
+			->append(
+				Option_Input::get_instance( 'Input Test Range' )
+					->show_in_rest( true )
+					->type( 'range' )
+			)
+			// Single Input Tel
+			->append(
+				Option_Input::get_instance( 'Input Test Tel' )
+					->show_in_rest( true )
+					->type( 'tel' )
+			)
+			// Single Input Week
+			->append(
+				Option_Input::get_instance( 'Input Test Week' )
+					->show_in_rest( true )
+					->type( 'week' )
+			)
+			// Multi Input
+			->append(
+				Option_Input::get_instance( 'Multi Input Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Textarea
+			->append( Option_Textarea::get_instance( 'Textarea Test' )->show_in_rest( true ) )
+			// Editor
+			->append( Option_Textarea::get_instance( 'Editor Test' )->show_in_rest( true ) )
+			// Radio
+			->append(
+				Option_Radio::get_instance( 'Radio Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Select
+			->append(
+				Option_Select::get_instance( 'Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Option_Select::get_instance( 'Multi Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Select
+			->append(
+				Option_Checkbox::get_instance( 'Checkbox Test' )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Option_Checkbox::get_instance( 'Multi Checkbox Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			->append_to( Admin::get_instance( '1st Depth' ) )
+		;
 	}
 
 	private function test_post_type() {
@@ -237,27 +301,109 @@ final class BrowserTest {
 		$taxonomy = Taxonomy::get_instance( 'New Taxonomy' );
 		$tag      = Taxonomy::get_instance( 'Tag' );
 
-		$term_meta_input      = Term_Meta_Input::get_instance( 'Input Test' );
-		$term_meta_textarea   = Term_Meta_Textarea::get_instance( 'Textarea Test' );
-		$term_meta_editor     = Term_Meta_Editor::get_instance( 'Editor Test' );
-		$term_meta_attachment = Term_Meta_Attachment::get_instance( 'Attachment Test' );
-		$term_meta_checkbox   = Term_Meta_Checkbox::get_instance( 'Checkbox Test' );
-		$term_meta_radio      = Term_Meta_Radio::get_instance( 'Radio Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-		$term_meta_select     = Term_Meta_Select::get_instance( 'Select Test' )
-			->options( array( 'Selection 1', 'Selection 2' ) );
-
-		$tag->add( $term_meta_input )
-			->add( $term_meta_textarea )
-			->add( $term_meta_editor )
-			->add( $term_meta_attachment )
-			->add( $term_meta_checkbox )
-			->add( $term_meta_radio )
-			->add( $term_meta_select );
+		Taxonomy::get_instance( 'Category' )
+			->append(
+				Term_Meta_Attachment::get_instance( 'Attachment Test' )
+					->show_in_rest( true )
+			)
+			// Multi Attachment
+			->append(
+				Term_Meta_Attachment::get_instance( 'Multi Attachment Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Single Input
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test' )
+					->show_in_rest( true )
+			)
+			// Single Input Color
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Color' )
+					->show_in_rest( true )
+					->type( 'color' )
+			)
+			// Single Input Date
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Date' )
+					->show_in_rest( true )
+					->type( 'date' )
+			)
+			// Single Input Email
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Email' )
+					->show_in_rest( true )
+					->type( 'email' )
+			)
+			// Single Input Number
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Number' )
+					->show_in_rest( true )
+					->type( 'number' )
+			)
+			// Single Input Range
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Range' )
+					->show_in_rest( true )
+					->type( 'range' )
+			)
+			// Single Input Tel
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Tel' )
+					->show_in_rest( true )
+					->type( 'tel' )
+			)
+			// Single Input Week
+			->append(
+				Term_Meta_Input::get_instance( 'Input Test Week' )
+					->show_in_rest( true )
+					->type( 'week' )
+			)
+			// Multi Input
+			->append(
+				Term_Meta_Input::get_instance( 'Multi Input Test' )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Textarea
+			->append( Term_Meta_Textarea::get_instance( 'Textarea Test' )->show_in_rest( true ) )
+			// Editor
+			->append( Term_Meta_Editor::get_instance( 'Editor Test' )->show_in_rest( true ) )
+			// Radio
+			->append(
+				Term_Meta_Radio::get_instance( 'Radio Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Select
+			->append(
+				Term_Meta_Select::get_instance( 'Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Term_Meta_Select::get_instance( 'Multi Select Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+					->single( false )
+			)
+			// Select
+			->append(
+				Term_Meta_Checkbox::get_instance( 'Checkbox Test' )
+					->show_in_rest( true )
+			)
+			// Multi Select
+			->append(
+				Term_Meta_Checkbox::get_instance( 'Multi Checkbox Test' )
+					->options( array( 'Selection 1', 'Selection 2' ) )
+					->show_in_rest( true )
+			)
+		;
 
 		// Term Meta to Existing Taxonomy
-		$term_meta_input
-			->attach_to( 'category' )
-			->attach_to( 'post_tag' );
+		Term_Meta_Input::get_instance( 'Input Test' )
+			->append_to( Taxonomy::get_instance( 'Category' ) )
+			->append_to( Taxonomy::get_instance( 'Tag' ) );
 	}
 }

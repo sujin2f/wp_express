@@ -12,9 +12,9 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Admin;
 
-abstract class Abs_Setting_Element extends Abs_Base_Element {
+abstract class Setting_Component extends Filed_Component {
 	/**
-	 * @var Abs_Post_Meta_Element[]
+	 * @var Setting_Component[]
 	 */
 	protected static $multiton_container  = array();
 
@@ -23,7 +23,7 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 	 */
 	private $setting;
 
-	public function attach_to( Setting $setting ) {
+	public function append_to( Setting $setting ) {
 		$this->setting        = $setting;
 		$this->option->legend = $setting->get_name();
 	}
@@ -33,13 +33,22 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 
 	protected function init(): void {
 		add_action( 'admin_init', array( $this, 'add_settings_field' ) );
+		add_filter( 'pre_update_option_' . $this->get_id(), array( $this, 'pre_update_option' ) );
+	}
+
+	public function pre_update_option( $value ) {
+		if ( $this->is_single() && is_array( $value ) ) {
+			$value = $value[0];
+		}
+
+		return $value;
 	}
 
 	public function get( ?int $_ = null ) {
 		return get_option( $this->get_id() );
 	}
 
-	public function add_settings_field() {
+	public function add_settings_field(): void {
 		if ( empty( $this->setting ) || empty( $this->setting->admin_page() ) ) {
 			return;
 		}
@@ -52,12 +61,16 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 		add_settings_field(
 			$this->get_id(),
 			$this->get_name(),
-			array( $this, 'render' ),
+			array( $this, 'render_setting_form' ),
 			$parent_id,
 			$this->setting->get_id()
 		);
 
 		register_setting( $parent_id, $this->get_id() );
+	}
+
+	public function render_setting_form( array $_ ) {
+		$this->render_form();
 	}
 
 	protected function refresh_id( ?int $id = null ): void {
@@ -66,7 +79,8 @@ abstract class Abs_Setting_Element extends Abs_Base_Element {
 
 	protected function refresh_value(): void {
 		if ( empty( $this->value ) ) {
-			$this->value = get_option( $this->get_id() );
+			$default_value = $this->is_single() ? null : array();
+			$this->value = get_option( $this->get_id(), $default_value );
 		}
 	}
 

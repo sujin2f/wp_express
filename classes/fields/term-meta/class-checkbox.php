@@ -9,9 +9,9 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Term_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Term_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Checkbox;
 
-class Checkbox extends Abs_Term_Meta_Element {
+class Checkbox extends Term_Meta_Component {
 	use Trait_Checkbox;
 }

@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Settings;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Setting_Element;
+use Sujin\Wordpress\WP_Express\Fields\Setting_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Textarea;
 
 // @codeCoverageIgnoreStart
@@ -20,6 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // @codeCoverageIgnoreEnd
 
-class Textarea extends Abs_Setting_Element {
+class Textarea extends Setting_Component {
 	use Trait_Textarea;
 }

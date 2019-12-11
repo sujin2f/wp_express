@@ -9,9 +9,9 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Term_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Term_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Textarea;
 
-class Textarea extends Abs_Term_Meta_Element {
+class Textarea extends Term_Meta_Component {
 	use Trait_Textarea;
 }

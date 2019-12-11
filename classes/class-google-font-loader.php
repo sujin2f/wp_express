@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Initialize like new Google_Font_Loader( 'Roboto+Condensed:400,700:latin' );
  * The value can be both an array and a string
  */
-final class Google_Font_Loader extends Abs_Base {
+final class Google_Font_Loader extends Component {
 	private $fonts = array();
 
 	protected function __construct( $fonts ) {

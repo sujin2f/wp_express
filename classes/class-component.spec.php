@@ -1,11 +1,11 @@
 <?php
-use Sujin\Wordpress\WP_Express\Abs_Base;
+use Sujin\Wordpress\WP_Express\Component;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
-class AbsBase_Inherited extends Abs_Base {}
+class AbsBase_Inherited extends Component {}
 
-class Abs_Base_Test extends Test_Case {
+class Component_Test extends Test_Case {
 	private $obj;
 
 	public function setUp() {
@@ -30,12 +30,10 @@ class Abs_Base_Test extends Test_Case {
 
 		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
 		$this->obj->wp_enqueue_scripts();
-
-		$this->assertEquals( $wp_scripts->queue[0], 'wp-express-script-js' );
+		$this->assertTrue( in_array( 'wp-express-script-js', $wp_scripts->queue, true ) );
 
 		$this->obj->admin_enqueue_scripts();
-
-		$this->assertEquals( $wp_scripts->queue[1], 'wp-express-another-script-js' );
+		$this->assertTrue( in_array( 'wp-express-another-script-js', $wp_scripts->queue, true ) );
 	}
 
 	public function test_set_localize() {
@@ -66,11 +64,11 @@ class Abs_Base_Test extends Test_Case {
 		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
 		$this->obj->wp_enqueue_scripts();
 
-		$this->assertEquals( $wp_styles->queue[0], 'wp-express-style-css' );
+		$this->assertTrue( in_array( 'wp-express-style-css', $wp_styles->queue, true ) );
 
 		$this->obj->admin_enqueue_scripts();
 
-		$this->assertEquals( $wp_styles->queue[1], 'wp-express-another-style-css' );
+		$this->assertTrue( in_array( 'wp-express-another-style-css', $wp_styles->queue, true ) );
 	}
 
 	public function test_get_assets_handle() {

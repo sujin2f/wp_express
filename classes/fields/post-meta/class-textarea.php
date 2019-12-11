@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Post_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Textarea;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,6 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class Textarea extends Abs_Post_Meta_Element {
+class Textarea extends Post_Meta_Component {
 	use Trait_Textarea;
 }

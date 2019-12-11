@@ -10,16 +10,11 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Taxonomy;
+use WP_Term;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
+abstract class Term_Meta_Component extends Filed_Component {
 	/**
-	 * @var Abs_Post_Meta_Element[]
+	 * @var Term_Meta_Component[]
 	 */
 	protected static $multiton_container  = array();
 
@@ -28,20 +23,39 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 	 */
 	private $taxonomies = array();
 
-	public function attach_to( Taxonomy $taxonomy ): Abs_Term_Meta_Element {
+	public function append_to( Taxonomy $taxonomy ): Term_Meta_Component {
 		$this->taxonomies[] = $taxonomy;
 
-		add_action( $taxonomy->get_id() . '_edit_form_fields', array( $this, 'render' ), 25 );
+		add_action( $taxonomy->get_id() . '_edit_form_fields', array( $this, 'render_setting_form' ), 25 );
 		add_action( 'edited_' . $taxonomy->get_id(), array( $this, 'update' ), 25 );
 
 		return $this;
 	}
 
+	public function render_setting_form( WP_Term $term ) {
+		$this->render_form( $term->term_id );
+	}
+
 	public function update( ?int $term_id = null, $value = null ): void {
 		if ( is_null( $value ) ) {
-			$value = $_POST[ $this->get_id() ];
+			$value = $_POST[ $this->get_id() ] ?? null;
 		}
-		update_term_meta( $term_id, $this->get_id(), $value );
+
+		delete_term_meta( $term_id, $this->get_id() );
+
+		if ( $this->is_single() ) {
+			$value = is_array( $value ) ? $value[0] : $value;
+			update_term_meta( $term_id, $this->get_id(), $value );
+			return;
+		}
+
+		foreach ( $value ?? array() as $single_value ) {
+			if ( ! $single_value ) {
+				continue;
+			}
+
+			add_term_meta( $term_id, $this->get_id(), $single_value );
+		}
 	}
 
 	public function register_meta() {
@@ -104,7 +118,7 @@ abstract class Abs_Term_Meta_Element extends Abs_Base_Element {
 		$taxonomies = array();
 
 		foreach ( $this->taxonomies as $taxonomy ) {
-			$taxonomies[] = ( $taxonomy instanceof Taxonomy ) ? $taxonomy->get_id() : $taxonomy;
+			$taxonomies[] = $taxonomy->get_id();
 		}
 
 		return $taxonomies;

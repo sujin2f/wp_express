@@ -8,11 +8,11 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Abs_Base;
-use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Component;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
 use WP_Post;
 
-final class Meta_Box extends Abs_Base {
+final class Meta_Box extends Component {
 	protected static $multiton_container = array();
 
 	/**
@@ -21,7 +21,7 @@ final class Meta_Box extends Abs_Base {
 	public $post_types = array();
 
 	/**
-	 * @var Abs_Post_Meta_Element[]
+	 * @var Post_Meta_Component[]
 	 */
 	public $post_metas = array();
 
@@ -30,8 +30,8 @@ final class Meta_Box extends Abs_Base {
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 	}
 
-	public function append( Abs_Post_Meta_Element $post_meta ): Meta_Box {
-		$post_meta->attach_to( $this );
+	public function append( Post_Meta_Component $post_meta ): Meta_Box {
+		$post_meta->append_to( $this );
 		$this->post_metas[] = $post_meta;
 		return $this;
 	}

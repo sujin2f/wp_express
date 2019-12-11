@@ -3,15 +3,16 @@
  * The base class inherited for all types
  * 알파요 오메가이니라
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @param   ?string $name The name of the componenet
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
 
-abstract class Abs_Base {
+abstract class Component {
 	protected const PREFIX = 'wp-express';
 
 	// Single/Multiton container
@@ -81,7 +82,7 @@ abstract class Abs_Base {
 	 * Supports both singleton and multiton patterns
 	 * Without argument, this returns a singleton
 	 */
-	public static function get_instance( ...$args ): Abs_Base {
+	public static function get_instance( ...$args ): Component {
 		$num_args = func_num_args();
 		$caller   = get_called_class();
 		$args     = func_get_args();
@@ -110,7 +111,7 @@ abstract class Abs_Base {
 		return static::$multiton_container;
 	}
 
-	public function add_script( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
+	public function add_script( string $url, bool $is_admin = false, bool $is_footer = false ): Component {
 		$handle                    = $this->get_assets_handle( $url );
 		$attr                      = $this->scripts[ $handle ] ?? array();
 		$attr_new                  = array(
@@ -124,7 +125,7 @@ abstract class Abs_Base {
 		return $this;
 	}
 
-	public function script_localize( string $name, array $translation_array ): Abs_Base {
+	public function script_localize( string $name, array $translation_array ): Component {
 		$translation = array(
 			'translation'     => $translation_array,
 			'translation-key' => $name,
@@ -135,7 +136,7 @@ abstract class Abs_Base {
 		return $this;
 	}
 
-	public function add_style( string $url, bool $is_admin = false, bool $is_footer = false ): Abs_Base {
+	public function add_style( string $url, bool $is_admin = false, bool $is_footer = false ): Component {
 		$handle                   = $this->get_assets_handle( $url );
 		$this->styles[ $handle ] = array(
 			'url'       => $url,
@@ -203,7 +204,7 @@ abstract class Abs_Base {
 		return self::PREFIX . '-' . sanitize_title( basename( $url ) );
 	}
 
-	protected function render_admin_message( string $text, string $class = 'updated' ): Abs_Base {
+	protected function render_admin_message( string $text, string $class = 'updated' ): Component {
 		if ( ! is_admin() ) {
 			return $this;
 		}

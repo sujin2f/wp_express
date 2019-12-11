@@ -1,12 +1,9 @@
 <?php
-namespace Sujin\Wordpress\WP_Express\Tests\Unit;
-
-use Sujin\Wordpress\WP_Express\Tests\Unit\TestCase;
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Input;
 use Sujin\Wordpress\WP_Express\Admin;
 
-class SettingTest extends TestCase {
+class Setting_Test extends Test_Case {
 	public function test_set_admin_page() {
 		$admin_page = Admin::get_instance( 'Admin Test' );
 		$settings   = Setting::get_instance( 'Setting Test' );
@@ -27,7 +24,7 @@ class SettingTest extends TestCase {
 		$setting    = Setting::get_instance( 'Setting Test' );
 		$setting
 			->admin_page( $admin_page )
-			->add( $input );
+			->append( $input );
 
 		$_setting = $this->get_private_property( $input, 'setting' );
 

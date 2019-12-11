@@ -3,22 +3,16 @@
  * Creates Admin Page
  * 무엇이든 만들지어다
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
- * @todo    None Dashicon
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @param   ?string $name The name of the componenet
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Setting;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-class Admin extends Abs_Base {
+final class Admin extends Component {
 	protected static $multiton_container  = array();
 
 	private $admin_url;
@@ -45,8 +39,7 @@ class Admin extends Abs_Base {
 	public const POSITION_DASHBOARD  = 'dashboard';
 	public const POSITION_APPEARANCE = 'appearance';
 
-	protected function __construct( string $name ) {
-		## Abs_Base
+	protected function __construct( ?string $name = null ) {
 		parent::__construct( $name );
 
 		add_action( 'network_admin_menu', array( $this, 'register_admin_menu' ) );
@@ -71,7 +64,7 @@ class Admin extends Abs_Base {
 		return $this;
 	}
 
-	public function add( Setting $setting ): Admin {
+	public function append( Setting $setting ): Admin {
 		$setting->admin_page( $this );
 		return $this;
 	}
@@ -159,7 +152,7 @@ class Admin extends Abs_Base {
 		}
 
 		$this->admin_url = add_query_arg( 'page', $this->get_id(), admin_url( $parent_slug ) );
-		$page_slug        = add_submenu_page( $parent_slug, ...$this->get_menu_args( false ) );
+		$page_slug        = add_submenu_page( $parent_slug, ...$this->get_menu_args() );
 		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 		return true;
 	}
@@ -169,7 +162,7 @@ class Admin extends Abs_Base {
 		if ( $this->position instanceof Post_Type ) {
 			$this->admin_url = admin_url( 'edit.php?post_type=' . $this->position->get_id() . '&page=' . $this->get_id() );
 		}
-		$page_slug = add_submenu_page( $this->position->get_id(), ...$this->get_menu_args( false ) );
+		$page_slug = add_submenu_page( $this->position->get_id(), ...$this->get_menu_args() );
 		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 	}
 
@@ -179,11 +172,11 @@ class Admin extends Abs_Base {
 		if ( isset( $menu[ $this->position ] ) ) { ## To existing position
 			$parent_url       = $menu[ $this->position ][2];
 			$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
-			$args             = $this->get_menu_args( false );
-			$page_slug        = add_submenu_page( $parent_url, ...$args );
+			$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args() );
 
 		} else { ## To new position
 			$args      = $this->get_menu_args();
+			$args[]    = $this->icon;
 			$args[]    = $this->position;
 			$page_slug = add_menu_page( ...$args );
 		}
@@ -203,7 +196,7 @@ class Admin extends Abs_Base {
 			if ( $this->position === $menu_item[0] ) {
 				$parent_url       = $menu_item[2];
 				$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
-				$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args( false ) );
+				$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args() );
 				add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 				return true;
 			}
@@ -254,18 +247,13 @@ class Admin extends Abs_Base {
 	public function render_screen_options() {}
 
 	# HELPER
-	private function get_menu_args( ?bool $has_icon = true ): array {
-		$args = array(
+	private function get_menu_args(): array {
+		return array(
 			$this->get_name(),
 			$this->get_name(),
 			$this->capability,
 			$this->get_id(),
 			array( $this, 'render' ),
 		);
-
-		if ( $has_icon ) {
-			$args[] = $this->icon;
-		}
-		return $args;
 	}
 }

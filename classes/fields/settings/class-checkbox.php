@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Settings;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Setting_Element;
+use Sujin\Wordpress\WP_Express\Fields\Setting_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Checkbox;
 
 // @codeCoverageIgnoreStart
@@ -20,6 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // @codeCoverageIgnoreEnd
 
-class Checkbox extends Abs_Setting_Element {
+class Checkbox extends Setting_Component {
 	use Trait_Checkbox;
 }

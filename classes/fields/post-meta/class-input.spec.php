@@ -1,10 +1,7 @@
 <?php
-namespace Sujin\Wordpress\WP_Express\Tests\Unit\Fields\Post_Meta;
-
-use Sujin\Wordpress\WP_Express\Tests\Unit\TestCase;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input;
 
-class InputTest extends TestCase {
+class Post_Meta_Input_Test extends Test_Case {
 	public function test_render() {
 		$field = Input::get_instance( 'Field 1' );
 

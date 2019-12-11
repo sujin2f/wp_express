@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields;
 
-use Sujin\Wordpress\WP_Express\Abs_Base;
+use Sujin\Wordpress\WP_Express\Component;
 use Sujin\Wordpress\WP_Express\Options\Field_Option;
 use WP_Term;
 
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 // @codeCoverageIgnoreEnd
 
-abstract class Abs_Base_Element extends Abs_Base {
+abstract class Filed_Component extends Component {
 	/**
 	 * Field option
 	 *
@@ -60,7 +60,7 @@ abstract class Abs_Base_Element extends Abs_Base {
 	 * Magic method for get/set option value
 	 * i.g. $input->class( 'wide' )
 	 */
-	public function __call( string $key, array $arguments ): Abs_Base_Element {
+	public function __call( string $key, array $arguments ): Filed_Component {
 		if ( ! in_array( $key, array_keys( get_object_vars( $this->option ) ), true ) ) {
 			return $this;
 		}

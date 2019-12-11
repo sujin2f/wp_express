@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Post_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Checkbox;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-class Checkbox extends Abs_Post_Meta_Element {
+class Checkbox extends Post_Meta_Component {
 	use Trait_Checkbox;
 
 	protected function render_wrapper_open(): void {

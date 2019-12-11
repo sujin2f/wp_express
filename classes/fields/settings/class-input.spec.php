@@ -1,10 +1,7 @@
 <?php
-namespace Sujin\Wordpress\WP_Express\Tests\Unit\Fields\Settings;
-
-use Sujin\Wordpress\WP_Express\Tests\Unit\TestCase;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Input;
 
-class InputTest extends TestCase {
+class Settings_Input_Test extends Test_Case {
 	public function test_render() {
 		$field = Input::get_instance( 'Field 1' );
 		ob_start();
