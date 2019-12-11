@@ -16,7 +16,7 @@ use ReflectionClass;
 
 use InvalidArgumentException;
 
-abstract class Enum {
+abstract class Abstract_Enum {
 	/**
 	 * Store existing constants in a static cache per object.
 	 * Key is a const value, and the value is Enum instance.

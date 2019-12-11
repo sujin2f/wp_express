@@ -6,7 +6,7 @@
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
-namespace Sujin\Wordpress\WP_Express\Options;
+namespace Sujin\Wordpress\WP_Express\Types;
 
 class Taxonomy_Argument extends Wp_Object {
 	public $meta_box_cb;

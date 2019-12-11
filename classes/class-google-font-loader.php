@@ -8,19 +8,13 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 /*
  * Google Font Loader: Load Google Font asynchronously
  *
  * Initialize like new Google_Font_Loader( 'Roboto+Condensed:400,700:latin' );
  * The value can be both an array and a string
  */
-final class Google_Font_Loader extends Component {
+class Google_Font_Loader extends Component {
 	private $fonts = array();
 
 	protected function __construct( $fonts ) {

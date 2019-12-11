@@ -11,9 +11,10 @@
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
-final class Admin extends Component {
-	protected static $multiton_container  = array();
+class Admin extends Component {
+	use Trait_Multiton;
 
 	private $admin_url;
 

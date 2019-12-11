@@ -2,18 +2,19 @@
 /**
  * Metabox Class
  *
- * @project WP-Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @param   ?string $name The name of the componenet
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Component;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use WP_Post;
-
-final class Meta_Box extends Component {
-	protected static $multiton_container = array();
+class Meta_Box extends Component {
+	use Trait_Multiton;
 
 	/**
 	 * @var Post_Type[]

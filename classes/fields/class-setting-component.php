@@ -11,12 +11,10 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Admin;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
 abstract class Setting_Component extends Filed_Component {
-	/**
-	 * @var Setting_Component[]
-	 */
-	protected static $multiton_container  = array();
+	use Trait_Multiton;
 
 	/**
 	 * @var Setting

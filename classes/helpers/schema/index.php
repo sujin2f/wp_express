@@ -9,13 +9,14 @@
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
 use Sujin\Wordpress\WP_Express\Helpers\Schema\Property;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
 use DomainException;
 use InvalidArgumentException;
 use JsonSerializable;
 
 class Schema implements JsonSerializable {
-	use Multiton;
+	use Trait_Multiton;
 
 	protected const SCHEMA__DIR = 'schema';
 	public const REF__KEY       = '$ref';

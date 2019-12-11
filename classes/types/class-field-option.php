@@ -6,7 +6,7 @@
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
-namespace Sujin\Wordpress\WP_Express\Options;
+namespace Sujin\Wordpress\WP_Express\Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'Status: 404 Not Found' );

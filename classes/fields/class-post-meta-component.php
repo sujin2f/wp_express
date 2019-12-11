@@ -10,12 +10,10 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Meta_Box;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
 abstract class Post_Meta_Component extends Filed_Component {
-	/**
-	 * @var Post_Meta_Component[]
-	 */
-	protected static $multiton_container  = array();
+	use Trait_Multiton;
 
 	/**
 	 * @var Meta_Box

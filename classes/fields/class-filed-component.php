@@ -10,7 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Component;
-use Sujin\Wordpress\WP_Express\Options\Field_Option;
+use Sujin\Wordpress\WP_Express\Types\Field_Option;
 use WP_Term;
 
 // @codeCoverageIgnoreStart

@@ -12,18 +12,12 @@ namespace Sujin\Wordpress\WP_Express;
 use Sujin\Wordpress\WP_Express\Component;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Fields\Setting_Component;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
 class Setting extends Component {
-	public const ADMIN_PAGE = 'admin_page';
+	use Trait_Multiton;
 
-	// Single/Multiton container
-	protected static $multiton_container  = array();
+	public const ADMIN_PAGE = 'admin_page';
 
 	private $admin_page = 'general';
 

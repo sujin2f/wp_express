@@ -10,13 +10,11 @@
 namespace Sujin\Wordpress\WP_Express\Fields;
 
 use Sujin\Wordpress\WP_Express\Taxonomy;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use WP_Term;
 
 abstract class Term_Meta_Component extends Filed_Component {
-	/**
-	 * @var Term_Meta_Component[]
-	 */
-	protected static $multiton_container  = array();
+	use Trait_Multiton;
 
 	/**
 	 * @var Taxonomy[]

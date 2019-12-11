@@ -2,22 +2,21 @@
 /**
  * Taxonomy Class
  *
- * @project WP-Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @param   ?string $name The name of the componenet
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta_Component;
-use Sujin\Wordpress\WP_Express\Options\Taxonomy_Argument;
+use Sujin\Wordpress\WP_Express\Types\Taxonomy_Argument;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
-final class Taxonomy extends Component {
+class Taxonomy extends Component {
+	use Trait_Multiton;
+
 	const DEFAULT_POST_TYPE = 'post';
-
-	/**
-	 * @var Taxonomy[]
-	 */
-	protected static $multiton_container  = array();
 
 	/**
 	 * @var Post_Type[]
@@ -99,6 +98,9 @@ final class Taxonomy extends Component {
 	}
 
 	public function append_to( $post_type ): Taxonomy {
+		if ( in_array( $post_type, $this->post_types ) ) {
+			return $this;
+		}
 		$this->post_types[] = $post_type;
 		return $this;
 	}

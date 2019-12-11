@@ -1,13 +1,15 @@
 <?php
 use Sujin\Wordpress\WP_Express\Taxonomy;
 use Sujin\Wordpress\WP_Express\Post_Type;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Input;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Textarea;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Editor;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Attachment;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Checkbox;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Radio;
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Select;
+use Sujin\Wordpress\WP_Express\Fields\Term_Meta\{
+	Input,
+	Textarea,
+	Editor,
+	Attachment,
+	Checkbox,
+	Radio,
+	Select,
+};
 
 class Taxonomy_Test extends Test_Case {
 	public function test_construct_and_register() {
@@ -30,9 +32,8 @@ class Taxonomy_Test extends Test_Case {
 		$taxonomy->append_to( $post_type );
 		$taxonomy->register_taxonomy();
 
-		$actual   = $wp_taxonomies[ $taxonomy->get_id() ]->object_type;
-		$expected = array( 'post', $post_type->get_id() );
-		$this->assertEquals( $expected, $actual );
+		$actual = $wp_taxonomies[ $taxonomy->get_id() ]->object_type;
+		$this->assertTrue( in_array( $post_type->get_id(), $actual ) );
 	}
 
 	public function test_get_post_types_strings() {
@@ -44,7 +45,7 @@ class Taxonomy_Test extends Test_Case {
 		$this->assertEquals( count( $post_types ), 1 );
 		$this->assertEquals( $post_types[0], 'post_type-test' );
 
-		$taxonomy->append_to( 'post' );
+		$taxonomy->append_to( Post_Type::get_instance( 'Post' ) );
 		$post_types = $this->call_private_method( $taxonomy, 'get_post_types_strings' );
 
 		$this->assertEquals( count( $post_types ), 2 );
@@ -61,12 +62,16 @@ class Taxonomy_Test extends Test_Case {
 			->append( Radio::get_instance( 'Radio' )->options( array( 'Radio 1', 'Radio 2' ) ) )
 			->append( Select::get_instance( 'Select' )->options( array( 'Select 1', 'Select 2' ) ) );
 
+		$taxonomy->register_taxonomy();
+
 		$post_type = Post_Type::get_instance( 'Post_Type Test' );
 		$taxonomy->append_to( $post_type );
+
+		$term = wp_insert_term( 'Term', $taxonomy->get_id() );
+		$term = get_term( $term['term_id'], $taxonomy->get_id() );
 	
-		$_GET['tag_ID'] = 1;
 		ob_start();
-		do_action( $taxonomy->get_id() . '_edit_form_fields' );
+		do_action( $taxonomy->get_id() . '_edit_form_fields', $term );
 		$actual = ob_get_clean();
 
 		$this->assertContains( '<label for="wp-express__field__input__input">', $actual );

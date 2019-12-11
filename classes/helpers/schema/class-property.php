@@ -19,7 +19,7 @@ use Sujin\Wordpress\WP_Express\Helpers\Schema\Enum\{
 
 use InvalidArgumentException;
 
-final class Property {
+class Property {
 	/**
 	 * Parent Schema
 	 *

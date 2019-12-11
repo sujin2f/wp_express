@@ -8,7 +8,7 @@ use JsonSerializable;
  * To create an exiting transient from key, use Transient::get_transient( $key )
  * To store the instance into transient, use $this->set_transient( $key );
  */
-final class Transient implements JsonSerializable {
+class Transient implements JsonSerializable {
 	public $cache_ttl;
 	public $expire_at;
 	public $items;
