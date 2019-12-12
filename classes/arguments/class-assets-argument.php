@@ -1,6 +1,6 @@
 <?php
 /**
- * Assets Helper
+ * Assets Argement
  *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Types;
 
-class Assets_Argument extends Abstract_Type {
+class Assets_Argument extends Abstract_Arguments {
     /*
      * @var ?string[]
      */

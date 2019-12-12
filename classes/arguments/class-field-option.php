@@ -10,7 +10,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Types;
 
-class Field_Option extends Abstract_Type {
+class Field_Option extends Abstract_Arguments {
 	private const ATTRIBUTES = array( 'class', 'hidden', 'type', 'placeholder', 'rows', 'cols' );
 
 	// HTML attributes

@@ -7,11 +7,11 @@
  * @since   4.0.0
  */
 
-namespace Sujin\Wordpress\WP_Express\Types;
+namespace Sujin\Wordpress\WP_Express\Arguments;
 
 use InvalidArgumentException;
 
-abstract class Abstract_Type {
+abstract class Abstract_Argument {
 	/**
 	 * Set the value
 	 * @throws InvalidArgumentException

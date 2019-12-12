@@ -13,6 +13,7 @@ use Sujin\Wordpress\WP_Express\Component;
 use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use WP_Post;
+
 class Meta_Box extends Component {
 	use Trait_Multiton;
 

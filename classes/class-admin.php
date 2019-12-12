@@ -15,6 +15,7 @@ namespace Sujin\Wordpress\WP_Express;
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use Sujin\Wordpress\WP_Express\Helpers\Enums\Admin_Position;
+use Sujin\Wordpress\WP_Express\Types\Admin_Argument;
 
 class Admin extends Component {
 	use Trait_Multiton;

@@ -10,7 +10,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Types;
 
-abstract class Abstract_WP_Object_Argument extends Abstract_Type {
+abstract class Abstract_WP_Object_Argument extends Abstract_Arguments {
 	private $_builtin;
 	private $capabilities;
 	private $description;
