@@ -2,51 +2,51 @@
 /**
  * Assets Helper
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
  * @since   4.0.0
  */
 
 namespace Sujin\Wordpress\WP_Express\Types;
 
-class Assets_Argument {
+class Assets_Argument extends Abstract_Type {
     /*
      * @var ?string[]
      */
-    public $depends;
+    private $depends;
 
     /*
      * @var ?bool
      */
-    public $is_admin;
+    private $is_admin;
 
     /*
      * @var ?bool
      */
-    public $is_footer;
+    private $is_footer;
 
     /*
      * @var ?array
      */
-    public $translation;
+    private $translation;
 
     /*
      * @var ?string
      */
-    public $translation_key;
+    private $translation_key;
 
     /*
      * @var Assets_Type
      */
-    public $type;
+    private $type;
 
     /*
      * @var string
      */
-    public $url;
+    private $url;
 
     /*
      * @var ?string
      */
-    public $version;
+    private $version;
 }

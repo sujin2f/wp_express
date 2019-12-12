@@ -1,39 +1,35 @@
 <?php
 /**
- * Options for field
+ * Options for Form Field
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   4.0.0
+ * @todo    Data types
  */
 
 namespace Sujin\Wordpress\WP_Express\Types;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-class Field_Option {
-	// HTML attributes
-	public $class;
-	public $hidden;
-	public $type;
-	public $placeholder;
-	public $rows;
-	public $cols;
-
-	public $help;
-	public $show_in_rest = false;
-	public $options;
-	public $default;
-	public $legend;
-	public $single = true;
-	public $on_change;
-	public $on_blur;
-	public $on_focus;
-
+class Field_Option extends Abstract_Type {
 	private const ATTRIBUTES = array( 'class', 'hidden', 'type', 'placeholder', 'rows', 'cols' );
+
+	// HTML attributes
+	private $class;
+	private $hidden;
+	private $type;
+	private $placeholder;
+	private $rows;
+	private $cols;
+
+	private $help;
+	private $show_in_rest = false;
+	private $options;
+	private $default;
+	private $legend;
+	private $single = true;
+	private $on_change;
+	private $on_blur;
+	private $on_focus;
 
 	public function render_attributes(): void {
 		foreach ( self::ATTRIBUTES as $key ) {

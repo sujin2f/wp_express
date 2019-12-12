@@ -117,12 +117,36 @@ class Admin_Test extends Test_Case {
 			'get_menu_args'
 		);
 
-		$this->assertEquals( $args[0], $menu_name );
-		$this->assertEquals( $args[1], $menu_name );
-		$this->assertEquals( $args[2], 'manage_options' );
-		$this->assertEquals( $args[3], Admin::get_instance( $menu_name )->get_id() );
-		$this->assertEquals( get_class( $args[4][0] ), 'Sujin\Wordpress\WP_Express\Admin' );
-		$this->assertEquals( $args[4][1], 'render' );
+		$this->assertEquals( 
+			$menu_name,
+			$args[0], 
+			'😡 Menu argument 1 is not matching.',
+		);
+		$this->assertEquals( 
+			$menu_name,
+			$args[1], 
+			'😡 Menu argument 2 is not matching.',
+		);
+		$this->assertEquals( 
+			'manage_options',
+			$args[2], 
+			'😡 Menu argument 3 is not matching.',
+		);
+		$this->assertEquals( 
+			Admin::get_instance( $menu_name )->get_id(),
+			$args[3],
+			'😡 Menu argument 4 is not matching.',
+		);
+		$this->assertEquals( 
+			'Sujin\Wordpress\WP_Express\Admin',
+			get_class( $args[4][0] ), 
+			'😡 Menu argument 5.1 is not matching.',
+		);
+		$this->assertEquals( 
+			'render',
+			$args[4][1], 
+			'😡 Menu argument 5.2 is not matching.',
+		);
 	}
 
 	// public function test_render() {
