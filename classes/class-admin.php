@@ -1,12 +1,12 @@
 <?php
 /**
  * Creates Admin Page
- * 무엇이든 만들지어다
  *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
  * @param   ?string $name The name of the componenet
  * @since   the beginning
+ * @todo    arguments
  * @todo    render_screen_options()
  */
 
