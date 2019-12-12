@@ -2,8 +2,8 @@
 /**
  * Common class for post meta
  *
- * @package WP-Express
- * @since   1.0.0
+ * @package WP Express
+ * @since   the beginning
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 

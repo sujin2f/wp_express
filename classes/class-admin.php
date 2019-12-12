@@ -3,15 +3,18 @@
  * Creates Admin Page
  * 무엇이든 만들지어다
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
  * @param   ?string $name The name of the componenet
+ * @since   the beginning
+ * @todo    render_screen_options()
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
 use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Enums\Admin_Position;
 
 class Admin extends Component {
 	use Trait_Multiton;
@@ -27,18 +30,6 @@ class Admin extends Component {
 	private $icon       = 'dashicons-admin-generic';
 	private $capability = 'manage_options';
 	private $plugin     = null;
-
-	public const POSITION_OPTION     = 'option';
-	public const POSITION_SETTINGS   = 'settings';
-	public const POSITION_TOOLS      = 'tools';
-	public const POSITION_USERS      = 'users';
-	public const POSITION_PLUGINS    = 'plugins';
-	public const POSITION_COMMENTS   = 'comments';
-	public const POSITION_PAGES      = 'pages';
-	public const POSITION_POSTS      = 'posts';
-	public const POSITION_MEDIA      = 'media';
-	public const POSITION_DASHBOARD  = 'dashboard';
-	public const POSITION_APPEARANCE = 'appearance';
 
 	protected function __construct( ?string $name = null ) {
 		parent::__construct( $name );
@@ -103,57 +94,14 @@ class Admin extends Component {
 
 	# Excecuted by: register_admin_menu()
 	private function register_admin_menu_by_position(): bool {
-		$parent_slug = null;
-
-		switch ( strtolower( $this->position ) ) {
-			case self::POSITION_OPTION:
-			case self::POSITION_SETTINGS:
-				$parent_slug = 'options-general.php';
-				break;
-
-			case self::POSITION_TOOLS:
-				$parent_slug = 'tools.php';
-				break;
-
-			case self::POSITION_USERS:
-				$parent_slug = 'users.php';
-				break;
-
-			case self::POSITION_PLUGINS:
-				$parent_slug = 'plugins.php';
-				break;
-
-			case self::POSITION_COMMENTS:
-				$parent_slug = 'edit-comments.php';
-				break;
-
-			case self::POSITION_PAGES:
-				$parent_slug = 'edit.php?post_type=page';
-				break;
-
-			case self::POSITION_POSTS:
-				$parent_slug = 'edit.php';
-				break;
-
-			case self::POSITION_MEDIA:
-				$parent_slug = 'upload.php';
-				break;
-
-			case self::POSITION_DASHBOARD:
-				$parent_slug = 'index.php';
-				break;
-
-			case self::POSITION_APPEARANCE:
-				$parent_slug = 'themes.php';
-				break;
-		}
+		$parent_slug = Admin_Position::get_parent_slug( strtolower( $this->position ) );
 
 		if ( is_null( $parent_slug ) ) {
 			return false;
 		}
 
 		$this->admin_url = add_query_arg( 'page', $this->get_id(), admin_url( $parent_slug ) );
-		$page_slug        = add_submenu_page( $parent_slug, ...$this->get_menu_args() );
+		$page_slug       = add_submenu_page( $parent_slug, ...$this->get_menu_args() );
 		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 		return true;
 	}
@@ -244,10 +192,6 @@ class Admin extends Component {
 		<?php
 	}
 
-	// TODO
-	public function render_screen_options() {}
-
-	# HELPER
 	private function get_menu_args(): array {
 		return array(
 			$this->get_name(),

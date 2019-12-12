@@ -155,7 +155,7 @@ class Property {
 
 		// Empty value, but it's required
 		if ( empty( $value ) && $this->required ) {
-			throw new InvalidArgumentException( 'The property ' . $this->id . '\'s value is required.' );
+			throw new InvalidArgumentException( '😡 The property ' . $this->id . '\'s value is required.' );
 		}
 
 		return $value;
@@ -201,7 +201,7 @@ class Property {
 			return $value;
 		}
 
-		throw new InvalidArgumentException( 'Enum value ' . $value . ' does not exist in the schema.' );
+		throw new InvalidArgumentException( '😡 Enum value ' . $value . ' does not exist in the schema.' );
 	}
 
 	/**

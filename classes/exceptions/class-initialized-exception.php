@@ -2,8 +2,8 @@
 /**
  * Dev exception: ID shouldn't be null
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @package WP Express WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
 namespace Sujin\Wordpress\WP_Express\Exceptions;

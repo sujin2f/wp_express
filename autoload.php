@@ -2,9 +2,9 @@
 /**
  * Autoload
  *
- * @project WP-Express 3
- * @version 3.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   the beginning
  */
 
 if ( ! defined( 'WP_EXPRESS_ASSET_URL' ) ) {

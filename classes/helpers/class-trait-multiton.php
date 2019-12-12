@@ -4,18 +4,18 @@
  *
  * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @since   8.0.0
+ * @since   4.0.0
  */
 
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
 trait Trait_Multiton {
 	/**
-	 * @var Trait_Multiton[]
+	 * @var self[]
 	 */
 	protected static $multiton_container  = array();
 
-	public static function get_instance( ...$args ): Trait_Multiton {
+	public static function get_instance( ...$args ): self {
 		$id  = $args[0];
 		$key = md5( $id );
 		if ( ! array_key_exists( $key, static::$multiton_container ) ) {
@@ -26,7 +26,7 @@ trait Trait_Multiton {
 
 	/*
 	 * Gets multiton instance
-	 * @return Trait_Multiton[]
+	 * @return self[]
 	 */
 	public static function get_instances(): array {
 		return static::$multiton_container;

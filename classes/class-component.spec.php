@@ -1,155 +1,176 @@
 <?php
-use Sujin\Wordpress\WP_Express\Component;
-use Sujin\Wordpress\WP_Express\Admin;
-use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
+/**
+ * Component Unit Test
+ *
+ * @package WP Express
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @since   3.0.0
+ */
 
-class AbsBase_Inherited extends Component {}
+use Sujin\Wordpress\WP_Express\Component;
+use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+
+class Component_Inherited extends Component {
+	use Trait_Multiton;
+}
 
 class Component_Test extends Test_Case {
-	private $obj;
+	// public function test_add_script() {
+	// 	$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
+	// 	$scripts = $this->get_private_property( $obj, 'scripts' );
 
-	public function setUp() {
-		parent::setUp();
-		$this->obj = AbsBase_Inherited::get_instance( 'Test' );
-	}
+	// 	$this->assertContains( '/assets/dist/script.js', $scripts['wp-express-script-js']['url'] );
+	// 	$this->assertFalse( $scripts['wp-express-script-js']['is_admin'] );
 
-	public function test_add_script() {
-		$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
-		$scripts = $this->get_private_property( $obj, 'scripts' );
+	// 	$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/another-script.js', true );
+	// 	$scripts = $this->get_private_property( $obj, 'scripts' );
 
-		$this->assertContains( '/assets/dist/script.js', $scripts['wp-express-script-js']['url'] );
-		$this->assertFalse( $scripts['wp-express-script-js']['is_admin'] );
+	// 	$this->assertTrue( $scripts['wp-express-another-script-js']['is_admin'] );
 
-		$obj     = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/another-script.js', true );
-		$scripts = $this->get_private_property( $obj, 'scripts' );
+	// 	// Enqueue Script
+	// 	$wp_scripts = wp_scripts();
 
-		$this->assertTrue( $scripts['wp-express-another-script-js']['is_admin'] );
+	// 	@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+	// 	$this->obj->wp_enqueue_scripts();
+	// 	$this->assertTrue( in_array( 'wp-express-script-js', $wp_scripts->queue, true ) );
 
-		// Enqueue Script
-		$wp_scripts = wp_scripts();
+	// 	$this->obj->admin_enqueue_scripts();
+	// 	$this->assertTrue( in_array( 'wp-express-another-script-js', $wp_scripts->queue, true ) );
+	// }
 
-		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
-		$this->obj->wp_enqueue_scripts();
-		$this->assertTrue( in_array( 'wp-express-script-js', $wp_scripts->queue, true ) );
+	// public function test_set_localize() {
+	// 	$obj = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
+	// 	$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
 
-		$this->obj->admin_enqueue_scripts();
-		$this->assertTrue( in_array( 'wp-express-another-script-js', $wp_scripts->queue, true ) );
-	}
+	// 	$scripts = $this->get_private_property( $obj, 'scripts' );
 
-	public function test_set_localize() {
-		$obj = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' );
-		$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
+	// 	$this->assertEquals( 'customVars', $scripts['wp-express-script-js']['translation-key'] );
+	// 	$this->assertEquals( 'value1', $scripts['wp-express-script-js']['translation']['var1'] );
+	// }
 
-		$scripts = $this->get_private_property( $obj, 'scripts' );
+	// public function test_add_style() {
+	// 	$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' );
+	// 	$styles = $this->get_private_property( $obj, 'styles' );
 
-		$this->assertEquals( 'customVars', $scripts['wp-express-script-js']['translation-key'] );
-		$this->assertEquals( 'value1', $scripts['wp-express-script-js']['translation']['var1'] );
-	}
+	// 	$this->assertContains( '/assets/dist/style.css', $styles['wp-express-style-css']['url'] );
+	// 	$this->assertFalse( $styles['wp-express-style-css']['is_admin'] );
 
-	public function test_add_style() {
-		$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' );
-		$styles = $this->get_private_property( $obj, 'styles' );
+	// 	$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/another-style.css', true );
+	// 	$styles = $this->get_private_property( $obj, 'styles' );
 
-		$this->assertContains( '/assets/dist/style.css', $styles['wp-express-style-css']['url'] );
-		$this->assertFalse( $styles['wp-express-style-css']['is_admin'] );
+	// 	$this->assertTrue( $styles['wp-express-another-style-css']['is_admin'] );
 
-		$obj    = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/assets/dist/another-style.css', true );
-		$styles = $this->get_private_property( $obj, 'styles' );
+	// 	// Enqueue Style
+	// 	$wp_styles = wp_styles();
 
-		$this->assertTrue( $styles['wp-express-another-style-css']['is_admin'] );
+	// 	@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+	// 	$this->obj->wp_enqueue_scripts();
 
-		// Enqueue Style
-		$wp_styles = wp_styles();
+	// 	$this->assertTrue( in_array( 'wp-express-style-css', $wp_styles->queue, true ) );
 
-		@$this->obj->register_assets();  // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
-		$this->obj->wp_enqueue_scripts();
+	// 	$this->obj->admin_enqueue_scripts();
 
-		$this->assertTrue( in_array( 'wp-express-style-css', $wp_styles->queue, true ) );
+	// 	$this->assertTrue( in_array( 'wp-express-another-style-css', $wp_styles->queue, true ) );
+	// }
 
-		$this->obj->admin_enqueue_scripts();
+	// public function test_get_assets_handle() {
+	// 	$handle = $this->call_private_method( $this->obj, 'get_assets_handle', array( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' ) );
+	// 	$this->assertEquals( 'wp-express-style-css', $handle );
+	// }
 
-		$this->assertTrue( in_array( 'wp-express-another-style-css', $wp_styles->queue, true ) );
-	}
+	// public function test_register_assets() {
+	// 	$obj = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/postcss.config.js' );
+	// 	$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
+	// 	$obj = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/style.css' );
 
-	public function test_get_assets_handle() {
-		$handle = $this->call_private_method( $this->obj, 'get_assets_handle', array( $this->get_stylesheet_directory_uri() . '/assets/dist/style.css' ) );
-		$this->assertEquals( 'wp-express-style-css', $handle );
-	}
+	// 	@$this->obj->register_assets(); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
 
-	public function test_register_assets() {
-		$obj = $this->obj->add_script( $this->get_stylesheet_directory_uri() . '/postcss.config.js' );
-		$obj->script_localize( 'customVars', array( 'var1' => 'value1' ) );
-		$obj = $this->obj->add_style( $this->get_stylesheet_directory_uri() . '/style.css' );
+	// 	$wp_scripts = wp_scripts();
+	// 	$wp_styles  = wp_styles();
 
-		@$this->obj->register_assets(); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Because of the filetime()
+	// 	$this->assertEquals( '_WP_Dependency', get_class( $wp_scripts->registered['wp-express-postcss-config-js'] ) );
+	// 	$this->assertEquals( '_WP_Dependency', get_class( $wp_styles->registered['wp-express-style-css'] ) );
+	// }
 
-		$wp_scripts = wp_scripts();
-		$wp_styles  = wp_styles();
+	// public function test_get_multiton_instance() {
+	// 	$instance1 = AbsBase_Inherited::get_instance( 'Test' );
+	// 	$instance2 = AbsBase_Inherited::get_instance( 'test 2' );
+	// 	$_instance = $this->get_private_property( $instance1, 'multiton_container' );
 
-		$this->assertEquals( '_WP_Dependency', get_class( $wp_scripts->registered['wp-express-postcss-config-js'] ) );
-		$this->assertEquals( '_WP_Dependency', get_class( $wp_styles->registered['wp-express-style-css'] ) );
-	}
+	// 	$this->assertEquals( $instance1, $this->obj );
+	// 	$this->assertEquals( $instance2, AbsBase_Inherited::get_instance( 'test 2' ) );
+	// 	$this->assertEquals( 2, count( $_instance ) );
+	// }
 
-	public function test_get_multiton_instance() {
-		$instance1 = AbsBase_Inherited::get_instance( 'Test' );
-		$instance2 = AbsBase_Inherited::get_instance( 'test 2' );
-		$_instance = $this->get_private_property( $instance1, 'multiton_container' );
+	// public function test_get_singleton_instance() {
+	// 	$instance  = AbsBase_Inherited::get_instance();
+	// 	$_instance = $this->get_private_property( $instance, 'singleton_container' );
 
-		$this->assertEquals( $instance1, $this->obj );
-		$this->assertEquals( $instance2, AbsBase_Inherited::get_instance( 'test 2' ) );
-		$this->assertEquals( 2, count( $_instance ) );
-	}
+	// 	$this->assertEquals( $_instance, AbsBase_Inherited::get_instance() );
+	// }
 
-	public function test_get_singleton_instance() {
-		$instance  = AbsBase_Inherited::get_instance();
-		$_instance = $this->get_private_property( $instance, 'singleton_container' );
+	/*
+	 * Test render_admin_message()
+	 */
+	public function test_render_admin_message(): void {
+		$component = Component_Inherited::get_instance( 'Test' );
 
-		$this->assertEquals( $_instance, AbsBase_Inherited::get_instance() );
-	}
-
-	public function test_render_admin_message() {
+		// Part 1: Front page
+		$this->go_to( '/' );
 		ob_start();
-		$this->call_private_method( $this->obj, 'render_admin_message', array( 'Text' ) );
-		$output = ob_get_clean();
-		$this->assertEmpty( $output );
+		$this->call_private_method( 
+			$component, 
+			'render_admin_message', 
+			array( 'Text' ),
+		);
+		$actual = ob_get_clean();
 
-		define( 'WP_ADMIN', true );
+		// @sssertion Empty becuase this is not admin screen
+		$this->assertEmpty( 
+			$actual,
+			'😡 Front page should not show the admin message.',
+		);
+
+		// Part 2: Go to admin
+		set_current_screen( 'edit-post' );
 		ob_start();
-		$this->call_private_method( $this->obj, 'render_admin_message', array( 'Test Message' ) );
-		$output = ob_get_clean();
+		$this->call_private_method( 
+			$component, 
+			'render_admin_message', 
+			array( 'Test Message' ),
+		);
+		$actual = ob_get_clean();
 
-		$this->assertContains( 'Test Message', $output );
+		// @sssertion
+		$this->assertContains( 
+			'Test Message', 
+			$actual,
+			'😡 Admin page should show the admin message.',
+		);
 	}
 
-	public function test_get_id() {
-		$actual = $this->obj->get_id();
-		$this->assertEquals( 'test', $actual );
-
-		// Exception
-		$this->set_private_property( $this->obj, 'id', null );
-		$actual = null;
-		try {
-			$actual = $this->obj->get_id();
-		} catch ( Initialized_Exception $e ) {
-			$actual = $e;
-		}
-
-		$this->assertTrue( $actual instanceof Initialized_Exception );
+	/*
+	 * Test get_id()
+	 */
+	public function test_get_id(): void {
+		// @sssertion
+		$this->assertEquals(
+			'test',
+			Component_Inherited::get_instance( 'Test' )->get_id(),
+			'😡 Component id is not matched as it expected.',
+		);
 	}
 
-	public function test_get_name() {
-		$actual = $this->obj->get_name();
-		$this->assertEquals( 'Test', $actual );
-
-		// Exception
-		$this->set_private_property( $this->obj, 'name', null );
-		$actual = null;
-		try {
-			$actual = $this->obj->get_name();
-		} catch ( Initialized_Exception $e ) {
-			$actual = $e;
-		}
-
-		$this->assertTrue( $actual instanceof Initialized_Exception );
+	/*
+	 * Test get_name()
+	 */
+	public function test_get_name(): void {
+		// @sssertion
+		$this->assertEquals( 
+			'Test', 
+			Component_Inherited::get_instance( 'Test' )->get_name(),
+			'😡 Component id is not matched as it expected.',
+		);
 	}
 }

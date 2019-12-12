@@ -134,14 +134,14 @@ class Schema implements JsonSerializable {
 		$path = $schema->get_base_dir() . DIRECTORY_SEPARATOR . $filename;
 
 		if ( ! file_exists( $path ) ) {
-			throw new InvalidArgumentException( $path . ' does not exist.' );
+			throw new InvalidArgumentException( '😡 ' . $path . ' does not exist.' );
 		}
 
 		$json = file_get_contents( $path );
 		$json = json_decode( $json, true );
 
 		if ( json_last_error() ) {
-			throw new DomainException( 'Not a valid json format.' );
+			throw new DomainException( '😡 Not a valid json format.' );
 		}
 
 		return $schema->set_json( $json );
