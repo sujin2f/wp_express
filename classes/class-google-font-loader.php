@@ -4,11 +4,11 @@
  *
  * ```
  * Google_Font_Loader::get_instance()
- * 	->append( 'Roboto+Condensed:400,700:latin' );
+ *  ->append( 'Roboto+Condensed:400,700:latin' );
  * ```
- * 
+ *
  * The value can be both an array and a string
- * 
+ *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
  * @since   4.0.0
@@ -67,7 +67,7 @@ class Google_Font_Loader {
 
 		(function(d) {
 			var wf = d.createElement('script'), s = d.scripts[0];
-			wf.src = '<?php echo esc_url( self::WEBFONT_JS ) ?>';
+			wf.src = '<?php echo esc_url( self::WEBFONT_JS ); ?>';
 			wf.async = true;
 			s.parentNode.insertBefore(wf, s);
 		})(document);

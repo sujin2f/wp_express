@@ -77,7 +77,7 @@ abstract class Abstract_Filed_Setting extends Abstract_Filed {
 	protected function refresh_value(): void {
 		if ( empty( $this->value ) ) {
 			$default_value = $this->is_single() ? null : array();
-			$this->value = get_option( $this->get_id(), $default_value );
+			$this->value   = get_option( $this->get_id(), $default_value );
 		}
 	}
 

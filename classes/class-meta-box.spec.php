@@ -25,9 +25,9 @@ class Meta_Box_Test extends Test_Case {
 			->append_to( Post_Type::get_instance( 'Post' ) );
 		$metabox->register_meta_box();
 
-		$this->assertTrue( 
-			array_key_exists( 
-				$metabox->get_id(), 
+		$this->assertTrue(
+			array_key_exists(
+				$metabox->get_id(),
 				$wp_meta_boxes['post']['advanced']['default'],
 			),
 			'😡 Meta box registration failed.',
@@ -41,8 +41,8 @@ class Meta_Box_Test extends Test_Case {
 
 		$post_types = $this->get_private_property( $metabox, 'post_types' );
 
-		$this->assertEquals( 
-			$post_type->get_id(), 
+		$this->assertEquals(
+			$post_type->get_id(),
 			$post_types[0]->get_id(),
 			'😡 Meta box - Post type assignment failed.',
 		);
@@ -56,13 +56,13 @@ class Meta_Box_Test extends Test_Case {
 		$expected1 = '_nonce';
 		$expected2 = '_wp_http_referer';
 
-		$this->assertContains( 
+		$this->assertContains(
 			$expected1,
 			$html,
 			'😡 Meta box does not have nonce field.',
 		);
-		$this->assertContains( 
-			$expected2, 
+		$this->assertContains(
+			$expected2,
 			$html,
 			'😡 Meta box does not have _wp_http_referer.',
 		);

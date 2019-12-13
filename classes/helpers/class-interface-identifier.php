@@ -10,6 +10,6 @@
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
 interface Interface_Identifier {
-    public function get_id(): string;
+	public function get_id(): string;
 	public function get_name(): string;
 }

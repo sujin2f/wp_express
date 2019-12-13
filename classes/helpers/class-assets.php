@@ -2,9 +2,9 @@
 /**
  * Assets Helper
  *
- * If you pass manifest array as the parameter, 
+ * If you pass manifest array as the parameter,
  * this class will automatically read the destination file
- * 
+ *
  * ```
  * $asset = Assets::get_instance( array( 'app.js' => 'app.9sdf83jdFs09.js' ), 'http://your.site/assets/' );
  * $asset->add_script( 'app.js' ); // will load http://your.site/assets/app.9sdf83jdFs09.js
@@ -67,18 +67,18 @@ class Assets {
 		foreach ( $this->arguments as $handle => $argument ) {
 			// Script
 			if ( Assets_Type::SCRIPT === $argument->get( 'type' )->case() ) {
-				wp_register_script( 
-					$handle, 
-					$argument->get( 'url' ), 
-					$argument->get( 'depends' ), 
-					$argument->get( 'version' ), 
+				wp_register_script(
+					$handle,
+					$argument->get( 'url' ),
+					$argument->get( 'depends' ),
+					$argument->get( 'version' ),
 					$argument->get( 'is_footer' ),
 				);
 
 				if ( ! empty( $argument->get( 'translation' ) ) ) {
-					wp_localize_script( 
-						$handle, 
-						$argument->get( 'translation_key' ), 
+					wp_localize_script(
+						$handle,
+						$argument->get( 'translation_key' ),
 						$argument->get( 'translation' ),
 					);
 				}
@@ -87,11 +87,11 @@ class Assets {
 			}
 
 			// Style
-			wp_register_style( 
-				$handle, 
-				$argument->get( 'url' ), 
-				$argument->get( 'depends' ), 
-				$argument->get( 'version' ), 
+			wp_register_style(
+				$handle,
+				$argument->get( 'url' ),
+				$argument->get( 'depends' ),
+				$argument->get( 'version' ),
 				$argument->get( 'is_footer' ),
 			);
 		}

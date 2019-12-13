@@ -28,7 +28,7 @@ trait Trait_With_Arguments {
 		}
 
 		$last_index = array_key_last( $this->arguments );
-		
+
 		if ( ! $last_index ) {
 			throw new InvalidArgumentException( '😡 No argument were assigned.' );
 		}

@@ -20,14 +20,14 @@ use Sujin\Wordpress\WP_Express\Admin;
 class Admin_Test extends Test_Case {
 	public function root_position_provider() {
 		return array(
-			'String, New Position' => array( 
-				'page_name' => 'Admin Page Test Case', 
-				'position'  => null, 
+			'String, New Position' => array(
+				'page_name' => 'Admin Page Test Case',
+				'position'  => null,
 				'expected'  => 100,
 			),
-			'Number, New Position' => array( 
-				'page_name' => 'Admin Page 300', 
-				'position'  => 300, 
+			'Number, New Position' => array(
+				'page_name' => 'Admin Page 300',
+				'position'  => 300,
 				'expected'  => 300,
 			),
 		);
@@ -45,15 +45,15 @@ class Admin_Test extends Test_Case {
 		global $menu;
 		try {
 			include_once( self::$home_dir . '/wordpress/wp-admin/menu.php' );
-		} catch ( Exception $_ ) {}
+		} catch ( Exception $_ ) {
+		}
 
 		Admin::get_instance( $page_name )
 			->position( $position )
-			->register_menu()
-			;
+			->register_menu();
 
-		$this->assertEquals( 
-			$page_name, 
+		$this->assertEquals(
+			$page_name,
 			$menu[ $expected ][0],
 			'😡 Menu registration failed.',
 		);
@@ -61,20 +61,20 @@ class Admin_Test extends Test_Case {
 
 	public function child_position_provider() {
 		return array(
-			'Under WP Menu'          => array( 
-				'page_name' => 'Child Tools', 
-				'position'  => 'tools', 
+			'Under WP Menu'          => array(
+				'page_name' => 'Child Tools',
+				'position'  => 'tools',
 				'expected'  => 'tools.php',
 			),
-			'Under WP Menu, by Name' => array( 
-				'page_name' => 'Child Post', 
-				'position'  => 'Posts', 
+			'Under WP Menu, by Name' => array(
+				'page_name' => 'Child Post',
+				'position'  => 'Posts',
 				'expected'  => 'edit.php',
 			),
-			'Under Express Menu'     => array( 
-				'page_name' => 'Child 300', 
+			'Under Express Menu'     => array(
+				'page_name' => 'Child 300',
 				'position'  => 'Admin Page 300',
-				'expected'  => 'admin-page-300', 
+				'expected'  => 'admin-page-300',
 				'is_class'  => true,
 			),
 		);
@@ -93,7 +93,8 @@ class Admin_Test extends Test_Case {
 		global $submenu;
 		try {
 			include_once( self::$home_dir . '/wordpress/wp-admin/menu.php' );
-		} catch ( Exception $_ ) {}
+		} catch ( Exception $_ ) {
+		}
 
 		$admin_page = ( true === $is_class )
 			? Admin::get_instance( $page_name )->position( Admin::get_instance( $position ) )
@@ -103,8 +104,8 @@ class Admin_Test extends Test_Case {
 		$expected = $submenu[ $expected ];
 		$expected = array_pop( $expected )[0];
 
-		$this->assertEquals( 
-			$page_name, 
+		$this->assertEquals(
+			$page_name,
 			$expected,
 			'😡 Sub-menu registration failed.',
 		);
@@ -117,34 +118,34 @@ class Admin_Test extends Test_Case {
 			'get_menu_args'
 		);
 
-		$this->assertEquals( 
+		$this->assertEquals(
 			$menu_name,
-			$args[0], 
+			$args[0],
 			'😡 Menu argument 1 is not matching.',
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			$menu_name,
-			$args[1], 
+			$args[1],
 			'😡 Menu argument 2 is not matching.',
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			'manage_options',
-			$args[2], 
+			$args[2],
 			'😡 Menu argument 3 is not matching.',
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			Admin::get_instance( $menu_name )->get_id(),
 			$args[3],
 			'😡 Menu argument 4 is not matching.',
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			'Sujin\Wordpress\WP_Express\Admin',
-			get_class( $args[4][0] ), 
+			get_class( $args[4][0] ),
 			'😡 Menu argument 5.1 is not matching.',
 		);
-		$this->assertEquals( 
+		$this->assertEquals(
 			'render',
-			$args[4][1], 
+			$args[4][1],
 			'😡 Menu argument 5.2 is not matching.',
 		);
 	}

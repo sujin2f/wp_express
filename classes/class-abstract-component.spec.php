@@ -118,15 +118,15 @@ class Component_Test extends Test_Case {
 		// Part 1: Front page
 		$this->go_to( '/' );
 		ob_start();
-		$this->call_private_method( 
-			$component, 
-			'render_admin_message', 
+		$this->call_private_method(
+			$component,
+			'render_admin_message',
 			array( 'Text' ),
 		);
 		$actual = ob_get_clean();
 
 		// @sssertion Empty becuase this is not admin screen
-		$this->assertEmpty( 
+		$this->assertEmpty(
 			$actual,
 			'😡 Front page should not show the admin message.',
 		);
@@ -134,16 +134,16 @@ class Component_Test extends Test_Case {
 		// Part 2: Go to admin
 		set_current_screen( 'edit-post' );
 		ob_start();
-		$this->call_private_method( 
-			$component, 
-			'render_admin_message', 
+		$this->call_private_method(
+			$component,
+			'render_admin_message',
 			array( 'Test Message' ),
 		);
 		$actual = ob_get_clean();
 
 		// @sssertion
-		$this->assertContains( 
-			'Test Message', 
+		$this->assertContains(
+			'Test Message',
 			$actual,
 			'😡 Admin page should show the admin message.',
 		);
@@ -166,8 +166,8 @@ class Component_Test extends Test_Case {
 	 */
 	public function test_get_name(): void {
 		// @sssertion
-		$this->assertEquals( 
-			'Test', 
+		$this->assertEquals(
+			'Test',
 			Component_Inherited::get_instance( 'Test' )->get_name(),
 			'😡 Component id is not matched as it expected.',
 		);

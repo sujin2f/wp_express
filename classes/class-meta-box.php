@@ -73,10 +73,10 @@ class Meta_Box extends Abstract_Component {
 		$post_id = $_GET['post'] ?? null;
 
 		?>
-		<section class="<?php echo esc_attr( self::PREFIX ) ?> metabox">
+		<section class="<?php echo esc_attr( self::PREFIX ); ?> metabox">
 			<?php
 			$this->wp_nonce_field();
-			foreach( $this->post_metas as $post_meta ) {
+			foreach ( $this->post_metas as $post_meta ) {
 				$post_meta->render_form( $post_id );
 			}
 			?>

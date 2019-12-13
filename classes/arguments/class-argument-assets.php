@@ -10,43 +10,43 @@
 namespace Sujin\Wordpress\WP_Express\Arguments;
 
 class Argument_Assets extends Abstract_Argument {
-    /*
-     * @var ?string[]
-     */
-    protected $depends;
+	/*
+	 * @var ?string[]
+	 */
+	protected $depends;
 
-    /*
-     * @var ?bool
-     */
-    protected $is_admin;
+	/*
+	 * @var ?bool
+	 */
+	protected $is_admin;
 
-    /*
-     * @var ?bool
-     */
-    protected $is_footer;
+	/*
+	 * @var ?bool
+	 */
+	protected $is_footer;
 
-    /*
-     * @var ?array
-     */
-    protected $translation;
+	/*
+	 * @var ?array
+	 */
+	protected $translation;
 
-    /*
-     * @var ?string
-     */
-    protected $translation_key;
+	/*
+	 * @var ?string
+	 */
+	protected $translation_key;
 
-    /*
-     * @var Assets_Type
-     */
-    protected $type;
+	/*
+	 * @var Assets_Type
+	 */
+	protected $type;
 
-    /*
-     * @var string
-     */
-    protected $url;
+	/*
+	 * @var string
+	 */
+	protected $url;
 
-    /*
-     * @var ?string
-     */
-    protected $version;
+	/*
+	 * @var ?string
+	 */
+	protected $version;
 }

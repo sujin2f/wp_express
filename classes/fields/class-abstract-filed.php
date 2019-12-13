@@ -54,11 +54,11 @@ abstract class Abstract_Filed extends Abstract_Component {
 		}
 
 		$manifest = WP_EXPRESS_ASSET_DIR . DIRECTORY_SEPARATOR . 'manifest.json';
-		
+
 		if ( ! file_exists( $manifest ) ) {
 			throw new RuntimeException( '😡 manifest.json is missing.' );
 		}
-		
+
 		$manifest = file_get_contents( $manifest );
 		$manifest = json_decode( $manifest, true );
 
@@ -67,8 +67,7 @@ abstract class Abstract_Filed extends Abstract_Component {
 			->append( 'style.scss' )
 			->is_admin( true )
 			->append( 'app.js' )
-			->is_admin( true )
-			;
+			->is_admin( true );
 	}
 
 	/**

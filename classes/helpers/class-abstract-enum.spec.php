@@ -11,7 +11,7 @@ use Sujin\Wordpress\WP_Express\Helpers\Abstract_Enum;
 
 class Enum_Sample extends Abstract_Enum {
 	public const STRING = 'string';
-	public const ARRAY = array( 'option1', 'option2' );
+	public const ARRAY  = array( 'option1', 'option2' );
 }
 
 class Enum_Another extends Abstract_Enum {
@@ -60,7 +60,7 @@ class Enum_Test extends Test_Case {
 	public function test_two_enuma(): void {
 		$string1 = Enum_Sample::string();
 		$string2 = Enum_Another::string();
-		$this->assertTrue( 
+		$this->assertTrue(
 			get_class( $string1 ) !== get_class( $string2 ),
 			'😡 Two enum values should be different.',
 		);

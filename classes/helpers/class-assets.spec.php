@@ -17,11 +17,10 @@ class Assets_Test extends Test_Case {
 	public function test_none_manifest(): void {
 		$assets = Assets::get_instance( 'Test' );
 		$assets->append( $this->get_stylesheet_directory_uri() . '/assets/dist/script.js' )
-			->is_admin(true)
-			->is_footer(true)
+			->is_admin( true )
+			->is_footer( true )
 			->translation( array( 'foo' => 'bar' ) )
-			->translation_key( 'baz' )
-		;
+			->translation_key( 'baz' );
 		$assets = $this->get_private_property( $assets, 'arguments' );
 		$assets = array_pop( $assets );
 

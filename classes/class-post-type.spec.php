@@ -23,7 +23,7 @@ class Post_Type_Test extends Test_Case {
 		// Custom Post Type
 		Post_Type::get_instance( 'Test Type' )->register_post_type();
 
-		$this->assertNotNull( 
+		$this->assertNotNull(
 			get_post_type_object( 'test-type' ),
 			'😡 Post type registration failed.',
 		);
@@ -34,11 +34,11 @@ class Post_Type_Test extends Test_Case {
 			->register_post_type();
 
 		$post_type = get_post_type_object( 'rest-test' );
-		$this->assertNotNull( 
+		$this->assertNotNull(
 			$post_type,
 			'😡 Post type registration failed.',
 		);
-		$this->assertTrue( 
+		$this->assertTrue(
 			$post_type->show_in_rest,
 			'😡 Post type show_in_rest assignment failed.',
 		);
@@ -48,7 +48,7 @@ class Post_Type_Test extends Test_Case {
 			->show_in_rest( false )
 			->register_post_type();
 		$post_type = get_post_type_object( 'post' );
-		$this->assertFalse( 
+		$this->assertFalse(
 			$post_type->show_in_rest,
 			'😡 Default post type re-assignment failed.',
 		);

@@ -50,7 +50,7 @@ class Admin extends Abstract_Component {
 		}
 
 		// When the position is WP Express class
-		if ( is_object( $position ) && $this->register_menu_in_express_class() ) { 
+		if ( is_object( $position ) && $this->register_menu_in_express_class() ) {
 			return;
 		}
 
@@ -83,7 +83,7 @@ class Admin extends Abstract_Component {
 		}
 
 		$this->url = add_query_arg( 'page', $this->get_id(), admin_url( $position ) );
-		$slug            = add_submenu_page( $position, ...$this->get_menu_args() );
+		$slug      = add_submenu_page( $position, ...$this->get_menu_args() );
 		// add_action( 'load-' . $slug, array( $this, 'render_screen_options' ) );
 		return true;
 	}
@@ -96,7 +96,7 @@ class Admin extends Abstract_Component {
 
 		if ( $position instanceof Post_Type ) {
 			$this->url = admin_url( 'edit.php?post_type=' . $position->get_id() . '&page=' . $this->get_id() );
-		} else if ( $position instanceof Admin ) {
+		} elseif ( $position instanceof Admin ) {
 			$this->url = admin_url( 'options-general.php?page=' . $position->get_id() );
 		} else {
 			return false;
@@ -143,9 +143,9 @@ class Admin extends Abstract_Component {
 
 		foreach ( $menu as $menu_item ) {
 			if ( $position === $menu_item[0] ) {
-				$parent_url       = $menu_item[2];
-				$this->url = add_query_arg( 'page', $this->get_id(), $parent_url );
-				$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args() );
+				$parent_url = $menu_item[2];
+				$this->url  = add_query_arg( 'page', $this->get_id(), $parent_url );
+				$page_slug  = add_submenu_page( $parent_url, ...$this->get_menu_args() );
 				// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 				return true;
 			}

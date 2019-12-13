@@ -57,7 +57,7 @@ class Taxonomy extends Abstract_Component {
 		unset( $arguments['name'] );
 		unset( $arguments['cap'] );
 
-		$user_args = array_filter( 
+		$user_args = array_filter(
 			$this->argument->to_array(),
 			function ( $value ): bool {
 				return ! is_null( $value );

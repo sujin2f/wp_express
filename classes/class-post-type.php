@@ -52,7 +52,7 @@ class Post_Type extends Abstract_Component {
 			return;
 		}
 
-		foreach( Abstract_Filed_Post_Meta::get_instances() as $post_meta ) {
+		foreach ( Abstract_Filed_Post_Meta::get_instances() as $post_meta ) {
 			$post_meta_post_types = array_map(
 				function( $post_type ) {
 					return $post_type->get_id();
@@ -90,17 +90,17 @@ class Post_Type extends Abstract_Component {
 		## Supports
 		$supports              = get_all_post_type_supports( $this->get_id() );
 		$arguments['supports'] = array_keys( $supports );
-		$user_args = array_filter( 
+		$user_args             = array_filter(
 			$this->argument->to_array(),
 			function ( $value ): bool {
 				return ! is_null( $value );
 			}
 		);
-		$arguments = array_merge( $arguments, $user_args );
+		$arguments             = array_merge( $arguments, $user_args );
 		register_post_type( $this->get_id(), $arguments );
 	}
 
-/*
+	/*
 	public function meta_in_rest() {
 		register_rest_field(
 			$this->get_id(),
@@ -131,5 +131,5 @@ class Post_Type extends Abstract_Component {
 		}
 		return $meta;
 	}
-*/
+	*/
 }

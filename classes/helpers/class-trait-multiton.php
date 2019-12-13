@@ -13,7 +13,7 @@ trait Trait_Multiton {
 	/**
 	 * @var self[]
 	 */
-	protected static $multiton_container  = array();
+	protected static $multiton_container = array();
 
 	public static function get_instance( ...$args ): self {
 		$id  = $args[0];

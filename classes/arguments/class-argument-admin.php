@@ -10,23 +10,23 @@
 namespace Sujin\Wordpress\WP_Express\Arguments;
 
 class Argument_Admin extends Abstract_Argument {
-    /*
-     * @var string|Admin
-     */
-	protected $position   = 'settings';
+	/*
+	 * @var string|Admin
+	 */
+	protected $position = 'settings';
 
-    /*
-     * @var string
-     */
-	protected $icon       = 'dashicons-admin-generic';
+	/*
+	 * @var string
+	 */
+	protected $icon = 'dashicons-admin-generic';
 
-    /*
-     * @var string
-     */
+	/*
+	 * @var string
+	 */
 	protected $capability = 'manage_options';
 
-    /*
-     * @var string
-     */
+	/*
+	 * @var string
+	 */
 	protected $plugin;
 }

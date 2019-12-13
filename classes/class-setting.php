@@ -40,8 +40,8 @@ class Setting extends Abstract_Component {
 	}
 
 	public function register_setting(): void {
-		$admin_page = ( $this->argument->get( 'admin_page' ) instanceof Admin ) 
-			? $this->argument->get( 'admin_page' )->get_id() 
+		$admin_page = ( $this->argument->get( 'admin_page' ) instanceof Admin )
+			? $this->argument->get( 'admin_page' )->get_id()
 			: $this->argument->get( 'admin_page' );
 		add_settings_section( $this->get_id(), $this->get_name(), null, $admin_page );
 	}

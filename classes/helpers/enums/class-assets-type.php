@@ -13,6 +13,6 @@ namespace Sujin\Wordpress\WP_Express\Helpers\Enums;
 use Sujin\Wordpress\WP_Express\Helpers\Abstract_Enum;
 
 class Assets_Type extends Abstract_Enum {
-    public const SCRIPT = 'script';
-    public const STYLE  = 'style';
+	public const SCRIPT = 'script';
+	public const STYLE  = 'style';
 }

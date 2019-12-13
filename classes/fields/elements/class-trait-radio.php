@@ -18,7 +18,7 @@ trait Trait_Radio {
 	}
 
 	protected function is_available(): bool {
-		
+
 		return ! empty( $this->argument->get( 'options' ) );
 	}
 

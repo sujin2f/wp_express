@@ -17,7 +17,7 @@ trait Trait_Input {
 	protected function get_data_type(): string {
 		return in_array( $this->argument->get( 'type' ), $this->NUMBER_TYPES, true ) ? 'number' : $this->DATA_TYPE;
 	}
-	
+
 	protected function init(): void {
 		$this->argument->set( 'class', 'regular-text code input__items__item' );
 		$this->argument->set( 'type', 'text' );
@@ -25,8 +25,8 @@ trait Trait_Input {
 	}
 
 	protected function render_form_field(): void {
-		$is_single   = $this->is_single();
-		$value       = $is_single
+		$is_single = $this->is_single();
+		$value     = $is_single
 			? array( $this->value )
 			: array_merge(
 				$this->value,

@@ -6,9 +6,9 @@
  * Usuage:
  * ```
  * class Enum extends Abstract_Enum {
- * 	public const KEY = 'value';
+ *  public const KEY = 'value';
  * }
- * 
+ *
  * Enum::value();
  * ```
  *
@@ -101,25 +101,25 @@ abstract class Abstract_Enum {
 	private static function to_array(): void {
 		$class = get_called_class();
 
-		if ( array_key_exists( $class, self::$cache )  ) {
+		if ( array_key_exists( $class, self::$cache ) ) {
 			return;
 		}
 
 		self::$cache[ $class ] = array();
-		
+
 		$reflection = new ReflectionClass( $class );
 		$constants  = $reflection->getConstants();
 
 		foreach ( $constants as $key => $value ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $array_value ) {
-					$enum = new static( $key );
+					$enum                                  = new static( $key );
 					self::$cache[ $class ][ $array_value ] = $enum;
 				}
 				continue;
 			}
 
-			$enum = new static( $key );
+			$enum                            = new static( $key );
 			self::$cache[ $class ][ $value ] = $enum;
 		}
 	}

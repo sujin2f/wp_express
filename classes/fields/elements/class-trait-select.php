@@ -22,8 +22,8 @@ trait Trait_Select {
 	}
 
 	protected function render_form_field(): void {
-		$is_single   = $this->is_single();
-		$value       = $is_single ? array( $this->value ) : $this->value;
+		$is_single = $this->is_single();
+		$value     = $is_single ? array( $this->value ) : $this->value;
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field select">
 			<select
@@ -41,7 +41,7 @@ trait Trait_Select {
 
 					echo '<option value="' . esc_attr( $name ) . '"' . $selected . '>' . esc_attr( $name ) . '</option>';
 				}
-		echo '</select>';
-		echo '</section>';
+				echo '</select>';
+				echo '</section>';
 	}
 }

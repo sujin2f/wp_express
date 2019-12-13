@@ -40,7 +40,7 @@ class Autoloader {
 			return null;
 		}
 
-		$path = array(
+		$path         = array(
 			'extension' => '.php',
 			// Delete Namespace and divide
 			'path'      => explode( '\\', str_replace( $this->namespace . '\\', '', $class_name ) ),

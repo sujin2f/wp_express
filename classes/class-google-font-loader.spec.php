@@ -13,13 +13,13 @@ class Google_Font_Loader_Test extends Test_Case {
 	public function test_loader(): void {
 		Google_Font_Loader::get_instance()
 			->append( 'Roboto+Condensed:400,700:latin' )
-			->append( 
+			->append(
 				array(
 					'this font',
 					'that font',
 				)
 			);
-		
+
 		ob_start();
 		do_action( 'wp_print_scripts' );
 		$actual = ob_get_clean();

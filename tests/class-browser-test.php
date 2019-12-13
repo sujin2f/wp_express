@@ -182,8 +182,7 @@ final class BrowserTest {
 					->options( array( 'Selection 1', 'Selection 2' ) )
 					->show_in_rest( true )
 			)
-			->append_to( Admin::get_instance( '1st Depth' ) )
-		;
+			->append_to( Admin::get_instance( '1st Depth' ) );
 	}
 
 	private function test_post_type() {
@@ -294,8 +293,7 @@ final class BrowserTest {
 				Meta_Checkbox::get_instance( 'Multi Checkbox Test' )
 					->options( array( 'Selection 1', 'Selection 2' ) )
 					->show_in_rest( true )
-			)
-		;
+			);
 	}
 
 	private function test_taxonomy() {
@@ -400,8 +398,7 @@ final class BrowserTest {
 				Term_Meta_Checkbox::get_instance( 'Multi Checkbox Test' )
 					->options( array( 'Selection 1', 'Selection 2' ) )
 					->show_in_rest( true )
-			)
-		;
+			);
 
 		// Term Meta to Existing Taxonomy
 		Term_Meta_Input::get_instance( 'Input Test' )

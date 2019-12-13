@@ -21,11 +21,11 @@ class Setting_Test extends Test_Case {
 
 		global $wp_settings_sections;
 
-		$this->assertTrue( 
+		$this->assertTrue(
 			array_key_exists( $admin_page->get_id(), $wp_settings_sections ),
 			'😡 Admin page does not appear in the $wp_settings_sections.',
 		);
-		$this->assertTrue( 
+		$this->assertTrue(
 			array_key_exists( $settings->get_id(), $wp_settings_sections[ $admin_page->get_id() ] ),
 			'😡 Setting does not appear in the $wp_settings_sections.',
 		);
