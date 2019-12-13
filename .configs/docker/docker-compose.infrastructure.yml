@@ -1,0 +1,17 @@
+version: '2'
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "${DOCKER_DATA_PATH}/portainer:/data portainer/portainer"
+    ports:
+      - 9000:9000
+    networks:
+      - local_default
+    environment:
+      VIRTUAL_HOST: portainer.test
+networks:
+  local_default:
+    external: true

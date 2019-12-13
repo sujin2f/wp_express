@@ -10,7 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
 trait Trait_Attachment {
-	protected $DATA_TYPE = 'integer';
+	protected $data_type = 'integer';
 
 	/**
 	 * Admin form

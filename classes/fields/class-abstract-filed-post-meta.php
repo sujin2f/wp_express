@@ -106,6 +106,6 @@ abstract class Abstract_Filed_Post_Meta extends Abstract_Filed {
 	}
 
 	protected function get_data_type(): string {
-		return $this->DATA_TYPE;
+		return $this->data_type;
 	}
 }

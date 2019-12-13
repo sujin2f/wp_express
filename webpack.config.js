@@ -8,7 +8,7 @@ const {
   setCSS,
   setFiles,
   setAnalyzer,
-} = require('./webpack.config.parts');
+} = require('./.configs/webpack.config.parts');
 
 const dist = path.resolve(__dirname, 'assets', 'dist');
 

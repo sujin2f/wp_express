@@ -10,7 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
 trait Trait_Checkbox {
-	protected $DATA_TYPE = 'string';
+	protected $data_type = 'string';
 
 	protected function is_single(): bool {
 		return $this->argument->get( 'options' ) ? false : true;

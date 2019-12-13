@@ -1,21 +1,21 @@
 version: '2'
 services:
-  wordpress:
-    container_name: wordpress-wpexpress
-    image: wordpress:latest
+  sujin:
+    container_name: "${CONTAINER_NAME}"
+    image: sujin2f/wordpress:latest
     external_links:
       - mariadb:mysql
       - mailhog
     restart: always
     environment:
-      VIRTUAL_HOST: wpexpress.test
-      WORDPRESS_DB_NAME: wpexpress.test
+      VIRTUAL_HOST: "${VIRTUAL_HOST}"
+      WORDPRESS_DB_NAME: "${DB_NAME}"
       WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_PASSWORD: "${DB_PASSWORD}"
       WORDPRESS_DEBUG: 1
       TZ: America/Toronto
     volumes:
-      - ../../Docker/wordpress/wp-content/wpexpress.test:/var/www/html/wp-content
+      - "${DOCKER_DATA_PATH}/wordpress/wp-content/${VIRTUAL_HOST}:/var/www/html/wp-content"
       - ./:/var/www/html/wp-content/mu-plugins
     ports:
       - 80

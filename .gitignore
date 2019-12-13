@@ -28,4 +28,5 @@ vendor/
 wordpress/
 
 # Build
-assets/dist
+assets/dist/
+build/

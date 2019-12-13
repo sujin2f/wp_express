@@ -10,7 +10,7 @@
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
 trait Trait_Select {
-	protected $DATA_TYPE = 'string';
+	protected $data_type = 'string';
 
 	protected function init(): void {
 		$this->argument->set( 'class', 'postform' );

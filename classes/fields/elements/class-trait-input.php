@@ -10,12 +10,11 @@
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
 trait Trait_Input {
-	protected $DATA_TYPE = 'string';
-
-	private $NUMBER_TYPES = array( 'range', 'number' );
+	protected $data_type  = 'string';
+	private $number_types = array( 'range', 'number' );
 
 	protected function get_data_type(): string {
-		return in_array( $this->argument->get( 'type' ), $this->NUMBER_TYPES, true ) ? 'number' : $this->DATA_TYPE;
+		return in_array( $this->argument->get( 'type' ), $this->number_types, true ) ? 'number' : $this->data_type;
 	}
 
 	protected function init(): void {

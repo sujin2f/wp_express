@@ -82,7 +82,7 @@ abstract class Abstract_Filed_Setting extends Abstract_Filed {
 	}
 
 	protected function get_data_type(): string {
-		return $this->DATA_TYPE;
+		return $this->data_type;
 	}
 
 	protected function render_form_wrapper_open(): void {}

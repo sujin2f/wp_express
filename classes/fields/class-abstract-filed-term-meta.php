@@ -109,7 +109,7 @@ abstract class Abstract_Filed_Term_Meta extends Abstract_Filed {
 	}
 
 	protected function get_data_type(): string {
-		return $this->DATA_TYPE;
+		return $this->data_type;
 	}
 
 	public function get_parents(): array {
