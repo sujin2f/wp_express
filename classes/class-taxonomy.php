@@ -2,19 +2,24 @@
 /**
  * Taxonomy Class
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @param   ?string $name The name of the componenet
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
+ * @todo    manage_columns()
+ * @todo    manage_custiom_columns()
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta_Component;
-use Sujin\Wordpress\WP_Express\Types\Taxonomy_Argument;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Taxonomy;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Term_Meta;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 
-class Taxonomy extends Component {
+class Taxonomy extends Abstract_Component {
 	use Trait_Multiton;
+	use Trait_With_Argument;
 
 	const DEFAULT_POST_TYPE = 'post';
 
@@ -23,52 +28,24 @@ class Taxonomy extends Component {
 	 */
 	private $post_types = array();
 
-	/**
-	 * @var Taxonomy_Argument
-	 */
-	private $arguments;
-
-	protected function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
 
 		if ( 'tag' === strtolower( $name ) ) {
 			$this->id = 'post_tag';
 		}
 
-		$this->arguments = new Taxonomy_Argument();
-
-		# Label
-		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->arguments->label = $name;
-		}
-
-		foreach ( $arguments as $key => $value ) {
-			$this->arguments->{$key} = $value;
-		}
+		$this->argument = new Argument_Taxonomy();
+		$this->argument->set( 'label', $name );
 
 		add_action( 'init', array( $this, 'register_taxonomy' ), 25 );
-	}
-
-	/**
-	 * @return any|Post_Type
-	 */
-	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->arguments->to_array() ) ) {
-			if ( empty( $arguments ) ) {
-				return $this->arguments->{$name};
-			}
-
-			$this->arguments->{$name} = $arguments[0];
-		}
-
-		return $this;
 	}
 
 	public function register_taxonomy() {
 		global $wp_taxonomies;
 
 		if ( ! array_key_exists( $this->get_id(), $wp_taxonomies ) ) {
-			register_taxonomy( $this->get_id(), $this->get_post_types_strings(), array_filter( $this->arguments->to_array() ) );
+			register_taxonomy( $this->get_id(), $this->get_post_types_strings(), array_filter( $this->argument->to_array() ) );
 			return;
 		}
 
@@ -81,7 +58,7 @@ class Taxonomy extends Component {
 		unset( $arguments['cap'] );
 
 		$user_args = array_filter( 
-			$this->arguments->to_array(),
+			$this->argument->to_array(),
 			function ( $value ): bool {
 				return ! is_null( $value );
 			}
@@ -92,7 +69,7 @@ class Taxonomy extends Component {
 		register_taxonomy( $this->get_id(), $object_type, $arguments );
 	}
 
-	public function append( Term_Meta_Component $field ): Taxonomy {
+	public function append( Abstract_Filed_Term_Meta $field ): Taxonomy {
 		$field->append_to( $this );
 		return $this;
 	}
@@ -105,13 +82,9 @@ class Taxonomy extends Component {
 		return $this;
 	}
 
-	// TODO
-	public function manage_columns() {
-	}
+	public function manage_columns() {}
 
-	// TODO
-	public function manage_custiom_columns() {
-	}
+	public function manage_custiom_columns() {}
 
 	private function get_post_types_strings(): array {
 		$post_types = array();

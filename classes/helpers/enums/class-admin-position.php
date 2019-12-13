@@ -23,7 +23,7 @@ class Admin_Position extends Abstract_Enum {
 	public const DASHBOARD  = 'dashboard';
 	public const APPEARANCE = 'appearance';
 
-	public static function get_parent_slug( string $keyword ): ?string {
+	public static function get_parent_file_name( string $keyword ): ?string {
 		if ( ! static::in_array( $keyword ) ) {
 			return null;
 		}

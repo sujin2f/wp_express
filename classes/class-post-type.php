@@ -2,65 +2,33 @@
 /**
  * Create a new Post Type
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @param   ?string $name The name of the componenet
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Meta_Box;
-use Sujin\Wordpress\WP_Express\Types\Post_Type_Argument;
-use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Post_Type;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Post_Meta;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 use WP_Post;
-class Post_Type extends Component {
+
+class Post_Type extends Abstract_Component {
 	use Trait_Multiton;
+	use Trait_With_Argument;
 
-	/**
-	 * Argument
-	 *
-	 * @var Post_Type_Argument
-	 */
-	private $arguments;
-
-	protected function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
 
-		$this->arguments = new Post_Type_Argument();
-
-		# Label
-		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->arguments->label = $name;
-		}
-
-		# Supports
-		if ( false === array_key_exists( 'supports', $arguments ) ) {
-			$this->arguments->supports = array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments', 'revisions' );
-		}
-
-		foreach ( $arguments as $key => $value ) {
-			$this->arguments->{$key} = $value;
-		}
+		$this->argument = new Argument_Post_Type();
+		$this->argument->set( 'label', $name );
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		// add_action( 'rest_api_init', array( $this, 'meta_in_rest' ) );
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
-	}
-
-	/**
-	 * @return any|Post_Type
-	 */
-	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->arguments->to_array() ) ) {
-			if ( empty( $arguments ) ) {
-				return $this->arguments->{$name};
-			}
-
-			$this->arguments->{$name} = $arguments[0];
-		}
-
-		return $this;
 	}
 
 	/**
@@ -84,7 +52,7 @@ class Post_Type extends Component {
 			return;
 		}
 
-		foreach( Post_Meta_Component::get_instances() as $post_meta ) {
+		foreach( Abstract_Filed_Post_Meta::get_instances() as $post_meta ) {
 			$post_meta_post_types = array_map(
 				function( $post_type ) {
 					return $post_type->get_id();
@@ -111,7 +79,7 @@ class Post_Type extends Component {
 
 		// New post type
 		if ( empty( $arguments ) ) {
-			register_post_type( $this->get_id(), array_filter( $this->arguments->to_array() ) );
+			register_post_type( $this->get_id(), array_filter( $this->argument->to_array() ) );
 			return;
 		}
 
@@ -123,7 +91,7 @@ class Post_Type extends Component {
 		$supports              = get_all_post_type_supports( $this->get_id() );
 		$arguments['supports'] = array_keys( $supports );
 		$user_args = array_filter( 
-			$this->arguments->to_array(),
+			$this->argument->to_array(),
 			function ( $value ): bool {
 				return ! is_null( $value );
 			}

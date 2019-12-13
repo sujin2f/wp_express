@@ -9,22 +9,17 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Radio {
 	protected $DATA_TYPE = 'string';
 
 	protected function init(): void {
-		$this->option->class = 'tog';
+		$this->argument->set( 'class', 'tog' );
 		parent::init();
 	}
 
 	protected function is_available(): bool {
-		return ! empty( $this->option->options );
+		
+		return ! empty( $this->argument->get( 'options' ) );
 	}
 
 	protected function is_single(): bool {
@@ -35,11 +30,11 @@ trait Trait_Radio {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field radio">';
 		echo '<fieldset>';
 
-		if ( ! empty( $this->option->legend ) ) {
-			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->option->legend ) . '</span></legend>';
+		if ( ! empty( $this->argument->get( 'legend' ) ) ) {
+			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->argument->get( 'legend' ) ) . '</span></legend>';
 		}
 
-		foreach ( $this->option->options as $name => $option ) {
+		foreach ( $this->argument->get( 'options' ) as $name => $option ) {
 			$name    = is_numeric( $name ) ? $option : $name;
 			$key     = sanitize_title( $name );
 			$checked = ( $option == $this->value ) ? 'checked="checked"' : '';
@@ -53,7 +48,7 @@ trait Trait_Radio {
 						name="<?php echo esc_attr( $this->get_id() ); ?>"
 						value="<?php echo esc_attr( $name ); ?>"
 						<?php echo $checked; ?>
-						<?php $this->option->render_attributes(); ?>
+						<?php $this->argument->render_attributes(); ?>
 					/>
 					<?php echo esc_html( $name ); ?>
 				</label>

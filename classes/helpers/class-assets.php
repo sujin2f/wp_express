@@ -13,19 +13,21 @@
  * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @since   4.0.0
- * @param   ?manifest $name The name of the componenet
- * @todo    defendancy & version
+ * @param   string|array $manifest
+ * @param   ?string      $base_url
  */
 
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Assets;
 use Sujin\Wordpress\WP_Express\Helpers\Enums\Assets_Type;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
-use Sujin\Wordpress\WP_Express\Types\Assets_Argument;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Arguments;
 use InvalidArgumentException;
 
 class Assets {
 	use Trait_Multiton;
+	use Trait_With_Arguments;
 
 	/*
 	 * @var array
@@ -37,87 +39,61 @@ class Assets {
 	 */
 	private $base_url;
 
-	/*
-	 * @var Assets_Argument[]
-	 */
-	private $assets = array();
-
 	protected function __construct( $manifest, ?string $base_url = null ) {
 		$this->manifest = $manifest;
-		$this->base_url = $base_url;
+		$this->base_url = $base_url ? $base_url . DIRECTORY_SEPARATOR : '';
 
 		add_action( 'init', array( $this, 'register_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
-	/**
-	 * Sets Assets_Argument properties
-	 * @throws InvalidArgumentException
-	 * @return self
-	 */
-	public function __call( string $key, array $arguments ): self {
-		if ( empty( $arguments ) ) {
-			throw new InvalidArgumentException( '😡 No getter supported.' );
-		}
-
-		$last_index = array_key_last( $this->assets );
-		
-		if ( ! $last_index ) {
-			throw new InvalidArgumentException( '😡 No assets were assigned.' );
-		}
-
-		if ( ! property_exists( $this->assets[ $last_index ], $key ) ) {
-			throw new InvalidArgumentException( '😡 Asset property does not exist.' );
-		}
-
-		$this->assets[ $last_index ]->{$key} = $arguments[0];
-		return $this;
-	}
-
-	public function add_script( string $url ): self {
+	public function append( string $url ): self {
 		if ( is_array( $this->manifest ) && array_key_exists( $url, $this->manifest ) ) {
 			$url = $this->manifest[ $url ] ?? $url;
 		}
 
-		$handle          = $this->get_assets_handle( $url );
-		$args            = new Assets_Argument();
-		$args->type      = Assets_Type::script();
-		$args->url       = $this->base_url . $url;
+		$type     = substr( $url, -3 ) === '.js' ? Assets_Type::script() : Assets_Type::style();
+		$handle   = $this->get_assets_handle( $url );
+		$argument = new Argument_Assets();
+		$argument->set( 'url', $this->base_url . $url );
+		$argument->set( 'type', $type );
 
-		$this->assets[ $handle ] = $args;
-
-		return $this;
-	}
-
-	public function add_style( string $url ): self {
-		if ( is_array( $this->manifest ) && array_key_exists( $url, $this->manifest ) ) {
-			$url = $this->manifest[ $url ] ?? $url;
-		}
-
-		$handle          = $this->get_assets_handle( $url );
-		$args            = new Assets_Argument();
-		$args->type      = Assets_Type::style();
-		$args->url       = $this->base_url . $url;
-
-		$this->assets[ $handle ] = $args;
-
+		$this->arguments[ $handle ] = $argument;
 		return $this;
 	}
 
 	public function register_assets() {
-		## Scripts
-		foreach ( $this->get_scripts() as $handle => $args ) {
-			wp_register_script( $handle, $args->url, $args->depends, $args->version, $args->is_footer );
+		foreach ( $this->arguments as $handle => $argument ) {
+			// Script
+			if ( Assets_Type::SCRIPT === $argument->get( 'type' )->case() ) {
+				wp_register_script( 
+					$handle, 
+					$argument->get( 'url' ), 
+					$argument->get( 'depends' ), 
+					$argument->get( 'version' ), 
+					$argument->get( 'is_footer' ),
+				);
 
-			if ( ! empty( $args->translation ) ) {
-				wp_localize_script( $handle, $args->translation_key, $args->translation );
+				if ( ! empty( $argument->get( 'translation' ) ) ) {
+					wp_localize_script( 
+						$handle, 
+						$argument->get( 'translation_key' ), 
+						$argument->get( 'translation' ),
+					);
+				}
+
+				continue;
 			}
-		}
 
-		## Styles
-		foreach ( $this->get_styles() as $handle => $args ) {
-			wp_register_style( $handle, $args->url, $args->depends, $args->version, $args->is_footer );
+			// Style
+			wp_register_style( 
+				$handle, 
+				$argument->get( 'url' ), 
+				$argument->get( 'depends' ), 
+				$argument->get( 'version' ), 
+				$argument->get( 'is_footer' ),
+			);
 		}
 	}
 
@@ -125,14 +101,14 @@ class Assets {
 	 * Actions: Front pages
 	 */
 	public function wp_enqueue_scripts() {
-		foreach ( $this->get_scripts() as $handle => $args ) {
-			if ( ! $args->is_admin ) {
-				wp_enqueue_script( $handle );
+		foreach ( $this->arguments as $handle => $argument ) {
+			if ( $argument->get( 'is_admin' ) ) {
+				continue;
 			}
-		}
 
-		foreach ( $this->get_styles() as $handle => $args ) {
-			if ( ! $args->is_admin ) {
+			if ( Assets_Type::SCRIPT === $argument->get( 'type' )->case() ) {
+				wp_enqueue_script( $handle );
+			} else {
 				wp_enqueue_style( $handle );
 			}
 		}
@@ -142,14 +118,14 @@ class Assets {
 	 * Actions: Admin pages
 	 */
 	public function admin_enqueue_scripts() {
-		foreach ( $this->get_scripts() as $handle => $args ) {
-			if ( $args->is_admin ) {
-				wp_enqueue_script( $handle );
+		foreach ( $this->arguments as $handle => $argument ) {
+			if ( ! $argument->get( 'is_admin' ) ) {
+				continue;
 			}
-		}
 
-		foreach ( $this->get_styles() as $handle => $args ) {
-			if ( $args->is_admin ) {
+			if ( Assets_Type::SCRIPT === $argument->get( 'type' )->case() ) {
+				wp_enqueue_script( $handle );
+			} else {
 				wp_enqueue_style( $handle );
 			}
 		}
@@ -159,32 +135,6 @@ class Assets {
 	 * Get Unique handle
 	 */
 	private function get_assets_handle( string $url ): string {
-		return md5( $this->manifest ) . '-' . sanitize_title( basename( $url ) );
-	}
-
-	/*
-	 * Get scripts from self::$assets
-	 * @return Assets_Argument[]
-	 */
-	private function get_scripts(): array {
-		return array_filter(
-			$this->assets,
-			function ( Assets_Argument $asset ) {
-				return Assets_Type::SCRIPT === $asset->type->case();
-			},
-		);
-	}
-
-	/*
-	 * Get styles from self::$assets
-	 * @return Assets_Argument[]
-	 */
-	private function get_styles(): array {
-		return array_filter(
-			$this->assets,
-			function ( Assets_Argument $asset ) {
-				return Assets_Type::STYLE === $asset->type->case();
-			},
-		);
+		return md5( json_encode( $this->manifest ) ) . '-' . sanitize_title( basename( $url ) );
 	}
 }

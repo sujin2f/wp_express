@@ -9,17 +9,9 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Settings;
 
-use Sujin\Wordpress\WP_Express\Fields\Setting_Component;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Setting;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Attachment;
 
-// @codeCoverageIgnoreStart
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-// @codeCoverageIgnoreEnd
-
-class Attachment extends Setting_Component {
+class Attachment extends Abstract_Filed_Setting {
 	use Trait_Attachment;
 }

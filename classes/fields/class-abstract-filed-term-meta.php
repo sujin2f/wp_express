@@ -1,6 +1,6 @@
 <?php
 /**
- * Interface for Fields
+ * Abstract class for term meta fields
  *
  * @package WP Express
  * @since   the beginning
@@ -13,7 +13,7 @@ use Sujin\Wordpress\WP_Express\Taxonomy;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use WP_Term;
 
-abstract class Term_Meta_Component extends Filed_Component {
+abstract class Abstract_Filed_Term_Meta extends Abstract_Filed {
 	use Trait_Multiton;
 
 	/**
@@ -21,7 +21,7 @@ abstract class Term_Meta_Component extends Filed_Component {
 	 */
 	private $taxonomies = array();
 
-	public function append_to( Taxonomy $taxonomy ): Term_Meta_Component {
+	public function append_to( Taxonomy $taxonomy ): self {
 		$this->taxonomies[] = $taxonomy;
 
 		add_action( $taxonomy->get_id() . '_edit_form_fields', array( $this, 'render_setting_form' ), 25 );
@@ -60,7 +60,7 @@ abstract class Term_Meta_Component extends Filed_Component {
 		$args = array(
 			'type'         => $this->get_data_type(),
 			'single'       => $this->is_single(),
-			'show_in_rest' => $this->option->show_in_rest,
+			'show_in_rest' => $this->argument->get( 'show_in_rest' ),
 		);
 		register_meta( 'term', $this->get_id(), $args );
 	}
@@ -89,23 +89,23 @@ abstract class Term_Meta_Component extends Filed_Component {
 	}
 
 	protected function refresh_id( ?int $id = null ): void {
-		if ( $this->object_id ) {
+		if ( $this->wp_object_id ) {
 			return;
 		}
 
 		if ( ! is_null( $id ) ) {
-			$this->object_id = $id;
+			$this->wp_object_id = $id;
 			return;
 		}
 
 		if ( empty( $_GET['tag_ID'] ?? null ) ) {
 			return;
 		}
-		$this->object_id = $_GET['tag_ID'];
+		$this->wp_object_id = $_GET['tag_ID'];
 	}
 
 	protected function refresh_value(): void {
-		$this->value = get_term_meta( $this->object_id, $this->get_id(), $this->is_single() );
+		$this->value = get_term_meta( $this->wp_object_id, $this->get_id(), $this->is_single() );
 	}
 
 	protected function get_data_type(): string {

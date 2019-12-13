@@ -45,7 +45,6 @@ class Autoloader {
 			// Delete Namespace and divide
 			'path'      => explode( '\\', str_replace( $this->namespace . '\\', '', $class_name ) ),
 		);
-
 		$path['path'] = array_map( array( $this, 'map_convert_path' ), $path['path'] );
 		array_unshift( $path['path'], $this->base_dir );
 
@@ -83,7 +82,7 @@ class Autoloader {
 	private function map_convert_path( string $string ): string {
 		$segments = array();
 
-		preg_match_all( '/((?:^|[A-Z])[a-z0-9]+)/', $string, $matches );
+		preg_match_all( '/((?:^|[A-Z])[A-Za-z0-9]+)/', $string, $matches );
 
 		return strtolower( implode( '-', $matches[0] ) );
 	}

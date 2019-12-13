@@ -37,6 +37,8 @@ use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Checkbox as Term_Meta_Checkbox;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Radio as Term_Meta_Radio;
 use Sujin\Wordpress\WP_Express\Fields\Term_Meta\Select as Term_Meta_Select;
 
+use Sujin\Wordpress\WP_Express\Helpers\Enums\Admin_Position;
+
 final class BrowserTest {
 	public function __construct() {
 		$this->test_admin();
@@ -51,25 +53,25 @@ final class BrowserTest {
 			->position( 100 )
 			->icon( 'dashicons-awards' );
 		Admin::get_instance( 'POSITION_OPTION' )
-			->position( Admin::POSITION_OPTION );
+			->position( Admin_Position::OPTION );
 		Admin::get_instance( 'POSITION_TOOLS' )
-			->position( Admin::POSITION_TOOLS );
+			->position( Admin_Position::TOOLS );
 		Admin::get_instance( 'POSITION_USERS' )
-			->position( Admin::POSITION_USERS );
+			->position( Admin_Position::USERS );
 		Admin::get_instance( 'POSITION_PLUGINS' )
-			->position( Admin::POSITION_PLUGINS );
+			->position( Admin_Position::PLUGINS );
 		Admin::get_instance( 'POSITION_COMMENTS' )
-			->position( Admin::POSITION_COMMENTS );
+			->position( Admin_Position::COMMENTS );
 		Admin::get_instance( 'POSITION_PAGES' )
-			->position( Admin::POSITION_PAGES );
+			->position( Admin_Position::PAGES );
 		Admin::get_instance( 'POSITION_POSTS' )
-			->position( Admin::POSITION_POSTS );
+			->position( Admin_Position::POSTS );
 		Admin::get_instance( 'POSITION_MEDIA' )
-			->position( Admin::POSITION_MEDIA );
+			->position( Admin_Position::MEDIA );
 		Admin::get_instance( 'POSITION_DASHBOARD' )
-			->position( Admin::POSITION_DASHBOARD );
+			->position( Admin_Position::DASHBOARD );
 		Admin::get_instance( 'POSITION_APPEARANCE' )
-			->position( Admin::POSITION_APPEARANCE );
+			->position( Admin_Position::APPEARANCE );
 		Admin::get_instance( 'By Name' )
 			->position( 'Test' )
 			->plugin( 'Akismet Anti-Spam' );

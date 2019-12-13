@@ -2,20 +2,24 @@
 /**
  * Metabox Class
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @param   ?string $name The name of the componenet
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
+ * @todo
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Component;
-use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Post_Meta;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Meta_Box;
 use WP_Post;
 
-class Meta_Box extends Component {
+class Meta_Box extends Abstract_Component {
 	use Trait_Multiton;
+	use Trait_With_Argument;
 
 	/**
 	 * @var Post_Type[]
@@ -23,22 +27,24 @@ class Meta_Box extends Component {
 	public $post_types = array();
 
 	/**
-	 * @var Post_Meta_Component[]
+	 * @var Abstract_Filed_Post_Meta[]
 	 */
 	public $post_metas = array();
 
-	protected function __construct( $name ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
+		$this->argument = new Argument_Meta_Box();
+
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 	}
 
-	public function append( Post_Meta_Component $post_meta ): Meta_Box {
+	public function append( Abstract_Filed_Post_Meta $post_meta ): self {
 		$post_meta->append_to( $this );
 		$this->post_metas[] = $post_meta;
 		return $this;
 	}
 
-	public function append_to( Post_Type $post_type ): Meta_Box {
+	public function append_to( Post_Type $post_type ): self {
 		$this->post_types[] = $post_type;
 		return $this;
 	}
@@ -58,6 +64,8 @@ class Meta_Box extends Component {
 				},
 				$this->post_types,
 			),
+			$this->argument->get( 'context' ),
+			$this->argument->get( 'priority' ),
 		);
 	}
 
@@ -67,8 +75,7 @@ class Meta_Box extends Component {
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ) ?> metabox">
 			<?php
-			wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
-
+			$this->wp_nonce_field();
 			foreach( $this->post_metas as $post_meta ) {
 				$post_meta->render_form( $post_id );
 			}

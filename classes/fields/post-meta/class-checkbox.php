@@ -9,16 +9,10 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Post_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Post_Meta_Component;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Post_Meta;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Checkbox;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
-class Checkbox extends Post_Meta_Component {
+class Checkbox extends Abstract_Filed_Post_Meta {
 	use Trait_Checkbox;
 
 	protected function render_wrapper_open(): void {

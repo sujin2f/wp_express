@@ -4,150 +4,149 @@
  *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
- * @param   ?string $name The name of the componenet
+ * @param   string $name The name of the componenet
  * @since   the beginning
- * @todo    arguments
  * @todo    render_screen_options()
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Setting;
-use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\{
+	Trait_Multiton,
+	Trait_With_Argument,
+};
 use Sujin\Wordpress\WP_Express\Helpers\Enums\Admin_Position;
-use Sujin\Wordpress\WP_Express\Types\Admin_Argument;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Admin;
 
-class Admin extends Component {
+class Admin extends Abstract_Component {
 	use Trait_Multiton;
+	use Trait_With_Argument;
 
-	private $admin_url;
+	private $url;
 
-	private const POSITION   = 'position';
-	private const ICON       = 'icon';
-	private const CAPABILITY = 'capability';
-	private const PLUGIN     = 'plugin';
-
-	private $position   = 'settings';
-	private $icon       = 'dashicons-admin-generic';
-	private $capability = 'manage_options';
-	private $plugin     = null;
-
-	protected function __construct( ?string $name = null ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
+		$this->argument = new Argument_Admin();
 
-		add_action( 'network_admin_menu', array( $this, 'register_admin_menu' ) );
-		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'network_admin_menu', array( $this, 'register_menu' ) );
+		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'plugin_action_links', array( $this, 'plugin_action_links' ), 15, 3 );
 	}
 
-	public function __call( string $name, array $arguments ) {
-		switch ( strtolower( $name ) ) {
-			case self::POSITION:
-			case self::ICON:
-			case self::CAPABILITY:
-			case self::PLUGIN:
-				if ( empty( $arguments ) ) {
-					return $this->{$name};
-				}
-
-				$this->{$name} = $arguments[0];
-				break;
-		}
-
+	public function append( Setting $setting ): self {
+		$setting->append_to( $this );
 		return $this;
 	}
 
-	public function append( Setting $setting ): Admin {
-		$setting->admin_page( $this );
-		return $this;
+	/*
+	 * @called-by https://developer.wordpress.org/reference/hooks/admin_menu/
+	 * @called-by https://developer.wordpress.org/reference/hooks/network_admin_menu/
+	 */
+	public function register_menu(): void {
+		$position = $this->argument->get( 'position' );
+
+		if ( is_string( $position ) && $this->register_menu_by_position() ) {
+			return;
+		}
+
+		// When the position is WP Express class
+		if ( is_object( $position ) && $this->register_menu_in_express_class() ) { 
+			return;
+		}
+
+		// When the position is numeric
+		if ( is_numeric( $position ) ) {
+			$this->register_menu_in_numeric_position();
+			return;
+		}
+
+		// When the position is a menu Name
+		if ( $this->register_menu_in_string_position() ) {
+			return;
+		}
+
+		// To root position
+		$this->url = admin_url( 'admin.php?page=' . $this->get_id() );
+		$slug      = add_menu_page( ...$this->get_menu_args() );
+		// add_action( 'load-' . $slug, array( $this, 'render_screen_options' ) );
 	}
 
-	# ACTION admin_menu, network_admin_menu
-	public function register_admin_menu() {
-		$parent_slug = '';
+	/*
+	 * @called-by self::register_menu()
+	 */
+	private function register_menu_by_position(): bool {
+		$position = $this->argument->get( 'position' );
+		$position = Admin_Position::get_parent_file_name( strtolower( $position ) );
 
-		if ( is_string( $this->position ) && $this->register_admin_menu_by_position() ) {
-			return;
-		}
-
-		## When the position is WP Express class
-		if ( is_object( $this->position ) && ( $this->position instanceof Admin || $this->position instanceof Post_Type ) ) {
-			$this->register_admin_menu_in_express_class();
-			return;
-		}
-
-		## When the position is numeric
-		if ( is_numeric( $this->position ) ) {
-			$this->register_admin_menu_in_numeric_position();
-			return;
-		}
-
-		## When the position is a menu Name
-		if ( $this->register_admin_menu_in_string_position() ) {
-			return;
-		}
-
-		## To root position
-		$this->admin_url = admin_url( 'admin.php?page=' . $this->get_id() );
-		$page_slug        = add_menu_page( ...$this->get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
-	}
-
-	# Excecuted by: register_admin_menu()
-	private function register_admin_menu_by_position(): bool {
-		$parent_slug = Admin_Position::get_parent_slug( strtolower( $this->position ) );
-
-		if ( is_null( $parent_slug ) ) {
+		if ( is_null( $position ) ) {
 			return false;
 		}
 
-		$this->admin_url = add_query_arg( 'page', $this->get_id(), admin_url( $parent_slug ) );
-		$page_slug       = add_submenu_page( $parent_slug, ...$this->get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+		$this->url = add_query_arg( 'page', $this->get_id(), admin_url( $position ) );
+		$slug            = add_submenu_page( $position, ...$this->get_menu_args() );
+		// add_action( 'load-' . $slug, array( $this, 'render_screen_options' ) );
 		return true;
 	}
 
-	# Excecuted by: register_admin_menu()
-	private function register_admin_menu_in_express_class() {
-		if ( $this->position instanceof Post_Type ) {
-			$this->admin_url = admin_url( 'edit.php?post_type=' . $this->position->get_id() . '&page=' . $this->get_id() );
-		}
-		$page_slug = add_submenu_page( $this->position->get_id(), ...$this->get_menu_args() );
-		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
-	}
+	/*
+	 * @called-by self::register_menu()
+	 */
+	private function register_menu_in_express_class(): bool {
+		$position = $this->argument->get( 'position' );
 
-	# Excecuted by: register_admin_menu()
-	private function register_admin_menu_in_numeric_position() {
-		global $menu;
-		if ( isset( $menu[ $this->position ] ) ) { ## To existing position
-			$parent_url       = $menu[ $this->position ][2];
-			$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
-			$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args() );
-
-		} else { ## To new position
-			$args      = $this->get_menu_args();
-			$args[]    = $this->icon;
-			$args[]    = $this->position;
-			$page_slug = add_menu_page( ...$args );
+		if ( $position instanceof Post_Type ) {
+			$this->url = admin_url( 'edit.php?post_type=' . $position->get_id() . '&page=' . $this->get_id() );
+		} else if ( $position instanceof Admin ) {
+			$this->url = admin_url( 'options-general.php?page=' . $position->get_id() );
+		} else {
+			return false;
 		}
 
-		add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+		$slug = add_submenu_page( $position->get_id(), ...$this->get_menu_args() );
+		// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+
+		return true;
 	}
 
-	# Excecuted by: register_admin_menu()
-	private function register_admin_menu_in_string_position(): bool {
+	/*
+	 * @called-by self::register_menu()
+	 */
+	private function register_menu_in_numeric_position(): void {
 		global $menu;
+		$position = $this->argument->get( 'position' );
+
+		if ( isset( $menu[ $position ] ) ) { // To existing position
+			$parent_url = $menu[ $position ][2];
+			$this->url  = add_query_arg( 'page', $this->get_id(), $parent_url );
+			$page_slug  = add_submenu_page( $parent_url, ...$this->get_menu_args() );
+			return;
+		}
+
+		$args      = $this->get_menu_args();
+		$args[]    = $this->argument->get( 'icon' );
+		$args[]    = $position;
+		$page_slug = add_menu_page( ...$args );
+
+		// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+	}
+
+	/*
+	 * @called-by self::register_menu()
+	 */
+	private function register_menu_in_string_position(): bool {
+		global $menu;
+		$position = $this->argument->get( 'position' );
 
 		if ( empty( $menu ) ) {
 			return false;
 		}
 
 		foreach ( $menu as $menu_item ) {
-			if ( $this->position === $menu_item[0] ) {
+			if ( $position === $menu_item[0] ) {
 				$parent_url       = $menu_item[2];
-				$this->admin_url = add_query_arg( 'page', $this->get_id(), $parent_url );
+				$this->url = add_query_arg( 'page', $this->get_id(), $parent_url );
 				$page_slug        = add_submenu_page( $parent_url, ...$this->get_menu_args() );
-				add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+				// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
 				return true;
 			}
 		}
@@ -155,30 +154,33 @@ class Admin extends Component {
 		return false;
 	}
 
-	# ACTION plugin_action_links
+	/*
+	 * @called-by https://developer.wordpress.org/reference/hooks/plugin_action_links/
+	 */
 	public function plugin_action_links( array $actions, string $_, array $plugin_data ): array {
-		if ( empty( $this->plugin ) ) {
+		$plugin = $this->argument->get( 'plugin' );
+		if ( empty( $plugin ) ) {
 			return $actions;
 		}
 
-		if ( sanitize_title( $this->plugin ) == sanitize_title( $plugin_data['Name'] ) ) {
+		if ( sanitize_title( $plugin ) == sanitize_title( $plugin_data['Name'] ) ) {
 			$actions['setting'] = sprintf(
 				'<a href="%s"><span class="dashicons-before dashicons-admin-generic"></span> Setting</a>',
-				$this->admin_url
+				$this->url
 			);
 		}
 
 		return $actions;
 	}
 
-	public function render() {
+	public function render(): void {
 		?>
 		<div
 			class="<?php echo esc_attr( self::PREFIX ); ?> admin wrap"
 			id="<?php echo esc_attr( self::PREFIX ); ?>-admin-<?php echo esc_attr( $this->get_id() ); ?>"
 		>
-			<h2 class="page-title <?php echo esc_attr( self::PREFIX ); ?>">
-				<span class="dashicons <?php echo esc_attr( $this->icon ); ?>"></span>
+			<h2 class="page-title">
+				<span class="dashicons <?php echo esc_attr( $this->argument->get( 'icon' ) ); ?>"></span>
 				<?php echo esc_html( $this->get_name() ); ?>
 			</h2>
 
@@ -197,7 +199,7 @@ class Admin extends Component {
 		return array(
 			$this->get_name(),
 			$this->get_name(),
-			$this->capability,
+			$this->argument->get( 'capability' ),
 			$this->get_id(),
 			array( $this, 'render' ),
 		);

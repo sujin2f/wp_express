@@ -9,24 +9,18 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Input {
 	protected $DATA_TYPE = 'string';
 
 	private $NUMBER_TYPES = array( 'range', 'number' );
 
 	protected function get_data_type(): string {
-		return in_array( $this->option->type, $this->NUMBER_TYPES, true ) ? 'number' : $this->DATA_TYPE;
+		return in_array( $this->argument->get( 'type' ), $this->NUMBER_TYPES, true ) ? 'number' : $this->DATA_TYPE;
 	}
-
+	
 	protected function init(): void {
-		$this->option->class = 'regular-text code input__items__item';
-		$this->option->type  = 'text';
+		$this->argument->set( 'class', 'regular-text code input__items__item' );
+		$this->argument->set( 'type', 'text' );
 		parent::init();
 	}
 
@@ -49,7 +43,7 @@ trait Trait_Input {
 				<input
 					name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $index ); ?>]"
 					value="<?php echo esc_attr( $item_value ); ?>"
-					<?php $this->option->render_attributes(); ?>
+					<?php $this->argument->render_attributes(); ?>
 				/>
 			<?php endforeach; ?>
 		</section>

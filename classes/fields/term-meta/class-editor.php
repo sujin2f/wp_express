@@ -9,9 +9,9 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Term_Meta;
 
-use Sujin\Wordpress\WP_Express\Fields\Term_Meta_Component;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Term_Meta;
 use Sujin\Wordpress\WP_Express\Fields\Elements\Trait_Editor;
 
-class Editor extends Term_Meta_Component {
+class Editor extends Abstract_Filed_Term_Meta {
 	use Trait_Editor;
 }

@@ -13,7 +13,7 @@ use Sujin\Wordpress\WP_Express\Setting;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
-abstract class Setting_Component extends Filed_Component {
+abstract class Abstract_Filed_Setting extends Abstract_Filed {
 	use Trait_Multiton;
 
 	/**
@@ -22,12 +22,11 @@ abstract class Setting_Component extends Filed_Component {
 	private $setting;
 
 	public function append_to( Setting $setting ) {
-		$this->setting        = $setting;
-		$this->option->legend = $setting->get_name();
+		$this->setting = $setting;
+		$this->argument->set( 'legend', $setting->get_name() );
 	}
 
-	public function update( ?int $post_id = null, $value = null ): void {
-	}
+	public function update( ?int $post_id = null, $value = null ): void {}
 
 	protected function init(): void {
 		add_action( 'admin_init', array( $this, 'add_settings_field' ) );
@@ -47,14 +46,14 @@ abstract class Setting_Component extends Filed_Component {
 	}
 
 	public function add_settings_field(): void {
-		if ( empty( $this->setting ) || empty( $this->setting->admin_page() ) ) {
+		if ( empty( $this->setting ) || empty( $this->setting->get_admin_page() ) ) {
 			return;
 		}
 
 		$parent_id =
-			( $this->setting->admin_page() instanceof Admin )
-			? $this->setting->admin_page()->get_id()
-			: $this->setting->admin_page();
+			( $this->setting->get_admin_page() instanceof Admin )
+			? $this->setting->get_admin_page()->get_id()
+			: $this->setting->get_admin_page();
 
 		add_settings_field(
 			$this->get_id(),

@@ -9,23 +9,17 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Checkbox {
 	protected $DATA_TYPE = 'string';
 
 	protected function is_single(): bool {
-		return $this->option->options ? false : true;
+		return $this->argument->get( 'options' ) ? false : true;
 	}
 
 	protected function render_form_field(): void {
 		$is_single = $this->is_single();
 		$value     = $is_single ? array( $this->value ) : $this->value;
-		$options   = $is_single ? array( $this->get_name() ) : $this->option->options;
+		$options   = $is_single ? array( $this->get_name() ) : $this->argument->get( 'options' );
 
 		foreach ( $options as $key => $option ) {
 			?>
@@ -37,7 +31,7 @@ trait Trait_Checkbox {
 						type="checkbox"
 						value="<?php echo esc_attr( $option ); ?>"
 						<?php echo in_array( $option, $value, true ) ? 'checked="checked"' : ''; ?>
-						<?php $this->option->render_attributes(); ?>
+						<?php $this->argument->render_attributes(); ?>
 					/>
 					<?php echo esc_html( $option ); ?>
 				</label>

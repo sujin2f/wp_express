@@ -8,28 +8,32 @@
  * @todo    Data types
  */
 
-namespace Sujin\Wordpress\WP_Express\Types;
+namespace Sujin\Wordpress\WP_Express\Arguments;
 
-class Field_Option extends Abstract_Arguments {
+class Argument_Field extends Abstract_Argument {
 	private const ATTRIBUTES = array( 'class', 'hidden', 'type', 'placeholder', 'rows', 'cols' );
 
 	// HTML attributes
-	private $class;
-	private $hidden;
-	private $type;
-	private $placeholder;
-	private $rows;
-	private $cols;
+	protected $class;
+	protected $hidden;
+	protected $type;
+	protected $placeholder;
+	protected $rows;
+	protected $cols;
 
-	private $help;
-	private $show_in_rest = false;
-	private $options;
-	private $default;
-	private $legend;
-	private $single = true;
-	private $on_change;
-	private $on_blur;
-	private $on_focus;
+	protected $help;
+	protected $show_in_rest = false;
+	protected $options;
+	protected $default;
+	protected $legend;
+
+	/*
+	 * @var bool
+	 */
+	protected $single = true;
+	protected $on_change;
+	protected $on_blur;
+	protected $on_focus;
 
 	public function render_attributes(): void {
 		foreach ( self::ATTRIBUTES as $key ) {

@@ -11,11 +11,11 @@ namespace Sujin\Wordpress\WP_Express\Helpers;
 
 use InvalidArgumentException;
 
-trait Trait_With_Argument {
+trait Trait_With_Arguments {
 	/*
-	 * @var Abstract_Argument
+	 * @var Abstract_Argument[]
 	 */
-	protected $argument;
+	protected $arguments;
 
 	/**
 	 * Sets Abstract_Argument properties
@@ -27,11 +27,17 @@ trait Trait_With_Argument {
 			throw new InvalidArgumentException( '😡 No getter supported.' );
 		}
 
-		if ( ! $this->argument->has( $key ) ) {
-			throw new InvalidArgumentException( '😡 Argument does not exist.' );
+		$last_index = array_key_last( $this->arguments );
+		
+		if ( ! $last_index ) {
+			throw new InvalidArgumentException( '😡 No argument were assigned.' );
 		}
 
-		$this->argument->set( $key, $arguments[0] );
+		if ( ! property_exists( $this->arguments[ $last_index ], $key ) ) {
+			throw new InvalidArgumentException( '😡 Asset property does not exist.' );
+		}
+
+		$this->arguments[ $last_index ]->set( $key, $arguments[0] );
 		return $this;
 	}
 }

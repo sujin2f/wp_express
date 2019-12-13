@@ -17,7 +17,7 @@ trait Trait_Multiton {
 
 	public static function get_instance( ...$args ): self {
 		$id  = $args[0];
-		$key = md5( $id );
+		$key = md5( json_encode( $id ) );
 		if ( ! array_key_exists( $key, static::$multiton_container ) ) {
 			static::$multiton_container[ $key ] = new static( ...$args );
 		}

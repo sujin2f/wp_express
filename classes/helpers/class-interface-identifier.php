@@ -7,7 +7,7 @@
  * @since   4.0.0
  */
 
-namespace Sujin\Wordpress\WP_Express\Helpers\Interfaces;
+namespace Sujin\Wordpress\WP_Express\Helpers;
 
 interface Interface_Identifier {
     public function get_id(): string;

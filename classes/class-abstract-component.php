@@ -5,15 +5,15 @@
  *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
- * @param   ?string $name The name of the componenet
+ * @param   string $name The name of the componenet
  * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Helpers\Interfaces\Interface_Identifier;
+use Sujin\Wordpress\WP_Express\Helpers\Interface_Identifier;
 
-abstract class Component implements Interface_Identifier {
+abstract class Abstract_Component implements Interface_Identifier {
 	protected const PREFIX = 'wp-express';
 
 	/*
@@ -40,7 +40,7 @@ abstract class Component implements Interface_Identifier {
 		$this->object_id   = sanitize_title( $name );
 	}
 
-	protected function render_admin_message( string $text, string $class = 'updated' ): Component {
+	protected function render_admin_message( string $text, string $class = 'updated' ): self {
 		if ( ! is_admin() ) {
 			return $this;
 		}
@@ -52,5 +52,9 @@ abstract class Component implements Interface_Identifier {
 		<?php
 
 		return $this;
+	}
+
+	protected function wp_nonce_field(): void {
+		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
 	}
 }

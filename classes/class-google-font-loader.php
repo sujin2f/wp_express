@@ -26,14 +26,14 @@ class Google_Font_Loader {
 	private $fonts = array();
 
 	protected function __construct() {
-		add_action( 'wp_print_scripts', array( $this, 'import_google_font_asynchronously' ) );
+		add_action( 'wp_print_scripts', array( $this, 'print_script' ) );
 	}
 
 	/*
 	 * Push font(s) in the queue
 	 * @param string|string[] $fonts
 	 */
-	public function append( $fonts ): void {
+	public function append( $fonts ): self {
 		if ( is_array( $fonts ) ) {
 			$this->fonts = array_merge( $this->fonts, $fonts );
 		}
@@ -41,13 +41,16 @@ class Google_Font_Loader {
 		if ( is_string( $fonts ) ) {
 			array_push( $this->fonts, $fonts );
 		}
+
+		return $this;
 	}
 
 	/*
 	 * Print the inline script
+	 * Google fonts will be loaded asynchronously
 	 * https://github.com/typekit/webfontloader
 	 */
-	public function import_google_font_asynchronously(): void {
+	public function print_script(): void {
 		if ( ! is_array( $this->fonts ) || 0 === count( $this->fonts ) ) {
 			return;
 		}

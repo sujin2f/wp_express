@@ -7,46 +7,46 @@
  * @since   4.0.0
  */
 
-namespace Sujin\Wordpress\WP_Express\Types;
+namespace Sujin\Wordpress\WP_Express\Arguments;
 
-class Assets_Argument extends Abstract_Arguments {
+class Argument_Assets extends Abstract_Argument {
     /*
      * @var ?string[]
      */
-    private $depends;
+    protected $depends;
 
     /*
      * @var ?bool
      */
-    private $is_admin;
+    protected $is_admin;
 
     /*
      * @var ?bool
      */
-    private $is_footer;
+    protected $is_footer;
 
     /*
      * @var ?array
      */
-    private $translation;
+    protected $translation;
 
     /*
      * @var ?string
      */
-    private $translation_key;
+    protected $translation_key;
 
     /*
      * @var Assets_Type
      */
-    private $type;
+    protected $type;
 
     /*
      * @var string
      */
-    private $url;
+    protected $url;
 
     /*
      * @var ?string
      */
-    private $version;
+    protected $version;
 }

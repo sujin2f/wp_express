@@ -49,7 +49,7 @@ class Admin_Test extends Test_Case {
 
 		Admin::get_instance( $page_name )
 			->position( $position )
-			->register_admin_menu()
+			->register_menu()
 			;
 
 		$this->assertEquals( 
@@ -98,7 +98,7 @@ class Admin_Test extends Test_Case {
 		$admin_page = ( true === $is_class )
 			? Admin::get_instance( $page_name )->position( Admin::get_instance( $position ) )
 			: Admin::get_instance( $page_name )->position( $position );
-		$admin_page->register_admin_menu();
+		$admin_page->register_menu();
 
 		$expected = $submenu[ $expected ];
 		$expected = array_pop( $expected )[0];

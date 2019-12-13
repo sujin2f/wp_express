@@ -8,23 +8,23 @@
  * @todo    Data types
  */
 
-namespace Sujin\Wordpress\WP_Express\Types;
+namespace Sujin\Wordpress\WP_Express\Arguments;
 
-abstract class Abstract_WP_Object_Argument extends Abstract_Arguments {
-	private $_builtin;
-	private $capabilities;
-	private $description;
-	private $hierarchical;
-	private $label;
-	private $labels;
-	private $private = true;
-	private $privately_queryable;
-	private $query_var;
-	private $rest_base;
-	private $rest_controller_class;
-	private $rewrite;
-	private $show_in_menu;
-	private $show_in_nav_menus;
-	private $show_in_rest;
-	private $show_ui;
+abstract class Abstract_WP_Object_Argument extends Abstract_Argument {
+	protected $_builtin;
+	protected $capabilities;
+	protected $description;
+	protected $hierarchical;
+	protected $label;
+	protected $labels;
+	protected $private = true;
+	protected $privately_queryable;
+	protected $query_var;
+	protected $rest_base;
+	protected $rest_controller_class;
+	protected $rewrite;
+	protected $show_in_menu;
+	protected $show_in_nav_menus;
+	protected $show_in_rest;
+	protected $show_ui;
 }

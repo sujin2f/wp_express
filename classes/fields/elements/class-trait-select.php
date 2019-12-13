@@ -9,22 +9,16 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Select {
 	protected $DATA_TYPE = 'string';
 
 	protected function init(): void {
-		$this->option->class = 'postform';
+		$this->argument->set( 'class', 'postform' );
 		parent::init();
 	}
 
 	protected function is_available(): bool {
-		return ! empty( $this->option->options );
+		return ! empty( $this->argument->get( 'options' ) );
 	}
 
 	protected function render_form_field(): void {
@@ -36,11 +30,11 @@ trait Trait_Select {
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__select__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>[]"
 				<?php echo $this->is_single() ? '' : 'multiple'; ?>
-				<?php $this->option->render_attributes(); ?>
+				<?php $this->argument->render_attributes(); ?>
 			>
 				<?php echo $this->is_single() ? '<option value="">== Select Option ==</option>' : ''; ?>
 				<?php
-				foreach ( $this->option->options as $name => $option ) {
+				foreach ( $this->argument->get( 'options' ) as $name => $option ) {
 					$name     = is_numeric( $name ) ? $option : $name;
 					$key      = sanitize_title( $name );
 					$selected = ( in_array( $option, $value, true ) ) ? ' selected="selected"' : '';

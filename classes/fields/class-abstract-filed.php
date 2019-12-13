@@ -2,32 +2,21 @@
 /**
  * The base class inherited for all field types
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @todo Multiple, options/callback...
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields;
 
-use Sujin\Wordpress\WP_Express\Component;
-use Sujin\Wordpress\WP_Express\Types\Field_Option;
-use WP_Term;
+use Sujin\Wordpress\WP_Express\Abstract_Component;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Field;
+use Sujin\Wordpress\WP_Express\Helpers\Assets;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 
-// @codeCoverageIgnoreStart
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-// @codeCoverageIgnoreEnd
-
-abstract class Filed_Component extends Component {
-	/**
-	 * Field option
-	 *
-	 * @var Field_Option
-	 */
-	protected $option;
+abstract class Abstract_Filed extends Abstract_Component {
+	use Trait_With_Argument;
 
 	/**
 	 * Field value
@@ -37,41 +26,49 @@ abstract class Filed_Component extends Component {
 	protected $value;
 
 	/**
-	 * Parent ID (post or term)
-	 *
+	 * Post/ Term id
 	 * @var integer
 	 */
-	protected $object_id;
+	protected $wp_object_id;
 
-	protected function __construct( string $name, array $attrs = array() ) {
+	/**
+	 * @var Assets
+	 */
+	protected static $assets;
+
+	/**
+	 * @var array
+	 */
+	protected static $manifest;
+
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
-		$this->option = new Field_Option();
-
-		foreach ( $attrs as $key => $value ) {
-			$this->option->{$key} = $value;
-		}
-
-		$this->add_style( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['style.scss'], true );
-		$this->add_script( WP_EXPRESS_ASSET_URL . '/' . self::$manifest['app.js'], true );
+		$this->argument = new Argument_Field();
+		$this->set_assets();
 		$this->init();
 	}
 
-	/**
-	 * Magic method for get/set option value
-	 * i.g. $input->class( 'wide' )
-	 */
-	public function __call( string $key, array $arguments ): Filed_Component {
-		if ( ! in_array( $key, array_keys( get_object_vars( $this->option ) ), true ) ) {
-			return $this;
+	private function set_assets(): void {
+		if ( ! empty( self::$assets ) ) {
+			return;
 		}
 
-		// Return the value
-		if ( empty( $arguments ) ) {
-			return $this->option->{$key};
+		$manifest = WP_EXPRESS_ASSET_DIR . DIRECTORY_SEPARATOR . 'manifest.json';
+		
+		if ( ! file_exists( $manifest ) ) {
+			throw new RuntimeException( '😡 manifest.json is missing.' );
 		}
+		
+		$manifest = file_get_contents( $manifest );
+		$manifest = json_decode( $manifest, true );
 
-		$this->option->{$key} = $arguments[0];
-		return $this;
+		self::$assets = Assets::get_instance( $manifest, WP_EXPRESS_ASSET_URL );
+		self::$assets
+			->append( 'style.scss' )
+			->is_admin( true )
+			->append( 'app.js' )
+			->is_admin( true )
+			;
 	}
 
 	/**
@@ -120,7 +117,7 @@ abstract class Filed_Component extends Component {
 	protected abstract function get_data_type(): string;
 
 	protected function is_single(): bool {
-		return $this->option->single;
+		return $this->argument->get( 'single' );
 	}
 
 	public abstract function update( ?int $id = null, $value = null ): void;

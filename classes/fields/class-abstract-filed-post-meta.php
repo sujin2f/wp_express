@@ -2,9 +2,9 @@
 /**
  * Common class for post meta
  *
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
  * @since   the beginning
- * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields;
@@ -12,7 +12,7 @@ namespace Sujin\Wordpress\WP_Express\Fields;
 use Sujin\Wordpress\WP_Express\Meta_Box;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
-abstract class Post_Meta_Component extends Filed_Component {
+abstract class Abstract_Filed_Post_Meta extends Abstract_Filed {
 	use Trait_Multiton;
 
 	/**
@@ -20,7 +20,7 @@ abstract class Post_Meta_Component extends Filed_Component {
 	 */
 	public $metabox;
 
-	public function append_to( Meta_Box $metabox ): Post_Meta_Component {
+	public function append_to( Meta_Box $metabox ): self {
 		$this->metabox = $metabox;
 		return $this;
 	}
@@ -55,7 +55,7 @@ abstract class Post_Meta_Component extends Filed_Component {
 		$args = array(
 			'type'         => $this->get_data_type(),
 			'single'       => $this->is_single(),
-			'show_in_rest' => $this->option->show_in_rest,
+			'show_in_rest' => $this->argument->get( 'show_in_rest' ),
 		);
 		register_meta( 'post', $this->get_id(), $args );
 	}
@@ -83,12 +83,12 @@ abstract class Post_Meta_Component extends Filed_Component {
 	}
 
 	protected function refresh_id( ?int $id = null ): void {
-		if ( $this->object_id ) {
+		if ( $this->wp_object_id ) {
 			return;
 		}
 
 		if ( ! is_null( $id ) ) {
-			$this->object_id = $id;
+			$this->wp_object_id = $id;
 			return;
 		}
 
@@ -98,11 +98,11 @@ abstract class Post_Meta_Component extends Filed_Component {
 			return;
 		}
 
-		$this->object_id = $post->ID;
+		$this->wp_object_id = $post->ID;
 	}
 
 	protected function refresh_value(): void {
-		$this->value = get_post_meta( $this->object_id, $this->get_id(), $this->is_single() );
+		$this->value = get_post_meta( $this->wp_object_id, $this->get_id(), $this->is_single() );
 	}
 
 	protected function get_data_type(): string {

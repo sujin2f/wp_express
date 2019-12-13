@@ -7,26 +7,26 @@
  * @since   4.0.0
  */
 
-namespace Sujin\Wordpress\WP_Express\Types;
+namespace Sujin\Wordpress\WP_Express\Arguments;
 
-class Admin_Argument extends Abstract_Arguments {
+class Argument_Admin extends Abstract_Argument {
     /*
      * @var string|Admin
      */
-	private $position   = 'settings';
+	protected $position   = 'settings';
 
     /*
      * @var string
      */
-	private $icon       = 'dashicons-admin-generic';
+	protected $icon       = 'dashicons-admin-generic';
 
     /*
      * @var string
      */
-	private $capability = 'manage_options';
+	protected $capability = 'manage_options';
 
     /*
      * @var string
      */
-	private $plugin;
+	protected $plugin;
 }

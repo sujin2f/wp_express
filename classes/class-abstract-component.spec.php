@@ -2,16 +2,15 @@
 /**
  * Component Unit Test
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
  * @since   3.0.0
  */
 
-use Sujin\Wordpress\WP_Express\Component;
-use Sujin\Wordpress\WP_Express\Exceptions\Initialized_Exception;
+use Sujin\Wordpress\WP_Express\Abstract_Component;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
-class Component_Inherited extends Component {
+class Component_Inherited extends Abstract_Component {
 	use Trait_Multiton;
 }
 
