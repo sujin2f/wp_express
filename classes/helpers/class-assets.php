@@ -10,11 +10,11 @@
  * $asset->add_script( 'app.js' ); // will load http://your.site/assets/app.9sdf83jdFs09.js
  * ```
  *
- * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
- * @since   4.0.0
+ * @package WP Express
  * @param   string|array $manifest
  * @param   ?string      $base_url
+ * @since   4.0.0
  */
 
 namespace Sujin\Wordpress\WP_Express\Helpers;

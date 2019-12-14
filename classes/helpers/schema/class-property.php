@@ -2,19 +2,19 @@
 /**
  * JSON Schema Property
  *
- * @package    Sujinc.com
- * @subpackage Schema
  * @author     Sujin 수진 Choi <http://www.sujinc.com/>
- * @since      9.0
+ * @package    WP Express
+ * @since      4.0.0
+ * @subpackage Schema
  * @todo       Array Validation
  */
 
 namespace Sujin\Wordpress\WP_Express\Helpers\Schema;
 
 use Sujin\Wordpress\WP_Express\Helpers\Schema;
-use Sujin\Wordpress\WP_Express\Helpers\Schema\Enum\{
-	Type,
-	Format,
+use Sujin\Wordpress\WP_Express\Helpers\Enums\{
+	Schema_Type,
+	Schema_Format,
 };
 
 use InvalidArgumentException;
@@ -49,12 +49,12 @@ class Property {
 	/**
 	 * Property must have type, so this can be used as an indicator of initialization.
 	 *
-	 * @var Type
+	 * @var Schema_Type
 	 */
 	private $type;
 
 	/**
-	 * @var Format
+	 * @var Schema_Format
 	 */
 	private $format;
 
@@ -117,10 +117,10 @@ class Property {
 
 		// Type is required
 		$type       = $this->property['type'];
-		$this->type = Type::$type();
+		$this->type = Schema_Type::$type();
 
 		$format       = $this->property['format'] ?? null;
-		$this->format = ! empty( $format ) ? Format::$format() : null;
+		$this->format = ! empty( $format ) ? Schema_Format::$format() : null;
 
 		$this->enum    = $this->property['enum'] ?? null;
 		$this->items   = $this->property['items'] ?? null;
@@ -155,7 +155,7 @@ class Property {
 
 		// Empty value, but it's required
 		if ( empty( $value ) && $this->required ) {
-			throw new InvalidArgumentException( '😡 The property ' . $this->id . '\'s value is required.' );
+			throw new InvalidArgumentException( '😡 The property \'' . $this->id . '\' value is required.' );
 		}
 
 		return $value;
@@ -171,16 +171,16 @@ class Property {
 		}
 
 		switch ( $this->type->case() ) {
-			case Type::NUMBER:
+			case Schema_Type::NUMBER:
 				return (int) $value;
 
-			case Type::BOOL:
+			case Schema_Type::BOOL:
 				return (bool) $value;
 
-			case Type::STRING:
+			case Schema_Type::STRING:
 				return (string) $value;
 
-			case Type::ARRAY:
+			case Schema_Type::ARRAY:
 				return (array) $value;
 		}
 
@@ -218,10 +218,10 @@ class Property {
 		}
 
 		switch ( $this->format->case() ) {
-			case Format::URI:
+			case Schema_Format::URI:
 				$value = filter_var( $value, FILTER_VALIDATE_URL );
 				break;
-			case Format::DATE:
+			case Schema_Format::DATE:
 				$value = date( 'Y-m-d', strtotime( $value ) );
 				break;
 		}
@@ -238,7 +238,7 @@ class Property {
 			return $value;
 		}
 
-		if ( Type::ARRAY !== $this->type->case() ) {
+		if ( Schema_Type::ARRAY !== $this->type->case() ) {
 			return $value;
 		}
 

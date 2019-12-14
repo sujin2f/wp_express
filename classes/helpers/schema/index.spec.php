@@ -2,8 +2,10 @@
 /**
  * Unit Test of Schema Base
  *
- * @package Sujinc.com
- * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @author     Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package    WP Express
+ * @since      4.0.0
+ * @subpackage Schema
  */
 
 use Sujin\Wordpress\WP_Express\Helpers\Schema;
@@ -17,10 +19,10 @@ class Temp_Schema extends Schema {
 			return $this->file_system->url() . '/schema';
 		}
 
-		$items       = file_get_contents( SJ_PHPUNIT__DIR . '/schema/simple.json' );
-		$reference   = file_get_contents( SJ_PHPUNIT__DIR . '/schema/reference.json' );
-		$definitions = file_get_contents( SJ_PHPUNIT__DIR . '/schema/definitions.json' );
-		$recursive   = file_get_contents( SJ_PHPUNIT__DIR . '/schema/recursive-reference.json' );
+		$items       = file_get_contents( WPEX_PHPUNIT__DIR . '/schema/simple.json' );
+		$reference   = file_get_contents( WPEX_PHPUNIT__DIR . '/schema/reference.json' );
+		$definitions = file_get_contents( WPEX_PHPUNIT__DIR . '/schema/definitions.json' );
+		$recursive   = file_get_contents( WPEX_PHPUNIT__DIR . '/schema/recursive-reference.json' );
 
 		$directory = array(
 			'schema' => array(
@@ -37,7 +39,7 @@ class Temp_Schema extends Schema {
 	}
 }
 
-class Simple extends Items {
+class Simple implements JsonSerializable {
 	public $title  = 'Title';
 	public $url    = 'http://test.com';
 	public $number = '1';
@@ -56,7 +58,7 @@ class Definitions extends Simple {
 	}
 }
 
-class Reference_Item extends Items {
+class Reference_Item implements JsonSerializable {
 	public $object = array(
 		'child' => array(
 			'title'  => 'Title',
@@ -73,7 +75,7 @@ class Reference_Item extends Items {
 	}
 }
 
-class Recursive_Reference extends Items {
+class Recursive_Reference implements JsonSerializable {
 	public $strings  = array( 'Sujin', 'Choi' );
 	public $children = array(
 		array(

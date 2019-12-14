@@ -2,12 +2,16 @@
 /**
  * Schema Base
  *
- * @package Sujinc.com
- * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @author     Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package    WP Express
+ * @param      string $name Schema Unique name
+ * @since      4.0.0
+ * @subpackage Schema
  */
 
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
+use Sujin\Wordpress\WP_Express\Abstract_Component;
 use Sujin\Wordpress\WP_Express\Helpers\Schema\Property;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
@@ -15,11 +19,10 @@ use DomainException;
 use InvalidArgumentException;
 use JsonSerializable;
 
-class Schema implements JsonSerializable {
+class Schema extends Abstract_Component implements JsonSerializable {
 	use Trait_Multiton;
 
-	protected const SCHEMA__DIR = 'schema';
-	public const REF__KEY       = '$ref';
+	public const REF__KEY = '$ref';
 
 	/**
 	 * @var array
@@ -28,21 +31,18 @@ class Schema implements JsonSerializable {
 
 	/**
 	 * Property list
-	 *
 	 * @var Schema[]|Property[]
 	 */
 	private $properties = array();
 
 	/**
 	 * Definition List
-	 *
 	 * @var Schema[]
 	 */
 	private $definitions = array();
 
 	/**
 	 * Required Keys
-	 *
 	 * @var string[]
 	 */
 	private $required;
@@ -101,16 +101,12 @@ class Schema implements JsonSerializable {
 	 * @return string
 	 */
 	protected function get_base_dir(): string {
-		return get_stylesheet_directory() . DIRECTORY_SEPARATOR . self::SCHEMA__DIR . DIRECTORY_SEPARATOR . static::GROUP;
+		return get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'schema';
 	}
 
 	/**
 	 * Constructor
-	 *
 	 * Create schema from json array
-	 *
-	 * @throws InvalidArgumentException File does not exist.
-	 * @throws DomainException          Not a valid json format.
 	 */
 	public static function from_json( string $key, array $json ): Schema {
 		return self::get_instance( $key )->set_json( $json );
@@ -195,13 +191,13 @@ class Schema implements JsonSerializable {
 		$all_of      = $this->json['allOf'] ?? array();
 
 		foreach ( $definitions as $key => $definition ) {
-			$this->definitions[ $key ] = self::from_json( $this->multiton_id . '/definitions/' . $key, array( 'properties' => $definition ) );
+			$this->definitions[ $key ] = self::from_json( $this->get_name() . '/definitions/' . $key, array( 'properties' => $definition ) );
 		}
 
 		foreach ( $properties as $key => $property ) {
 			// If object, create a new schema
 			if ( 'object' === $property['type'] ) {
-				$this->properties[ $key ] = self::from_json( $this->multiton_id . '/properties/' . $key, $property );
+				$this->properties[ $key ] = self::from_json( $this->get_name() . '/properties/' . $key, $property );
 				continue;
 			}
 
@@ -225,7 +221,7 @@ class Schema implements JsonSerializable {
 					break;
 
 				case 'properties':
-					$one_prop         = self::from_json( $this->multiton_id . '/oneof/' . $one_key, $one_value );
+					$one_prop         = self::from_json( $this->get_name() . '/oneof/' . $one_key, $one_value );
 					$this->properties = array_merge( $this->properties, $one_prop->get_properties() );
 					$this->required   = array_merge( $this->required, $one_prop->get_required() );
 					break;
@@ -241,7 +237,7 @@ class Schema implements JsonSerializable {
 	 */
 	public function get_reference( string $ref ): ?Schema {
 		if ( 0 === strpos( $ref, '#' ) ) {
-			return self::get_instance( $this->multiton_id . substr( $ref, 1 ) );
+			return self::get_instance( $this->get_name() . substr( $ref, 1 ) );
 		}
 
 		if ( '.json' === substr( $ref, -5 ) ) {

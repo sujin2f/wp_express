@@ -39,8 +39,8 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by https://developer.wordpress.org/reference/hooks/admin_menu/
-	 * @called-by https://developer.wordpress.org/reference/hooks/network_admin_menu/
+	 * @used-by https://developer.wordpress.org/reference/hooks/admin_menu/
+	 * @used-by https://developer.wordpress.org/reference/hooks/network_admin_menu/
 	 */
 	public function register_menu(): void {
 		$position = $this->argument->get( 'position' );
@@ -72,7 +72,7 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by self::register_menu()
+	 * @used-by self::register_menu()
 	 */
 	private function register_menu_by_position(): bool {
 		$position = $this->argument->get( 'position' );
@@ -89,7 +89,7 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by self::register_menu()
+	 * @used-by self::register_menu()
 	 */
 	private function register_menu_in_express_class(): bool {
 		$position = $this->argument->get( 'position' );
@@ -109,7 +109,7 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by self::register_menu()
+	 * @used-by self::register_menu()
 	 */
 	private function register_menu_in_numeric_position(): void {
 		global $menu;
@@ -131,7 +131,7 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by self::register_menu()
+	 * @used-by self::register_menu()
 	 */
 	private function register_menu_in_string_position(): bool {
 		global $menu;
@@ -157,7 +157,7 @@ class Admin extends Abstract_Component {
 	}
 
 	/*
-	 * @called-by https://developer.wordpress.org/reference/hooks/plugin_action_links/
+	 * @used-by https://developer.wordpress.org/reference/hooks/plugin_action_links/
 	 */
 	public function plugin_action_links( array $actions, string $_, array $plugin_data ): array {
 		$plugin = $this->argument->get( 'plugin' );
