@@ -1,10 +1,10 @@
 <?php
 /**
- * Interface for Fields
+ * Post meta -- input
  *
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
  * @since   the beginning
- * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields\Post_Meta;

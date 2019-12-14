@@ -112,6 +112,7 @@ abstract class Abstract_Filed extends Abstract_Component {
 	 * https://developer.wordpress.org/reference/functions/register_meta/
 	 *
 	 * @return string 'string', 'boolean', 'integer', 'number', 'array', or 'object'
+	 * @todo   Make it as Enum (in Abstract_Argument)
 	 */
 	protected abstract function get_data_type(): string;
 

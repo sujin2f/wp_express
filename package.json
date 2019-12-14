@@ -10,13 +10,13 @@
     "phpcbf": "vendor/bin/phpcbf --standard=./.configs/phpcs.xml -s && true",
     "phpcs": "vendor/bin/phpcs --standard=./.configs/phpcs.xml -s",
     "phpdoc": "vendor/bin/phpdoc -d ./classes -t ./logs/phpdoc",
-    "phpunit": "vendor/bin/phpunit -c ./.configs/phpunit/phpunit.xml",
+    "phpunit": "vendor/bin/phpunit -c ./.configs/phpunit/phpunit.xml --coverage-html ./logs/php",
     "run:bundle-analyzer": "NODE_ENV=production webpack-bundle-analyzer logs/stats.json",
     "run:stats": "NODE_ENV=production webpack --profile --json > logs/stats.json",
     "schema:build": "./scripts/build-schema.sh",
     "start": "APP_ENV=development webpack --watch",
-    "test": "jest --coverage",
-    "test:dev": "jest"
+    "test": "jest --config=jest.config.js --coverage",
+    "test:dev": "jest --config=jest.config.js"
   },
   "repository": {
     "type": "git",

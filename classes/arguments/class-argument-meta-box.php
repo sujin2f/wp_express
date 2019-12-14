@@ -20,9 +20,15 @@ class Argument_Meta_Box extends Abstract_Argument {
 	 * @var Meta_Box_Context
 	 */
 	protected $context = Meta_Box_Context::ADVANCED;
+	protected function set_context( Meta_Box_Context $value ): bool {
+		return true;
+	}
 
 	/*
 	 * @var Meta_Box_Priority
 	 */
 	protected $priority = Meta_Box_Priority::DEFAULT;
+	protected function set_priority( Meta_Box_Priority $value ): bool {
+		return true;
+	}
 }

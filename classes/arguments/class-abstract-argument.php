@@ -2,6 +2,9 @@
 /**
  * Type Abstraction
  *
+ * If the method `protected function set_{attribute}( type $value ): bool { return true; }` exist,
+ * you can test the type of the attribute.
+ *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
  * @since   4.0.0
@@ -19,6 +22,10 @@ abstract class Abstract_Argument {
 	public function set( string $key, $value ): void {
 		if ( ! $this->has( $key ) ) {
 			throw new InvalidArgumentException( '😡 Invalid argument' );
+		}
+
+		if ( false === $this->{'set_' . $key}( $value ) ) {
+			throw new InvalidArgumentException( '😡 Data type is not matched' );
 		}
 
 		$this->{$key} = $value;

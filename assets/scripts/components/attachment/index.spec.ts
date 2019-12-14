@@ -1,4 +1,4 @@
-import { Attachment } from 'app/attachment';
+import { Attachment } from 'app/components/attachment';
 
 document.body.innerHTML = `
   <section

@@ -9,15 +9,6 @@
 
 use Sujin\Wordpress\WP_Express\Taxonomy;
 use Sujin\Wordpress\WP_Express\Post_Type;
-// use Sujin\Wordpress\WP_Express\Fields\Term_Meta\{
-// 	Input,
-// 	Textarea,
-// 	Editor,
-// 	Attachment,
-// 	Checkbox,
-// 	Radio,
-// 	Select,
-// };
 
 class Taxonomy_Test extends Test_Case {
 	public function test_construct_and_register() {
@@ -82,37 +73,4 @@ class Taxonomy_Test extends Test_Case {
 			'😡 get_post_types_strings() is not matched as expectation.',
 		);
 	}
-
-	// public function test_term_meta() {
-	// 	$taxonomy = Taxonomy::get_instance( 'Term Meta Test' )
-	// 		->append( Input::get_instance( 'Input' ) )
-	// 		->append( Textarea::get_instance( 'Textarea' ) )
-	// 		->append( Attachment::get_instance( 'Attachment' ) )
-	// 		->append( Checkbox::get_instance( 'Checkbox' ) )
-	// 		->append( Radio::get_instance( 'Radio' )->options( array( 'Radio 1', 'Radio 2' ) ) )
-	// 		->append( Select::get_instance( 'Select' )->options( array( 'Select 1', 'Select 2' ) ) );
-
-	// 	$taxonomy->register_taxonomy();
-
-	// 	$post_type = Post_Type::get_instance( 'Post_Type Test' );
-	// 	$taxonomy->append_to( $post_type );
-
-	// 	$term = wp_insert_term( 'Term', $taxonomy->get_id() );
-	// 	$term = get_term( $term['term_id'], $taxonomy->get_id() );
-
-	// 	ob_start();
-	// 	do_action( $taxonomy->get_id() . '_edit_form_fields', $term );
-	// 	$actual = ob_get_clean();
-
-	// 	$this->assertContains( '<label for="wp-express__field__input__input">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__textarea__textarea">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__attachment__attachment">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__checkbox__checkbox">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__radio__radio">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__radio__radio__radio-1">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__radio__radio__radio-2">', $actual );
-	// 	$this->assertContains( '<label for="wp-express__field__select__select">', $actual );
-	// 	$this->assertContains( '<option value="Select 1">Select 1</option>', $actual );
-	// 	$this->assertContains( '<option value="Select 2">Select 2</option>', $actual );
-	// }
 }

@@ -8,7 +8,6 @@
  */
 
 use Sujin\Wordpress\WP_Express\Setting;
-// use Sujin\Wordpress\WP_Express\Fields\Settings\Input;
 use Sujin\Wordpress\WP_Express\Admin;
 
 class Setting_Test extends Test_Case {
@@ -31,19 +30,18 @@ class Setting_Test extends Test_Case {
 		);
 	}
 
-	// TODO
-	// public function test_append() {
-	// 	// $input      = Input::get_instance( 'Test Input' );
-	// 	$admin_page = Admin::get_instance( 'Admin Test' );
-	// 	$setting    = Setting::get_instance( 'Setting Test' );
-	// 	$setting
-	// 		->admin_page( $admin_page )
-	// 		->append( $input );
-
-	// 	$_setting = $this->get_private_property( $input, 'setting' );
-
-	// 	$this->assertEquals( $admin_page, $setting->admin_page() );
-	// 	$this->assertEquals( $setting, $_setting );
-	// 	$this->assertTrue( true );
-	// }
+	public function test_get_admin_page() {
+		$admin_page = Admin::get_instance( 'Admin Test' );
+		$settings   = Setting::get_instance( 'Setting Test' );
+		$settings
+			->admin_page( $admin_page )
+			->register_setting();
+		
+		$actual = $settings->get_admin_page();
+		$this->assertEquals( 
+			$admin_page, 
+			$actual,
+			'😡 Setting::append() does not work.',
+		);
+	}
 }

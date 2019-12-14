@@ -142,13 +142,15 @@ class Admin extends Abstract_Component {
 		}
 
 		foreach ( $menu as $menu_item ) {
-			if ( $position === $menu_item[0] ) {
-				$parent_url = $menu_item[2];
-				$this->url  = add_query_arg( 'page', $this->get_id(), $parent_url );
-				$page_slug  = add_submenu_page( $parent_url, ...$this->get_menu_args() );
-				// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
-				return true;
+			if ( $position !== $menu_item[0] ) {
+				continue;
 			}
+
+			$parent_url = $menu_item[2];
+			$this->url  = add_query_arg( 'page', $this->get_id(), $parent_url );
+			$page_slug  = add_submenu_page( $parent_url, ...$this->get_menu_args() );
+			// add_action( 'load-' . $page_slug, array( $this, 'render_screen_options' ) );
+			return true;
 		}
 
 		return false;
@@ -159,6 +161,7 @@ class Admin extends Abstract_Component {
 	 */
 	public function plugin_action_links( array $actions, string $_, array $plugin_data ): array {
 		$plugin = $this->argument->get( 'plugin' );
+
 		if ( empty( $plugin ) ) {
 			return $actions;
 		}

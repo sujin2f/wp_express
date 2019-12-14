@@ -1,4 +1,5 @@
 <?php
+
 abstract class Test_Case extends WP_UnitTestCase {
 	protected static $home_dir = '';
 	protected static $test_dir = '';

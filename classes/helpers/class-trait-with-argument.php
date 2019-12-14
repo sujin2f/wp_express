@@ -24,7 +24,7 @@ trait Trait_With_Argument {
 	 */
 	public function __call( string $key, array $arguments ): self {
 		if ( empty( $arguments ) ) {
-			throw new InvalidArgumentException( '😡 No getter supported.' );
+			throw new InvalidArgumentException( '😡 No getter supported, or your called unregistered method.' );
 		}
 
 		if ( ! $this->argument->has( $key ) ) {
