@@ -82,7 +82,7 @@ class Argument_Post_Type extends Abstract_WP_Object_Argument {
 	protected function set_menu_position( int $value ): bool {
 		return true;
 	}
-	
+
 	/*
 	 * @var ?callable
 	 */
@@ -106,7 +106,7 @@ class Argument_Post_Type extends Abstract_WP_Object_Argument {
 	protected function set_supports( array $value ): bool {
 		return true;
 	}
-	
+
 	/*
 	 * @var ?string[]
 	 */

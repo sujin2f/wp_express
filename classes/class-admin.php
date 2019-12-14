@@ -11,12 +11,12 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Admin;
 use Sujin\Wordpress\WP_Express\Helpers\{
 	Trait_Multiton,
 	Trait_With_Argument,
+	Enums\Admin_Position,
 };
-use Sujin\Wordpress\WP_Express\Helpers\Enums\Admin_Position;
-use Sujin\Wordpress\WP_Express\Arguments\Argument_Admin;
 
 class Admin extends Abstract_Component {
 	use Trait_Multiton;
@@ -33,7 +33,7 @@ class Admin extends Abstract_Component {
 		add_action( 'plugin_action_links', array( $this, 'plugin_action_links' ), 15, 3 );
 	}
 
-	public function append( Setting $setting ): self {
+	public function append( Settings_Section $setting ): self {
 		$setting->append_to( $this );
 		return $this;
 	}

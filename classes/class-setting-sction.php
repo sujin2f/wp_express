@@ -10,18 +10,18 @@
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Arguments\Argument_Setting;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Settings_Section;
 use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Setting;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 
-class Setting extends Abstract_Component {
+class Settings_Section extends Abstract_Component {
 	use Trait_Multiton;
 	use Trait_With_Argument;
 
 	protected function __construct( string $name ) {
 		parent::__construct( $name );
-		$this->argument = new Argument_Setting();
+		$this->argument = new Argument_Settings_Section();
 		add_action( 'admin_init', array( $this, 'register_setting' ) );
 	}
 

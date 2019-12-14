@@ -7,7 +7,7 @@
  * @since   4.0.0
  */
 
- use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input;
+use Sujin\Wordpress\WP_Express\Fields\Post_Meta\Input;
 
 class Post_Meta_Input_Test extends Test_Case {
 	public function test_render(): void {
@@ -15,8 +15,8 @@ class Post_Meta_Input_Test extends Test_Case {
 		ob_start();
 		$field->render_form();
 		$output = ob_get_clean();
-		$this->assertContains( 
-			'field-1', 
+		$this->assertContains(
+			'field-1',
 			$output,
 			'😡 Input render has failed.',
 		);
@@ -31,8 +31,8 @@ class Post_Meta_Input_Test extends Test_Case {
 		$field = Input::get_instance( 'Field 1' );
 		$field->update( $post_id, 'Value 1' );
 
-		$this->assertEquals( 
-			'Value 1', 
+		$this->assertEquals(
+			'Value 1',
 			$field->get(),
 			'😡 Input value has not been saved.',
 		);
@@ -47,8 +47,8 @@ class Post_Meta_Input_Test extends Test_Case {
 		$field = Input::get_instance( 'Field 2' )
 			->single( false );
 		$field->update( $post_id, array( 'Value 1' ) );
-		$this->assertEquals( 
-			array( 'Value 1' ), 
+		$this->assertEquals(
+			array( 'Value 1' ),
 			$field->get(),
 			'😡 Multiple value has not been supported.',
 		);
@@ -58,8 +58,8 @@ class Post_Meta_Input_Test extends Test_Case {
 		$field = Input::get_instance( 'Field 2' );
 		$field->type( 'string' );
 		$actual = $this->call_private_method( $field, 'get_data_type' );
-		$this->assertEquals( 
-			'string', 
+		$this->assertEquals(
+			'string',
 			$actual,
 			'😡 Input data type assignment has failed.',
 		);

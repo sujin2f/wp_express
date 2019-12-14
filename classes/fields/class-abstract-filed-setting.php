@@ -9,7 +9,7 @@
 
 namespace Sujin\Wordpress\WP_Express\Fields;
 
-use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Settings_Section;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
 
@@ -17,11 +17,11 @@ abstract class Abstract_Filed_Setting extends Abstract_Filed {
 	use Trait_Multiton;
 
 	/**
-	 * @var Setting
+	 * @var Settings_Section
 	 */
 	private $setting;
 
-	public function append_to( Setting $setting ) {
+	public function append_to( Settings_Section $setting ) {
 		$this->setting = $setting;
 		$this->argument->set( 'legend', $setting->get_name() );
 	}

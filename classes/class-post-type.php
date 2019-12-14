@@ -99,37 +99,4 @@ class Post_Type extends Abstract_Component {
 		$arguments             = array_merge( $arguments, $user_args );
 		register_post_type( $this->get_id(), $arguments );
 	}
-
-	/*
-	public function meta_in_rest() {
-		register_rest_field(
-			$this->get_id(),
-			'meta',
-			array(
-				'get_callback' => array( $this, 'get_post_meta' ),
-				'schema'       => null,
-			)
-		);
-	}
-
-	public function get_post_meta( $object = '', $field_name = '', $_ = array() ) {
-		global $wp_meta_keys;
-		$meta = get_post_meta( $object['id'] );
-		foreach ( array_keys( $meta ) as $key ) {
-			$registered   = $wp_meta_keys['post'][''][ $key ] ?? array();
-			$is_single    = $registered['single'] ?? false;
-			$show_in_rest = $registered['show_in_rest'] ?? false;
-
-			if ( ! $show_in_rest ) {
-				unset( $meta[ $key ] );
-				continue;
-			}
-
-			if ( $is_single ) {
-				$meta[ $key ] = $meta[ $key ][0];
-			}
-		}
-		return $meta;
-	}
-	*/
 }

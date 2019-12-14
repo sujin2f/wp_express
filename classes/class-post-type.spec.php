@@ -89,7 +89,7 @@ class Post_Type_Test extends Test_Case {
 		);
 		$post_type->save_post( $post->ID, $post );
 
-		$actual = get_post_meta(  $post->ID, $textarea->get_id(), true );
+		$actual = get_post_meta( $post->ID, $textarea->get_id(), true );
 
 		$this->assertEquals(
 			'test',

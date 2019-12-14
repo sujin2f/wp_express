@@ -10,7 +10,7 @@
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Post_Type;
 
-use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Settings_Section;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Input as Option_Input;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Textarea as Option_Textarea;
 use Sujin\Wordpress\WP_Express\Fields\Settings\Editor as Option_Editor;
@@ -83,7 +83,7 @@ final class BrowserTest {
 	}
 
 	private function test_setting() {
-		Setting::get_instance( 'Test Setting Block' )
+		Settings_Section::get_instance( 'Test Setting Block' )
 			// Single Attachment
 			->append(
 				Option_Attachment::get_instance( 'Attachment Test' )

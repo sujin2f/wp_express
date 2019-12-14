@@ -1,6 +1,6 @@
 <?php
 /**
- * Options for Setting
+ * Options for Settings_Section
  *
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
  * @package WP Express
@@ -12,9 +12,9 @@ namespace Sujin\Wordpress\WP_Express\Arguments;
 use Sujin\Wordpress\WP_Express\Admin;
 use Sujin\Wordpress\WP_Express\Post_Type;
 
-class Argument_Setting extends Abstract_Argument {
+class Argument_Settings_Section extends Abstract_Argument {
 	/*
-	 * @var string|Admin|Post_Type
+	 * @var string|Admin
 	*/
 	protected $admin_page = 'general';
 	protected function set_admin_page( $value ): bool {
@@ -23,10 +23,6 @@ class Argument_Setting extends Abstract_Argument {
 		}
 
 		if ( $value instanceof Admin ) {
-			return true;
-		}
-
-		if ( $value instanceof Post_Type ) {
 			return true;
 		}
 

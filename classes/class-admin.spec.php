@@ -8,7 +8,7 @@
  */
 
 use Sujin\Wordpress\WP_Express\Admin;
-use Sujin\Wordpress\WP_Express\Setting;
+use Sujin\Wordpress\WP_Express\Settings_Section;
 use Sujin\Wordpress\WP_Express\Post_Type;
 
 class Admin_Test extends Test_Case {
@@ -39,7 +39,8 @@ class Admin_Test extends Test_Case {
 		global $menu;
 		try {
 			include_once( self::$home_dir . '/wordpress/wp-admin/menu.php' );
-		} catch ( Exception $_ ) {}
+		} catch ( Exception $_ ) {
+		}
 
 		$admin = Admin::get_instance( $page_name );
 
@@ -57,27 +58,27 @@ class Admin_Test extends Test_Case {
 
 	public function child_position_provider(): array {
 		return array(
-			'Under WP Menu'          => array(
+			'Under WP Menu'                   => array(
 				'page_name' => 'Child Tools',
 				'position'  => 'tools',
 				'expected'  => 'tools.php',
 			),
-			'Under WP Menu, by Name' => array(
+			'Under WP Menu, by Name'          => array(
 				'page_name' => 'Child Post 1',
 				'position'  => 'Posts',
 				'expected'  => 'edit.php',
 			),
-			'Under WP Menu, by ID' => array(
+			'Under WP Menu, by ID'            => array(
 				'page_name' => 'Child Menu 2',
 				'position'  => 10,
 				'expected'  => 'upload.php',
 			),
-			'Under Express Menu'     => array(
+			'Under Express Menu'              => array(
 				'page_name' => 'Child 300',
 				'position'  => Admin::get_instance( 'Admin Page 300' ),
 				'expected'  => 'admin-page-300',
 			),
-			'Under Express Post Type'     => array(
+			'Under Express Post Type'         => array(
 				'page_name' => 'Child Menu 3',
 				'position'  => Post_Type::get_instance( 'Custom Post' ),
 				'expected'  => 'custom-post',
@@ -121,13 +122,13 @@ class Admin_Test extends Test_Case {
 
 	public function test_append(): void {
 		$admin   = Admin::get_instance( 'Admin Test' );
-		$setting = Setting::get_instance( 'Setting Test' );
+		$setting = Settings_Section::get_instance( 'Setting Test' );
 
 		$admin->append( $setting );
 
 		$argument = $this->get_private_property( $setting, 'argument' );
 		$actual   = $argument->get( 'admin_page' )->get_name();
-		
+
 		$this->assertEquals(
 			'Admin Test',
 			$actual,
@@ -155,7 +156,7 @@ class Admin_Test extends Test_Case {
 		ob_start();
 		Admin::get_instance( 'Admin Test' )->render();
 		$actual = ob_get_clean();
-		
+
 		$this->assertContains(
 			'class="wp-express admin wrap"',
 			$actual,
