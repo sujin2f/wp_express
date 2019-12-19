@@ -2,148 +2,101 @@
 /**
  * Create a new Post Type
  *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Meta_Box;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Post_Type;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Post_Meta;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
+use WP_Post;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
+class Post_Type extends Abstract_Component {
+	use Trait_Multiton;
+	use Trait_With_Argument;
 
-class Post_Type extends Abs_Base {
-	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
-
-	private $_arguments = array(
-		'label'                 => null,
-		'labels'                => null,
-		'description'           => null,
-		'public'                => true,
-		'exclude_from_search'   => null,
-		'publicly_queryable'    => null,
-		'show_ui'               => null,
-		'show_in_nav_menus'     => null,
-		'show_in_menu'          => null,
-		'show_in_admin_bar'     => null,
-		'menu_position'         => null,
-		'menu_icon'             => null,
-		'capability_type'       => null,
-		'capabilities'          => null,
-		'map_meta_cap'          => null,
-		'hierarchical'          => null,
-		'supports'              => null,
-		'register_meta_box_cb'  => null,
-		'taxonomies'            => null,
-		'has_archive'           => null,
-		'rewrite'               => null,
-		'permalink_epmask'      => null,
-		'query_var'             => null,
-		'can_export'            => null,
-		'delete_with_user'      => null,
-		'show_in_rest'          => true,
-		'rest_base'             => null,
-		'rest_controller_class' => null,
-		'_builtin'              => null,
-		'_edit_link'            => null,
-	);
-
-	private $_user_args = array();
-
-	protected function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
 
-		$this->_user_args = $arguments;
+		$this->argument = new Argument_Post_Type();
+		$this->argument->set( 'label', $name );
 
-		# Label
-		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->_arguments['label'] = $name;
-		}
-
-		# Supports
-		if ( false === array_key_exists( 'supports', $arguments ) ) {
-			$this->_arguments['supports'] = array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments', 'revisions' );
-		}
-
-		$this->_arguments = array_merge( $this->_arguments, $arguments );
-
-		add_action( 'init', array( $this, '_register_post_type' ) );
-		add_action( 'rest_api_init', array( $this, '_meta_in_rest' ) );
+		add_action( 'init', array( $this, 'register_post_type' ) );
+		// add_action( 'rest_api_init', array( $this, 'meta_in_rest' ) );
+		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 	}
 
-	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->_arguments ) ) {
-			if ( empty( $arguments ) ) {
-				return $this->_arguments[ $name ];
-			}
-
-			$this->_arguments[ $name ] = $arguments[0];
-			$this->_user_args[ $name ] = $arguments[0];
-		}
-
+	/**
+	 * Append meta box to this post type
+	 */
+	public function append( Meta_Box $metabox ): Post_Type {
+		$metabox->append_to( $this );
 		return $this;
 	}
 
-	public function add( Meta_Box $metabox ): Post_Type {
-		$metabox->post_type( $this );
-		return $this;
-	}
-
-	public function _register_post_type() {
-		$arguments = (array) get_post_type_object( $this->get_id() );
-
-		if ( empty( $arguments ) ) {
-			register_post_type( $this->get_id(), array_filter( $this->_arguments ) );
+	/**
+	 * Save Post Hook
+	 * https://developer.wordpress.org/reference/hooks/save_post/
+	 */
+	public function save_post( int $post_id, WP_Post $post ) {
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
 			return;
 		}
 
-		## Capability
+		if ( $post->post_type !== $this->get_id() ) {
+			return;
+		}
+
+		foreach ( Abstract_Filed_Post_Meta::get_instances() as $post_meta ) {
+			$post_meta_post_types = array_map(
+				function( $post_type ) {
+					return $post_type->get_id();
+				},
+				$post_meta->metabox->post_types,
+			);
+
+			if ( ! in_array( $this->get_id(), $post_meta_post_types, true ) ) {
+				continue;
+			}
+
+			$nonce = $_POST[ $post_meta->metabox->get_id() . '_nonce' ] ?? null;
+
+			if ( ! wp_verify_nonce( $nonce, $post_meta->metabox->get_id() ) ) {
+				continue;
+			}
+
+			$post_meta->update( $post_id );
+		}
+	}
+
+	public function register_post_type() {
+		$arguments = (array) get_post_type_object( $this->get_id() );
+
+		// New post type
+		if ( empty( $arguments ) ) {
+			register_post_type( $this->get_id(), array_filter( $this->argument->to_array() ) );
+			return;
+		}
+
+		// Capability
 		$arguments['capabilities'] = array_keys( (array) $arguments['cap'] );
 		unset( $arguments['cap'] );
 
 		## Supports
 		$supports              = get_all_post_type_supports( $this->get_id() );
 		$arguments['supports'] = array_keys( $supports );
-
-		$arguments = array_merge( $arguments, $this->_user_args );
-		register_post_type( $this->get_id(), $arguments );
-	}
-
-	public function _meta_in_rest() {
-		register_rest_field(
-			$this->get_id(),
-			'meta',
-			array(
-				'get_callback' => array( $this, 'get_post_meta' ),
-				'schema'       => null,
-			)
+		$user_args             = array_filter(
+			$this->argument->to_array(),
+			function ( $value ): bool {
+				return ! is_null( $value );
+			}
 		);
-	}
-
-	public function get_post_meta( $object = '', $field_name = '', $_ = array() ) {
-		global $wp_meta_keys;
-		$meta = get_post_meta( $object['id'] );
-		foreach ( array_keys( $meta ) as $key ) {
-			$registered   = $wp_meta_keys['post'][''][ $key ] ?? array();
-			$is_single    = $registered['single'] ?? false;
-			$show_in_rest = $registered['show_in_rest'] ?? false;
-
-			if ( ! $show_in_rest ) {
-				unset( $meta[ $key ] );
-				continue;
-			}
-
-			if ( $is_single ) {
-				$meta[ $key ] = $meta[ $key ][0];
-			}
-		}
-		return $meta;
+		$arguments             = array_merge( $arguments, $user_args );
+		register_post_type( $this->get_id(), $arguments );
 	}
 }

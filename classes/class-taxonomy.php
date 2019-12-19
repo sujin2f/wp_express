@@ -2,143 +2,95 @@
 /**
  * Taxonomy Class
  *
- * @project WP-Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
+ * @todo    manage_columns()
+ * @todo    manage_custiom_columns()
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Fields\Abs_Term_Meta_Element;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Taxonomy;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Term_Meta;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
+class Taxonomy extends Abstract_Component {
+	use Trait_Multiton;
+	use Trait_With_Argument;
 
-class Taxonomy extends Abs_Base {
 	const DEFAULT_POST_TYPE = 'post';
 
-	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	/**
+	 * @var Post_Type[]
+	 */
+	private $post_types = array();
 
-	public $_is_tag = false;
-
-	private $_post_types = array();
-	private $_arguments  = array(
-		'label'                 => null,
-		'labels'                => null,
-		'public'                => true,
-		'publicly_queryable'    => null,
-		'show_ui'               => null,
-		'show_in_menu'          => null,
-		'show_in_nav_menus'     => null,
-		'show_in_rest'          => true,
-		'rest_base'             => null,
-		'rest_controller_class' => null,
-		'show_tagcloud'         => null,
-		'show_in_quick_edit'    => null,
-		'meta_box_cb'           => null,
-		'show_admin_column'     => null,
-		'description'           => null,
-		'hierarchical'          => null,
-		'update_count_callback' => null,
-		'query_var'             => null,
-		'rewrite'               => null,
-		'capabilities'          => null,
-		'sort'                  => null,
-		'_builtin'              => null,
-	);
-	private $_user_args  = array();
-
-	protected function __construct( string $name, array $arguments = array() ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
 
 		if ( 'tag' === strtolower( $name ) ) {
-			$this->_is_tag = 'post_tag';
+			$this->id = 'post_tag';
 		}
 
-		$this->_user_args = $arguments;
+		$this->argument = new Argument_Taxonomy();
+		$this->argument->set( 'label', $name );
 
-		# Label
-		if ( false === array_key_exists( 'label', $arguments ) ) {
-			$this->_arguments['label'] = $name;
-		}
-
-		$this->_arguments = array_merge( $this->_arguments, $arguments );
-
-		add_action( 'init', array( $this, '_register_taxonomy' ), 25 );
+		add_action( 'init', array( $this, 'register_taxonomy' ), 25 );
 	}
 
-	public function __call( string $name, array $arguments ) {
-		if ( array_key_exists( strtolower( $name ), $this->_arguments ) ) {
-			if ( empty( $arguments ) ) {
-				return $this->_arguments[ $name ];
-			}
-
-			$this->_arguments[ $name ] = $arguments[0];
-			$this->_user_args[ $name ] = $arguments[0];
-		}
-
-		return $this;
-	}
-
-	public function get_id(): string {
-		if ( is_null( parent::get_id() ) ) {
-			throw new Initialized_Exception();
-		}
-		return $this->_is_tag ?: parent::get_id();
-	}
-
-	public function _register_taxonomy() {
+	public function register_taxonomy() {
 		global $wp_taxonomies;
 
 		if ( ! array_key_exists( $this->get_id(), $wp_taxonomies ) ) {
-			register_taxonomy( $this->get_id(), $this->_get_post_types_strings(), array_filter( $this->_arguments ) );
+			register_taxonomy( $this->get_id(), $this->get_post_types_strings(), array_filter( $this->argument->to_array() ) );
 			return;
 		}
 
 		$arguments = (array) $wp_taxonomies[ $this->get_id() ];
 
-		$object_type = array_unique( array_merge( $arguments['object_type'], $this->_get_post_types_strings() ) );
 		## Capability
 		$arguments['capabilities'] = array_keys( (array) $arguments['cap'] );
 
 		unset( $arguments['name'] );
-		unset( $arguments['object_type'] );
 		unset( $arguments['cap'] );
 
-		register_taxonomy( $this->get_id(), $object_type, array_merge( $arguments, $this->_user_args ) );
+		$user_args = array_filter(
+			$this->argument->to_array(),
+			function ( $value ): bool {
+				return ! is_null( $value );
+			}
+		);
+
+		$object_type = array_unique( array_merge( $arguments['object_type'], $this->get_post_types_strings() ) );
+		unset( $arguments['object_type'] );
+		register_taxonomy( $this->get_id(), $object_type, $arguments );
 	}
 
-	public function add( Abs_Term_Meta_Element $field ): Taxonomy {
-		$field->attach_to( $this );
+	public function append( Abstract_Filed_Term_Meta $field ): Taxonomy {
+		$field->append_to( $this );
 		return $this;
 	}
 
-	public function attach_to( $post_type ): Taxonomy {
-		$this->_post_types[] = $post_type;
+	public function append_to( $post_type ): Taxonomy {
+		if ( in_array( $post_type, $this->post_types ) ) {
+			return $this;
+		}
+		$this->post_types[] = $post_type;
 		return $this;
 	}
 
-	// TODO
-	public function _manage_columns() {
-	}
+	public function manage_columns() {}
 
-	// TODO
-	public function _manage_custiom_columns() {
-	}
+	public function manage_custiom_columns() {}
 
-	private function _get_post_types_strings(): array {
+	private function get_post_types_strings(): array {
 		$post_types = array();
 
-		foreach ( $this->_post_types as $post_type ) {
-			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
-		}
-
-		if ( empty( $post_types ) ) {
-			$post_types = array( self::DEFAULT_POST_TYPE );
+		foreach ( $this->post_types as $post_type ) {
+			$post_types[] = $post_type->get_id();
 		}
 
 		return array_unique( $post_types );

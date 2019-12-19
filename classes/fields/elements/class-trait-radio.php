@@ -2,40 +2,42 @@
 /**
  * Interface for Fields
  *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Radio {
-	protected $_defaults_attributes = array(
-		'class' => 'tog',
-	);
+	protected $data_type = 'string';
 
-	protected function _is_available(): bool {
-		return ! empty( $this->_options['options'] );
+	protected function init(): void {
+		$this->argument->set( 'class', 'tog' );
+		parent::init();
 	}
 
-	protected function _render_form() {
+	protected function is_available(): bool {
+
+		return ! empty( $this->argument->get( 'options' ) );
+	}
+
+	protected function is_single(): bool {
+		return true;
+	}
+
+	protected function render_form_field(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field radio">';
 		echo '<fieldset>';
 
-		if ( ! empty( $this->_options['legend'] ) ) {
-			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->_options['legend'] ) . '</span></legend>';
+		if ( ! empty( $this->argument->get( 'legend' ) ) ) {
+			echo '<legend class="screen-reader-text"><span>' . esc_html( $this->argument->get( 'legend' ) ) . '</span></legend>';
 		}
 
-		foreach ( $this->_options['options'] as $name => $option ) {
+		foreach ( $this->argument->get( 'options' ) as $name => $option ) {
 			$name    = is_numeric( $name ) ? $option : $name;
 			$key     = sanitize_title( $name );
-			$checked = ( $option == $this->_attributes['value'] ) ? 'checked="checked"' : '';
+			$checked = ( $option == $this->value ) ? 'checked="checked"' : '';
 
 			?>
 			<p>
@@ -46,7 +48,7 @@ trait Trait_Radio {
 						name="<?php echo esc_attr( $this->get_id() ); ?>"
 						value="<?php echo esc_attr( $name ); ?>"
 						<?php echo $checked; ?>
-						<?php $this->_render_attributes(); ?>
+						<?php $this->argument->render_attributes(); ?>
 					/>
 					<?php echo esc_html( $name ); ?>
 				</label>

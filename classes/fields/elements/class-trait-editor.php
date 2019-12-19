@@ -2,29 +2,23 @@
 /**
  * Interface for Fields
  *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Editor {
-	protected $_defaults_attributes = array();
+	protected $data_type = 'string';
 
-	protected function _is_available(): bool {
+	protected function is_single(): bool {
 		return true;
 	}
 
-	protected function _render_form() {
+	protected function render_form_field(): void {
 		echo '<section class="' . esc_attr( self::PREFIX ) . ' field editor">';
-		wp_editor( stripcslashes( $this->_attributes['value'] ), $this->get_id() );
+		wp_editor( stripcslashes( $this->value ), $this->get_id() );
 		echo '</section>';
 	}
 }

@@ -1,0 +1,33 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-sonarts"
+  ],
+  "rules": {
+    "await-promise": true,
+    "ban-comma-operator": true,
+    "file-name-casing": [true, "kebab-case"],
+    "member-ordering": [true, {
+      "order": "fields-first"
+    }],
+    "no-console": false,
+    "no-floating-promises": true,
+    "no-import-side-effect": true,
+    "no-inferrable-types": true,
+    "no-magic-numbers": true,
+    "no-null-keyword": true,
+    "no-parameter-reassignment": true,
+    "no-unused-expression": true,
+    "only-arrow-functions": true,
+    "promise-function-async": true,
+    "quotemark": {
+      "options": ["single", "avoid-escape"]
+    },
+    "trailing-comma": [true, {
+      "singleline": "never"
+    }],
+    "typedef": true,
+    "whitespace": [true, "check-module"]
+  }
+}

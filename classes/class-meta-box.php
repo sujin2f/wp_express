@@ -2,77 +2,85 @@
 /**
  * Metabox Class
  *
- * @project WP-Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @param   string $name The name of the componenet
+ * @since   the beginning
+ * @todo
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-use Sujin\Wordpress\WP_Express\Abs_Base;
-use Sujin\Wordpress\WP_Express\Fields\Abs_Post_Meta_Element;
+use Sujin\Wordpress\WP_Express\Fields\Abstract_Filed_Post_Meta;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
+use Sujin\Wordpress\WP_Express\Arguments\Argument_Meta_Box;
 use WP_Post;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
+class Meta_Box extends Abstract_Component {
+	use Trait_Multiton;
+	use Trait_With_Argument;
 
-class Meta_Box extends Abs_Base {
-	private const DEFAULT_POST_TYPE = 'post';
+	/**
+	 * @var Post_Type[]
+	 */
+	public $post_types = array();
 
-	// Single/Multiton container
-	protected static $_multiton_container  = array();
-	protected static $_singleton_container = null;
+	/**
+	 * @var Abstract_Filed_Post_Meta[]
+	 */
+	public $post_metas = array();
 
-	private $_post_types = array();
-
-	protected function __construct( $name ) {
+	protected function __construct( string $name ) {
 		parent::__construct( $name );
-		add_action( 'add_meta_boxes', array( $this, '_register_meta_box' ) );
+		$this->argument = new Argument_Meta_Box();
+
+		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 	}
 
-	public function add( Abs_Post_Meta_Element $field ): Meta_Box {
-		$field->attach_to( $this );
+	public function append( Abstract_Filed_Post_Meta $post_meta ): self {
+		$post_meta->append_to( $this );
+		$this->post_metas[] = $post_meta;
 		return $this;
 	}
 
-	public function attach_to( $post_type ): Meta_Box {
-		$this->_post_types[] = $post_type;
+	public function append_to( Post_Type $post_type ): self {
+		$this->post_types[] = $post_type;
 		return $this;
 	}
 
-	public function _register_meta_box() {
-		$post_types = $this->_get_parents();
+	public function register_meta_box(): void {
+		if ( empty( $this->post_types ) ) {
+			return;
+		}
+
 		add_meta_box(
 			$this->get_id(),
 			$this->get_name(),
-			array( $this, '_show_meta_box' ),
-			$post_types
+			array( $this, 'show_meta_box' ),
+			array_map(
+				function( $post_type ) {
+					return $post_type->get_id();
+				},
+				$this->post_types,
+			),
+			$this->argument->get( 'context' ),
+			$this->argument->get( 'priority' ),
 		);
 	}
 
-	public function _show_meta_box() {
-		echo '<section class="' . esc_attr( self::PREFIX ) . ' metabox">';
+	public function show_meta_box(): void {
+		$post_id = $_GET['post'] ?? null;
 
-		wp_nonce_field( $this->get_id(), $this->get_id() . '_nonce' );
-
-		echo apply_filters( self::PREFIX . '_meta_box_' . $this->get_id(), '', $_GET['post'] ?? null );
-
-		echo '</section>';
-	}
-
-	public function _get_parents(): array {
-		$post_types = array();
-
-		foreach ( $this->_post_types as $post_type ) {
-			$post_types[] = ( $post_type instanceof Post_Type ) ? $post_type->get_id() : $post_type;
-		}
-
-		if ( empty( $post_types ) ) {
-			$post_types = array( self::DEFAULT_POST_TYPE );
-		}
-
-		return $post_types;
+		?>
+		<section class="<?php echo esc_attr( self::PREFIX ); ?> metabox">
+			<?php
+			$this->wp_nonce_field();
+			foreach ( $this->post_metas as $post_meta ) {
+				$post_meta->render_form( $post_id );
+			}
+			?>
+		</section>
+		<?php
 	}
 }

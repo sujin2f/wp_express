@@ -2,38 +2,35 @@
 /**
  * Interface for Fields
  *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Textarea {
-	protected $_defaults_attributes = array(
-		'class' => 'large-text code',
-		'rows'  => 10,
-		'cols'  => 50,
-	);
+	protected $data_type = 'string';
 
-	protected function _is_available(): bool {
+	protected function init(): void {
+		$this->argument->set( 'class', 'large-text code' );
+		$this->argument->set( 'rows', 10 );
+		$this->argument->set( 'cols', 50 );
+		parent::init();
+	}
+
+	protected function is_single(): bool {
 		return true;
 	}
 
-	protected function _render_form() {
+	protected function render_form_field(): void {
 		?>
 		<section class="<?php echo esc_attr( self::PREFIX ); ?> field textarea">
 			<textarea
 				id="<?php echo esc_attr( self::PREFIX ); ?>__field__textarea__<?php echo esc_attr( $this->get_id() ); ?>"
 				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->_render_attributes(); ?>
-			><?php echo $this->_attributes['value']; ?></textarea>
+				<?php $this->argument->render_attributes(); ?>
+			><?php echo $this->value; ?></textarea>
 		</section>
 		<?php
 	}

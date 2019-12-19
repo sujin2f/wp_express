@@ -1,31 +1,39 @@
 <?php
 /**
- * GoogleFontImporter
+ * Google Font Loader: Load Google Font asynchronously
  *
- * @project WP Express
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * ```
+ * Google_Font_Loader::get_instance()
+ *  ->append( 'Roboto+Condensed:400,700:latin' );
+ * ```
+ *
+ * The value can be both an array and a string
+ *
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   4.0.0
  */
 
 namespace Sujin\Wordpress\WP_Express;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
+use Sujin\Wordpress\WP_Express\Helpers\Trait_Singleton;
 
-/*
- * Google Font Loader: Load Google Font asynchronously
- *
- * Initialize like new Google_Font_Loader( 'Roboto+Condensed:400,700:latin' );
- * The value can be both an array and a string
- */
-final class Google_Font_Loader extends Abs_Base {
+class Google_Font_Loader {
+	use Trait_Singleton;
+
+	private const WEBFONT_JS = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+
 	private $fonts = array();
 
-	protected function __construct( $fonts ) {
-		parent::__construct();
+	protected function __construct() {
+		add_action( 'wp_print_scripts', array( $this, 'print_script' ) );
+	}
 
+	/*
+	 * Push font(s) in the queue
+	 * @param string|string[] $fonts
+	 */
+	public function append( $fonts ): self {
 		if ( is_array( $fonts ) ) {
 			$this->fonts = array_merge( $this->fonts, $fonts );
 		}
@@ -34,31 +42,32 @@ final class Google_Font_Loader extends Abs_Base {
 			array_push( $this->fonts, $fonts );
 		}
 
-		add_action( 'wp_print_scripts', array( $this, 'import_google_font_asynchronously' ) );
+		return $this;
 	}
 
 	/*
 	 * Print the inline script
+	 * Google fonts will be loaded asynchronously
+	 * https://github.com/typekit/webfontloader
 	 */
-	public function import_google_font_asynchronously() {
+	public function print_script(): void {
 		if ( ! is_array( $this->fonts ) || 0 === count( $this->fonts ) ) {
 			return;
 		}
 
 		$this->fonts = wp_json_encode( $this->fonts );
 
-		// This code is from webfontloader (https://github.com/typekit/webfontloader)
 		?>
 		<script>
 		WebFontConfig = {
 			google: {
-				families: <?php echo $this->fonts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- quote will be broken ?>
+				families: <?php echo $this->fonts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- broken quote ?>
 			}
 		};
 
 		(function(d) {
 			var wf = d.createElement('script'), s = d.scripts[0];
-			wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+			wf.src = '<?php echo esc_url( self::WEBFONT_JS ); ?>';
 			wf.async = true;
 			s.parentNode.insertBefore(wf, s);
 		})(document);

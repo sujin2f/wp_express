@@ -2,37 +2,49 @@
 /**
  * Interface for Fields
  *
- * @project WP-Express
- * @since   1.0.0
- * @author  Sujin 수진 Choi http://www.sujinc.com/
+ * @author  Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package WP Express
+ * @since   the beginning
  */
 
 namespace Sujin\Wordpress\WP_Express\Fields\Elements;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	header( 'Status: 404 Not Found' );
-	header( 'HTTP/1.1 404 Not Found' );
-	exit();
-}
-
 trait Trait_Input {
-	protected $_defaults_attributes = array(
-		'class' => 'regular-text code',
-		'type'  => 'text',
-	);
+	protected $data_type  = 'string';
+	private $number_types = array( 'range', 'number' );
 
-	protected function _is_available(): bool {
-		return true;
+	protected function get_data_type(): string {
+		return in_array( $this->argument->get( 'type' ), $this->number_types, true ) ? 'number' : $this->data_type;
 	}
 
-	protected function _render_form() {
+	protected function init(): void {
+		$this->argument->set( 'class', 'regular-text code input__items__item' );
+		$this->argument->set( 'type', 'text' );
+		parent::init();
+	}
+
+	protected function render_form_field(): void {
+		$is_single = $this->is_single();
+		$value     = $is_single
+			? array( $this->value )
+			: array_merge(
+				$this->value,
+				array( null ),
+			);
 		?>
-		<section class="<?php echo esc_attr( self::PREFIX ); ?> field input">
-			<input
-				id="<?php echo esc_attr( self::PREFIX ); ?>__field__input__<?php echo esc_attr( $this->get_id() ); ?>"
-				name="<?php echo esc_attr( $this->get_id() ); ?>"
-				<?php $this->_render_attributes(); ?>
-			/>
+		<section
+			class="<?php echo esc_attr( self::PREFIX ); ?> field input input__items"
+			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
+			data-next="<?php echo esc_attr( count( $value ) ); ?>"
+			<?php echo $is_single ? '' : esc_attr( 'data-multiple' ); ?>
+		>
+			<?php foreach ( $value as $index => $item_value ) : ?>
+				<input
+					name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $index ); ?>]"
+					value="<?php echo esc_attr( $item_value ); ?>"
+					<?php $this->argument->render_attributes(); ?>
+				/>
+			<?php endforeach; ?>
 		</section>
 		<?php
 	}

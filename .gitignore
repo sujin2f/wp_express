@@ -26,3 +26,7 @@ node_modules/
 # Composer
 vendor/
 wordpress/
+
+# Build
+assets/dist/
+build/
