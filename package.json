@@ -13,7 +13,6 @@
     "phpunit": "vendor/bin/phpunit -c ./.configs/phpunit/phpunit.xml --coverage-html ./logs/php",
     "run:bundle-analyzer": "NODE_ENV=production webpack-bundle-analyzer logs/stats.json",
     "run:stats": "NODE_ENV=production webpack --profile --json > logs/stats.json",
-    "schema:build": "./scripts/build-schema.sh",
     "start": "APP_ENV=development webpack --watch",
     "test": "jest --config=jest.config.js --coverage",
     "test:dev": "jest --config=jest.config.js"
