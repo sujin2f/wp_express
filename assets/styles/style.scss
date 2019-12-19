@@ -48,6 +48,30 @@
 	}
 }
 
+.wp-express.field.input {
+	input {
+		margin-bottom: 0.5em;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.wp-express.field.select {
+	select {
+		min-width: 200px;
+
+		&[multiple] {
+			padding: 0;
+
+			option {
+				padding: 5px;
+			}
+		}
+	}
+}
+
 .wp-express.option-wrap.checkbox {
 	label {
 		display: flex;

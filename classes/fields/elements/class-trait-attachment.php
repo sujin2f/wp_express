@@ -22,7 +22,7 @@ trait Trait_Attachment {
 		?>
 		<section
 			class="<?php echo esc_attr( self::PREFIX ); ?> field attachment"
-			data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
+			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
 		>
 			<section class="attachment__items">
 				<?php
@@ -34,20 +34,19 @@ trait Trait_Attachment {
 					}
 
 					?>
-					<section class="attachment__items__item" data-index="<?php echo esc_attr( $key ); ?>">
+					<section
+						class="attachment__items__item"
+						data-id="<?php echo esc_attr( $key ); ?>"
+					>
 						<input
 							name="<?php echo esc_attr( $this->get_id() ); ?>[<?php echo esc_attr( $key ); ?>]"
 							type="hidden"
 							value="<?php echo esc_attr( $attachment_id ); ?>"
 						/>
 
-						<div class="img-container" style="background-image: url('<?php echo $img_src; ?>');"></div>
+						<div class="img-container" style="background-image: url('<?php echo esc_url( $img_src ); ?>');"></div>
 
-						<button
-							class="btn-remove"
-							data-parent="<?php echo esc_attr( $this->get_id() ); ?>"
-							data-index="<?php echo esc_attr( $key ); ?>"
-						>
+						<button class="btn-remove">
 							<span class="dashicons dashicons-no"></span>
 						</button>
 					</section>

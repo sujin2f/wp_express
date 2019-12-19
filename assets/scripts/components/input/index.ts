@@ -3,12 +3,17 @@ import { DOMUtils } from 'app/utils/dom';
 
 export class Input {
   private static DOM = {
-    itemsContainer: 'input__items',
-    itemContainer: 'input__items__item',
+    classes: {
+      itemsContainer: 'input__items',
+    },
+    attrs: {
+      multiple: 'data-multiple',
+      next: 'data-next',
+    }
   };
 
   public constructor() {
-    const inputs = DOMUtils.querySelectorAll(`.${Input.DOM.itemsContainer}[data-multiple] input`);
+    const inputs = DOMUtils.querySelectorAll(`.${Input.DOM.classes.itemsContainer}[${Input.DOM.attrs.multiple}] input`);
     inputs.map((input: HTMLInputElement) => {
       this.bindTextEvent(input);
     });
@@ -16,7 +21,7 @@ export class Input {
 
   private bindTextEvent(input: HTMLInputElement): void {
     input.addEventListener('keyup', (_: KeyboardEvent) => {
-      const container = input.closest(`.wp-express.${Input.DOM.itemsContainer}`);
+      const container = input.closest(`.wp-express.${Input.DOM.classes.itemsContainer}`);
       const inputs = DOMUtils.nodes(container.getElementsByTagName('input'));
       const hasValue = inputs.filter((target: HTMLInputElement) => target.value);
       const emptyInputs = inputs.length - hasValue.length;
@@ -38,9 +43,9 @@ export class Input {
    * Add an empty input
    */
   private addInput(container: Element): void {
-    const index = parseInt(container.getAttribute('data-next-index'), 10);
+    const index = parseInt(container.getAttribute(Input.DOM.attrs.next), 10);
     const nextIndex = index + 1;
-    container.setAttribute('data-next-index', (nextIndex).toString());
+    container.setAttribute(Input.DOM.attrs.next, (nextIndex).toString());
 
     const input = container.getElementsByTagName('input')[0].cloneNode(true) as HTMLInputElement;
     const id = container.getAttribute('data-id');

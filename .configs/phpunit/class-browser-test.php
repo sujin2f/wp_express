@@ -52,8 +52,7 @@ final class BrowserTest {
 		$first_depth = Admin::get_instance( '1st Depth' )
 			->position( 100 )
 			->icon( 'dashicons-awards' );
-		Admin::get_instance( 'POSITION_OPTION' )
-			->position( Admin_Position::OPTION );
+		Admin::get_instance( 'POSITION_OPTION' );
 		Admin::get_instance( 'POSITION_TOOLS' )
 			->position( Admin_Position::TOOLS );
 		Admin::get_instance( 'POSITION_USERS' )

@@ -35,7 +35,7 @@ trait Trait_Input {
 		<section
 			class="<?php echo esc_attr( self::PREFIX ); ?> field input input__items"
 			data-id="<?php echo esc_attr( $this->get_id() ); ?>"
-			data-next-index="<?php echo esc_attr( count( $value ) ); ?>"
+			data-next="<?php echo esc_attr( count( $value ) ); ?>"
 			<?php echo $is_single ? '' : esc_attr( 'data-multiple' ); ?>
 		>
 			<?php foreach ( $value as $index => $item_value ) : ?>

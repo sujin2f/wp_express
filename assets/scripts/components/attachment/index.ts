@@ -1,7 +1,7 @@
 // app/components/attachment
 import { DOMUtils } from 'app/utils/dom';
 
-interface IAttachment {
+export interface IAttachment {
   id: number;
   attributes: {
     url: string;
@@ -10,14 +10,22 @@ interface IAttachment {
 
 export class Attachment {
   private static DOM = {
-    upload: '.wp-express.field.attachment .btn-upload',
-    remove: '.wp-express.field.attachment .btn-remove',
-    itemsContainer: '.attachment__items',
-    itemContainer: 'attachment__items__item',
+    classes: {
+      section: 'wp-express.attachment',
+      attachmentBlock: 'attachment__items__item',
+      upload: 'btn-upload',
+      remove: 'btn-remove',
+      itemsContainer: 'attachment__items',
+      itemContainer: 'attachment__items__item',
+    },
+    attrs: {
+      id: 'data-id',
+      single: 'data-single',
+    },
   };
 
   public constructor() {
-    const removeButtons = DOMUtils.querySelectorAll(Attachment.DOM.remove);
+    const removeButtons = DOMUtils.querySelectorAll(`.${Attachment.DOM.classes.section} .${Attachment.DOM.classes.remove}`);
     this.bindUploadEvent();
     this.bindRemoveEvent(removeButtons);
   }
@@ -27,15 +35,15 @@ export class Attachment {
    * Opens the WP media library
    */
   private bindUploadEvent(): void {
-    const buttons = DOMUtils.querySelectorAll(Attachment.DOM.upload);
+    const buttons = DOMUtils.querySelectorAll(`.${Attachment.DOM.classes.section} .${Attachment.DOM.classes.upload}`);
     buttons.map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
 
         const target = e.currentTarget as Element;
-        const parent = target.closest('.wp-express.field.attachment');
-        const parentId = parent.getAttribute('data-parent');
-        const isSingle = target.hasAttribute('data-single');
+        const parent = target.closest(`.${Attachment.DOM.classes.section}`);
+        const parentId = this.getSectionId(target);
+        const isSingle = target.hasAttribute(Attachment.DOM.attrs.single);
 
         // Media library
         const frame = wp.media && wp.media({
@@ -48,8 +56,8 @@ export class Attachment {
 
         // Select existing items in the media library
         frame.on('open', () => {
-          const items = parent.querySelectorAll(`.${Attachment.DOM.itemContainer}`);
-          Array.prototype.slice.call(items).map((item: Element) => {
+          const items = parent.querySelectorAll(`.${Attachment.DOM.classes.itemContainer}`);
+          DOMUtils.nodes(items).map((item: Element) => {
             const attachmentId = item.getElementsByTagName('input')[0].value;
             frame.state().get('selection').add(wp.media.attachment(attachmentId));
           })
@@ -73,30 +81,34 @@ export class Attachment {
     buttons.map((button: Element) => {
       button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
-
         const target = e.currentTarget as Element;
-        const parent = target.getAttribute('data-parent');
-        const index = target.getAttribute('data-index');
-        this.removeAttachment(parent, index);
+        this.removeAttachment(target);
       });
     });
   }
 
-  private removeAttachment(parent: string, index: string): void {
-    const selector = `section[data-parent="${parent}"] .${Attachment.DOM.itemContainer}[data-index="${index}"]`;
-    const target = document.querySelector(selector);
-    target.parentNode.removeChild(target);
+  private removeAttachment(target: Element): void {
+    const parent = this.getSectionId(target);
+    const index = this.getAttachmentId(target);
+
+    let selector = `.${Attachment.DOM.classes.section}[${Attachment.DOM.attrs.id}="${parent}"] `;
+    selector += `.${Attachment.DOM.classes.itemContainer}[${Attachment.DOM.attrs.id}="${index}"]`;
+
+    const remove = document.querySelector(selector);
+    remove.parentNode.removeChild(remove);
   }
 
   /*
    * Remove container and create items in it
    */
   private renderAttachments(parent:string, attachments: IAttachment[], isSingle:boolean): void {
-    document.querySelector(`section[data-parent="${parent}"] ${Attachment.DOM.itemsContainer}`).innerHTML = '';
+    let selector = `.${Attachment.DOM.classes.section}[${Attachment.DOM.attrs.id}="${parent}"] `;
+    selector += `.${Attachment.DOM.classes.itemsContainer}`;
+    document.querySelector(selector).innerHTML = '';
 
     attachments
       .filter((_:IAttachment, index: number) => isSingle ? (index === 0) : true)
-      .map((attachment:IAttachment, index:number) => {
+      .forEach((attachment:IAttachment, index:number) => {
         this.renderAttachment(
           parent,
           attachment.id,
@@ -116,8 +128,8 @@ export class Attachment {
     index: number
   ): void {
     const container = document.createElement('section');
-    container.classList.add(Attachment.DOM.itemContainer);
-    container.setAttribute('data-index', index.toString());
+    container.classList.add(Attachment.DOM.classes.itemContainer);
+    container.setAttribute(Attachment.DOM.attrs.id, index.toString());
 
     const input = document.createElement('input');
     input.setAttribute('name', `${parent}[${index}]`);
@@ -129,9 +141,7 @@ export class Attachment {
     div.setAttribute('style', `background-image: url('${url}')`);
 
     const button = document.createElement('button');
-    button.classList.add('btn-remove');
-    button.setAttribute('data-parent', parent);
-    button.setAttribute('data-index', index.toString());
+    button.classList.add(Attachment.DOM.classes.remove);
 
     const span = document.createElement('span');
     span.classList.add('dashicons');
@@ -145,7 +155,22 @@ export class Attachment {
 
     this.bindRemoveEvent([button]);
 
-    document.querySelector(`section[data-parent="${parent}"] ${Attachment.DOM.itemsContainer}`)
+    let selector = `.${Attachment.DOM.classes.section}[${Attachment.DOM.attrs.id}="${parent}"] `;
+    selector += `.${Attachment.DOM.classes.itemsContainer}`;
+
+    document.querySelector(selector)
       .appendChild(container);
+  }
+
+  private getSectionId(target: Element): string {
+    return target
+      .closest(`.${Attachment.DOM.classes.section}`)
+      .getAttribute(Attachment.DOM.attrs.id);
+  }
+
+  private getAttachmentId(target: Element): string {
+    return target
+      .closest(`.${Attachment.DOM.classes.attachmentBlock}`)
+      .getAttribute(Attachment.DOM.attrs.id);
   }
 };
