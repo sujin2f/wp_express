@@ -15,6 +15,8 @@ use Sujin\Wordpress\WP_Express\Arguments\Argument_Field;
 use Sujin\Wordpress\WP_Express\Helpers\Assets;
 use Sujin\Wordpress\WP_Express\Helpers\Trait_With_Argument;
 
+use RuntimeException;
+
 abstract class Abstract_Filed extends Abstract_Component {
 	use Trait_With_Argument;
 
