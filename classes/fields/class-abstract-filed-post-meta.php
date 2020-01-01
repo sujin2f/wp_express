@@ -84,10 +84,6 @@ abstract class Abstract_Filed_Post_Meta extends Abstract_Filed {
 	}
 
 	protected function refresh_id( ?int $id = null ): void {
-		if ( $this->wp_object_id ) {
-			return;
-		}
-
 		if ( ! is_null( $id ) ) {
 			$this->wp_object_id = $id;
 			return;
