@@ -246,7 +246,7 @@ class Property {
 			return $value;
 		}
 
-		$property = Property::from_json( $this->schema, $id . '::items', $this->items );
+		$property = Property::from_json( $this->schema, $this->id . '::items', $this->items );
 		$array    = array();
 
 		foreach ( $value as $item ) {
