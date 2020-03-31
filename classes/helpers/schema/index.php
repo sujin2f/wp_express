@@ -196,7 +196,7 @@ class Schema extends Abstract_Component implements JsonSerializable {
 
 		foreach ( $properties as $key => $property ) {
 			// If object, create a new schema
-			if ( 'object' === $property['type'] ) {
+			if ( 'object' === ( $property['type'] ?? '' ) ) {
 				$this->properties[ $key ] = self::from_json( $this->get_name() . '/properties/' . $key, $property );
 				continue;
 			}
