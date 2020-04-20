@@ -1,13 +1,13 @@
 <?php
 /**
- * JSON Schema Property
- *
- * @author     Sujin 수진 Choi <http://www.sujinc.com/>
- * @package    WP Express
- * @since      4.0.0
- * @subpackage Schema
- * @todo       Array Validation
- */
+	* JSON Schema Property
+	*
+	* @author     Sujin 수진 Choi <http://www.sujinc.com/>
+	* @package    WP Express
+	* @since      4.0.0
+	* @subpackage Schema
+	* @todo       Array Validation
+	*/
 
 namespace Sujin\Wordpress\WP_Express\Helpers\Schema;
 
@@ -147,15 +147,17 @@ class Property {
 			return $this->default;
 		}
 
-		// Filters
-		$value = $this->filter_type( $value );
-		$value = $this->filter_enum( $value );
-		$value = $this->filter_format( $value );
-		$value = $this->filter_array( $value );
-
 		// Empty value, but it's required
-		if ( empty( $value ) && $this->required ) {
+		if ( is_null( $value ) && $this->required ) {
 			throw new InvalidArgumentException( '😡 The property \'' . $this->id . '\' value is required.' );
+		}
+
+		// Filters
+		if ( ! is_null( $value ) ) {
+			$value = $this->filter_type( $value );
+			$value = $this->filter_enum( $value );
+			$value = $this->filter_format( $value );
+			$value = $this->filter_array( $value );
 		}
 
 		return $value;

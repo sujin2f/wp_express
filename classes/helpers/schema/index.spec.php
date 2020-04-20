@@ -1,12 +1,12 @@
 <?php
 /**
- * Unit Test of Schema Base
- *
- * @author     Sujin 수진 Choi <http://www.sujinc.com/>
- * @package    WP Express
- * @since      4.0.0
- * @subpackage Schema
- */
+	* Unit Test of Schema Base
+	*
+	* @author     Sujin 수진 Choi <http://www.sujinc.com/>
+	* @package    WP Express
+	* @since      4.0.0
+	* @subpackage Schema
+	*/
 
 use Sujin\Wordpress\WP_Express\Helpers\Schema;
 use org\bovigo\vfs\vfsStream;
@@ -119,7 +119,7 @@ class Schema_Test extends Test_Case {
 
 	public function test_reference_schema_nested_item() {
 		$reference                                     = new Reference_Item();
-		$reference->object['child']['object']['child'] = '';
+		unset( $reference->object['child']['object']['child'] );
 
 		try {
 			json_decode( wp_json_encode( $reference ), true );
