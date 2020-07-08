@@ -23,6 +23,9 @@ namespace Sujin\Wordpress\WP_Express\Helpers;
 use ReflectionClass;
 use InvalidArgumentException;
 
+/**
+ * Enum Base
+ */
 abstract class Abstract_Enum {
 	/**
 	 * Store existing constants in a static cache per object.
@@ -39,6 +42,11 @@ abstract class Abstract_Enum {
 	 */
 	protected $const_key;
 
+	/**
+	 * Constructor
+	 *
+	 * @param string $const_key Key.
+	 */
 	private function __construct( string $const_key ) {
 		$this->const_key = $const_key;
 	}
@@ -71,8 +79,11 @@ abstract class Abstract_Enum {
 
 	/**
 	 * Get the instance from a string
-	 * @throws InvalidArgumentException
-	 * @return self
+	 *
+	 * @param string $value Called value.
+	 * @param array  $_     Not used.
+	 * @return Abstract_Enum
+	 * @throws InvalidArgumentException Value is not valid.
 	 */
 	public static function __callStatic( string $value, array $_ ): self {
 		self::to_array();
@@ -87,6 +98,9 @@ abstract class Abstract_Enum {
 
 	/**
 	 * Check the value in this consts
+	 *
+	 * @param string $value Value to check.
+	 * @return bool
 	 */
 	public static function in_array( string $value ): bool {
 		self::to_array();
@@ -96,7 +110,8 @@ abstract class Abstract_Enum {
 
 	/**
 	 * Make const to array cache
-	 * @uses   ReflectionClass
+	 *
+	 * @uses ReflectionClass
 	 */
 	private static function to_array(): void {
 		$class = get_called_class();
@@ -113,14 +128,12 @@ abstract class Abstract_Enum {
 		foreach ( $constants as $key => $value ) {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $array_value ) {
-					$enum                                  = new static( $key );
-					self::$cache[ $class ][ $array_value ] = $enum;
+					self::$cache[ $class ][ $array_value ] = new static( $key );
 				}
 				continue;
 			}
 
-			$enum                            = new static( $key );
-			self::$cache[ $class ][ $value ] = $enum;
+			self::$cache[ $class ][ $value ] = new static( $key );
 		}
 	}
 }

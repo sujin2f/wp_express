@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Schema Base
  *
@@ -11,55 +11,71 @@
 
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
-use Sujin\Wordpress\WP_Express\Abstract_Component;
-use Sujin\Wordpress\WP_Express\Helpers\Schema\Property;
-use Sujin\Wordpress\WP_Express\Helpers\Trait_Multiton;
+use Sujin\Wordpress\WP_Express\{
+	Abstract_Component,
+	Helpers\Schema\Property,
+	Helpers\Trait_Multiton,
+};
 
 use DomainException;
 use InvalidArgumentException;
 use JsonSerializable;
 
+/**
+ * Schema Base
+ */
 class Schema extends Abstract_Component implements JsonSerializable {
 	use Trait_Multiton;
 
 	public const REF__KEY = '$ref';
 
 	/**
+	 * JSON schema in array
+	 *
 	 * @var array
 	 */
 	private $json;
 
 	/**
-	 * Property list
+	 * Parsed properties
+	 *
 	 * @var Schema[]|Property[]
 	 */
 	private $properties = array();
 
 	/**
-	 * Definition List
+	 * Parsed definitions
+	 *
 	 * @var Schema[]
 	 */
 	private $definitions = array();
 
 	/**
 	 * Required Keys
+	 *
 	 * @var string[]
 	 */
-	private $required;
+	private $required = array();
 
 	/**
+	 * Additional properties allowed
+	 *
 	 * @var bool
 	 */
 	private $additional_properties;
 
 	/**
+	 * Get required strings
+	 *
 	 * @return string[]
 	 */
-	public function get_required(): ?array {
+	public function get_required(): array {
 		return $this->required;
 	}
 
 	/**
+	 * Get properties from $properties
+	 *
 	 * @return Property[]
 	 */
 	public function get_properties(): array {
@@ -78,6 +94,9 @@ class Schema extends Abstract_Component implements JsonSerializable {
 	}
 
 	/**
+	 * Set json from given array or string
+	 *
+	 * @param  array $json JSON array.
 	 * @return Schema
 	 */
 	public function set_json( array $json ): Schema {
@@ -91,22 +110,31 @@ class Schema extends Abstract_Component implements JsonSerializable {
 	}
 
 	/**
-	 * @return array
+	 * Get json array
+	 *
+	 * @return array|null
 	 */
 	public function get_json(): ?array {
 		return $this->json;
 	}
 
 	/**
+	 * Get base dir of schema
+	 *
 	 * @return string
 	 */
-	protected function get_base_dir(): string {
+	protected static function get_base_dir(): string {
 		return get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'schema';
 	}
 
 	/**
 	 * Constructor
+	 *
 	 * Create schema from json array
+	 *
+	 * @param  string $key JSON key.
+	 * @param  array  $json JSON array.
+	 * @return Schema
 	 */
 	public static function from_json( string $key, array $json ): Schema {
 		return self::get_instance( $key )->set_json( $json );
@@ -117,6 +145,8 @@ class Schema extends Abstract_Component implements JsonSerializable {
 	 *
 	 * Create schema from filesystem
 	 *
+	 * @param  string $filename File name to read.
+	 * @return Schema
 	 * @throws InvalidArgumentException File does not exist.
 	 * @throws DomainException          Not a valid json format.
 	 */
@@ -127,13 +157,16 @@ class Schema extends Abstract_Component implements JsonSerializable {
 			return $schema;
 		}
 
-		$path = $schema->get_base_dir() . DIRECTORY_SEPARATOR . $filename;
+		global $wp_filesystem;
+		require_once ABSPATH . '/wp-admin/includes/file.php';
+		WP_Filesystem();
 
-		if ( ! file_exists( $path ) ) {
-			throw new InvalidArgumentException( '😡 ' . $path . ' does not exist.' );
+		$json = array();
+		if ( ! $wp_filesystem->exists( $filename ) ) {
+			throw new InvalidArgumentException( '😡 ' . $filename . ' does not exist.' );
 		}
 
-		$json = file_get_contents( $path );
+		$json = $wp_filesystem->get_contents( $filename );
 		$json = json_decode( $json, true );
 
 		if ( json_last_error() ) {
@@ -146,15 +179,16 @@ class Schema extends Abstract_Component implements JsonSerializable {
 	/**
 	 * Validate and filter the value with schema
 	 *
-	 * @param object|array $value
+	 * @param  object|array $value value to validate.
+	 * @return any[]
 	 */
 	public function filter( $value ): array {
 		$value = (object) $value;
 		$value = get_object_vars( $value );
 
-		// For each in schema
+		// For each in schema.
 		foreach ( $this->get_properties() as $key => $property ) {
-			// Not need to be filtered
+			// Not need to be filtered.
 			if ( empty( $property->get_required() ) && empty( $value[ $key ] ) ) {
 				continue;
 			}
@@ -166,7 +200,7 @@ class Schema extends Abstract_Component implements JsonSerializable {
 			return $value;
 		}
 
-		// For each $value item, unset undefined in schema
+		// For each $value item, unset undefined in schema.
 		foreach ( array_keys( $value ) as $key ) {
 			if ( ! in_array( $key, array_keys( $this->get_properties() ), true ) ) {
 				unset( $value[ $key ] );
@@ -195,7 +229,7 @@ class Schema extends Abstract_Component implements JsonSerializable {
 		}
 
 		foreach ( $properties as $key => $property ) {
-			// If object, create a new schema
+			// If object, create a new schema.
 			if ( 'object' === ( $property['type'] ?? '' ) ) {
 				$this->properties[ $key ] = self::from_json( $this->get_name() . '/properties/' . $key, $property );
 				continue;
@@ -232,6 +266,8 @@ class Schema extends Abstract_Component implements JsonSerializable {
 	/**
 	 * Returns a reference from $ref string
 	 *
+	 * @param   string $ref Referece to read.
+	 * @return  Schema|null
 	 * @used-by Schema::init()
 	 * @used-by Property::init()
 	 */
@@ -241,7 +277,7 @@ class Schema extends Abstract_Component implements JsonSerializable {
 		}
 
 		if ( '.json' === substr( $ref, -5 ) ) {
-			return self::from_file( $ref );
+			return self::from_file( static::get_base_dir() . '/' . $ref );
 		}
 
 		return null;
@@ -249,6 +285,7 @@ class Schema extends Abstract_Component implements JsonSerializable {
 
 	/**
 	 * Triggered by wp_json_encode()
+	 *
 	 * @return array Raw .json
 	 */
 	public function jsonSerialize(): array {

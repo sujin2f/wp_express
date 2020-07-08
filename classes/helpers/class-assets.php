@@ -92,7 +92,6 @@ class Assets {
 				$argument->get( 'url' ),
 				$argument->get( 'depends' ),
 				$argument->get( 'version' ),
-				$argument->get( 'is_footer' ),
 			);
 		}
 	}

@@ -15,9 +15,9 @@ trait Trait_Singleton {
 	 */
 	protected static $singleton_container = null;
 
-	public static function get_instance(): self {
+	public static function get_instance( ...$attr ): self {
 		if ( is_null( static::$singleton_container ) ) {
-			static::$singleton_container = new static();
+			static::$singleton_container = new static( ...$attr );
 		}
 
 		return static::$singleton_container;

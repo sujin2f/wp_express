@@ -53,6 +53,10 @@ class Post_Type extends Abstract_Component {
 		}
 
 		foreach ( Abstract_Filed_Post_Meta::get_instances() as $post_meta ) {
+			if ( empty( $post_meta->metabox ) ) {
+				continue;
+			}
+
 			$post_meta_post_types = array_map(
 				function( $post_type ) {
 					return $post_type->get_id();

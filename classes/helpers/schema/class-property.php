@@ -1,25 +1,32 @@
 <?php
 /**
-	* JSON Schema Property
-	*
-	* @author     Sujin 수진 Choi <http://www.sujinc.com/>
-	* @package    WP Express
-	* @since      4.0.0
-	* @subpackage Schema
-	* @todo       Array Validation
-	*/
+ * JSON Schema Property
+ *
+ * @author     Sujin 수진 Choi <http://www.sujinc.com/>
+ * @package    WP Express
+ * @since      4.0.0
+ * @subpackage Schema
+ * @todo       Array Validation
+ */
 
 namespace Sujin\Wordpress\WP_Express\Helpers\Schema;
 
-use Sujin\Wordpress\WP_Express\Helpers\Schema;
-use Sujin\Wordpress\WP_Express\Helpers\Enums\{
-	Schema_Type,
-	Schema_Format,
+use Sujin\Wordpress\WP_Express\{
+	Abstract_Component,
+	Helpers\Enums\Schema_Format,
+	Helpers\Enums\Schema_Type,
+	Helpers\Schema,
+	Helpers\Trait_Multiton,
 };
 
 use InvalidArgumentException;
 
-class Property {
+/**
+ * JSON Schema Property
+ */
+class Property extends Abstract_Component {
+	use Trait_Multiton;
+
 	/**
 	 * Parent Schema
 	 *
@@ -28,13 +35,8 @@ class Property {
 	private $schema;
 
 	/**
-	 * Identifier
+	 * Child properties
 	 *
-	 * @var string
-	 */
-	private $id;
-
-	/**
 	 * @var array
 	 */
 	private $property;
@@ -54,26 +56,36 @@ class Property {
 	private $type;
 
 	/**
+	 * Format i.g. uri
+	 *
 	 * @var Schema_Format
 	 */
 	private $format;
 
 	/**
+	 * Enum
+	 *
 	 * @var array
 	 */
 	private $enum;
 
 	/**
+	 * Array type items
+	 *
 	 * @var array
 	 */
 	private $items;
 
 	/**
+	 * Is required?
+	 *
 	 * @var bool
 	 */
 	private $required;
 
 	/**
+	 * Default value
+	 *
 	 * @var mixed
 	 */
 	private $default;
@@ -90,16 +102,20 @@ class Property {
 	/**
 	 * Get the instance from a json
 	 *
+	 * @param   Schema $parent   Parent Schema.
+	 * @param   string $id       Instance ID.
+	 * @param   array  $property Props JSON.
 	 * @return  Property
 	 * @used-by Schema::init
 	 */
 	public static function from_json( Schema $parent, string $id, array $property ): Property {
-		$that           = new Property();
-		$that->id       = $id;
-		$that->schema   = $parent;
-		$that->property = $property;
+		$that = self::get_instance( $parent->get_id() . '-' . $id );
 
-		$that->init();
+		if ( ! $that->schema ) {
+			$that->schema   = $parent;
+			$that->property = $property;
+			$that->init();
+		}
 
 		return $that;
 	}
@@ -108,14 +124,14 @@ class Property {
 	 * Prepare this instance
 	 */
 	public function init(): void {
-		$this->required = ! empty( $this->schema->get_required() ) ? in_array( $this->id, $this->schema->get_required(), true ) : false;
+		$this->required = ! empty( $this->schema->get_required() ) ? in_array( $this->get_id(), $this->schema->get_required(), true ) : false;
 
 		if ( ! empty( $this->property[ Schema::REF__KEY ] ) ) {
 			$this->reference = $this->schema->get_reference( $this->property[ Schema::REF__KEY ] );
 			return;
 		}
 
-		// Type is required
+		// Type is required.
 		$type       = $this->property['type'];
 		$this->type = Schema_Type::$type();
 
@@ -130,11 +146,9 @@ class Property {
 	/**
 	 * Filter a value
 	 *
-	 *
-	 *
-	 * @param  $value mixed
+	 * @param  mixed $value Value to examine.
 	 * @return mixed
-	 * @throws InvalidArgumentException
+	 * @throws InvalidArgumentException When the value is required but empty.
 	 * @todo   $ref
 	 */
 	public function filter( $value ) {
@@ -142,17 +156,17 @@ class Property {
 			return $this->reference->filter( $value );
 		}
 
-		// Set as default
+		// Set as default.
 		if ( empty( $value ) && $this->default ) {
 			return $this->default;
 		}
 
-		// Empty value, but it's required
+		// Empty value, but it's required.
 		if ( is_null( $value ) && $this->required ) {
-			throw new InvalidArgumentException( '😡 The property \'' . $this->id . '\' value is required.' );
+			throw new InvalidArgumentException( '😡 The property \'' . $this->get_id() . '\' value is required.' );
 		}
 
-		// Filters
+		// Filters.
 		if ( ! is_null( $value ) ) {
 			$value = $this->filter_type( $value );
 			$value = $this->filter_enum( $value );
@@ -164,6 +178,9 @@ class Property {
 	}
 
 	/**
+	 * Filter vlaue by type
+	 *
+	 * @param   mixed $value Value to examine.
 	 * @return  mixed
 	 * @used-by Property::filter()
 	 */
@@ -190,16 +207,19 @@ class Property {
 	}
 
 	/**
+	 * Filter vlaue by enum
+	 *
+	 * @param   mixed $value Value to examine.
 	 * @return  mixed
 	 * @used-by Property::filter()
-	 * @throws  InvalidArgumentException
+	 * @throws  InvalidArgumentException Value is not matched.
 	 */
 	private function filter_enum( $value ) {
 		if ( empty( $this->enum ) ) {
 			return $value;
 		}
 
-		if ( in_array( $value, $this->enum ) ) {
+		if ( in_array( $value, $this->enum, true ) ) {
 			return $value;
 		}
 
@@ -207,6 +227,9 @@ class Property {
 	}
 
 	/**
+	 * Filter vlaue by format
+	 *
+	 * @param   mixed $value Value to examine.
 	 * @return  mixed
 	 * @used-by Property::filter()
 	 */
@@ -232,6 +255,9 @@ class Property {
 	}
 
 	/**
+	 * Filter vlaue of array
+	 *
+	 * @param   mixed $value Value to examine.
 	 * @return  mixed
 	 * @used-by Property::filter()
 	 */
@@ -248,7 +274,7 @@ class Property {
 			return $value;
 		}
 
-		$property = Property::from_json( $this->schema, $this->id . '::items', $this->items );
+		$property = self::from_json( $this->schema, $this->get_id() . '::items', $this->items );
 		$array    = array();
 
 		foreach ( $value as $item ) {
