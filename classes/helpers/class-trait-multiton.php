@@ -1,6 +1,6 @@
 <?php
 /**
- * Object which has id and name
+ * Multiton Helper
  *
  * @package WP Express
  * @author  Sujin 수진 Choi <http://www.sujinc.com/>
@@ -9,18 +9,26 @@
 
 namespace Sujin\Wordpress\WP_Express\Helpers;
 
-interface Interface_Identifier {
+trait Trait_Multiton {
 	/**
-	 * Get Unique Identifier
-	 *
-	 * @return string
+	 * @var self[]
 	 */
-	public function get_id(): string;
+	protected static $multiton_container = array();
 
-	/**
-	 * Get object name
-	 *
-	 * @return string
+	public static function get_instance( ...$args ): self {
+		$id  = $args[0];
+		$key = md5( json_encode( $id ) );
+		if ( ! array_key_exists( $key, static::$multiton_container ) ) {
+			static::$multiton_container[ $key ] = new static( ...$args );
+		}
+		return static::$multiton_container[ $key ];
+	}
+
+	/*
+	 * Gets multiton instance
+	 * @return self[]
 	 */
-	public function get_name(): string;
+	public static function get_instances(): array {
+		return static::$multiton_container;
+	}
 }
